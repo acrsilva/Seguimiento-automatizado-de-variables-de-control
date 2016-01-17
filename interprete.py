@@ -41,11 +41,17 @@ layout.addWidget(btnPrevDia);
 layout.addWidget(btnSigDia);
 
 # Datos de ejemplo a mostrar
-x2 = np.linspace(-100, 100, 1000)
-data2 = np.sin(x2) / x2
+#x2 = np.linspace(-100, 100, 1000)
+#data2 = np.sin(x2) / x2
+
+# Datos desde csv a mostrar
+csv = np.genfromtxt ('data.csv', delimiter=",")
+tiempo = csv[:,0]
+sueno = csv[:,25]
+
 
 # Contenido de la gráfica superior (día)
-curve = plotDia.plot(data2, clickable=False)
+curve = plotDia.plot(sueno, clickable=False)
 #curve.curve.setClickable(True)
 curve.setPen('w')  ## white pen
 #curve.setShadowPen(pg.mkPen((70,70,30), width=6, cosmetic=True))
@@ -55,14 +61,14 @@ def clicked():
 curve.sigClicked.connect(clicked)
 
 # Definir la amplitud inicial de la lupa y sus límites
-lr = pg.LinearRegionItem([1, 300], bounds=[0,1000], movable=True)
+lr = pg.LinearRegionItem([0, 1000], bounds=[0,len(tiempo)], movable=True)
 plotDia.addItem(lr)
 #line = pg.InfiniteLine(angle=90, movable=True)
 #plotDia.addItem(line)
 #line.setBounds([0,200])
 
 # Contenido de la gráfica inferior (episodio ~ zoom del día)
-plotEpi.plot(data2)
+plotEpi.plot(sueno)
 def updatePlot():
     plotEpi.setXRange(*lr.getRegion(), padding=0)
 def updateRegion():
