@@ -6,47 +6,57 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
-    <height>481</height>
+    <width>729</width>
+    <height>512</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Intérprete de sueños</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="next_e_btn">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>360</y>
-      <width>98</width>
+      <x>370</x>
+      <y>130</y>
+      <width>141</width>
       <height>27</height>
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>Episodio Siguiente</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="prev_e_btn">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>360</y>
-      <width>98</width>
+      <x>190</x>
+      <y>130</y>
+      <width>141</width>
       <height>27</height>
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>Episodio Anterior</string>
     </property>
    </widget>
    <widget class="GraphicsView" name="graphicsView">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>60</y>
-      <width>256</width>
-      <height>192</height>
+      <x>25</x>
+      <y>20</y>
+      <width>681</width>
+      <height>81</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QGraphicsView" name="graphicsView_2">
+    <property name="geometry">
+     <rect>
+      <x>25</x>
+      <y>181</y>
+      <width>681</width>
+      <height>281</height>
      </rect>
     </property>
    </widget>
@@ -56,7 +66,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>480</width>
+     <width>729</width>
      <height>25</height>
     </rect>
    </property>
