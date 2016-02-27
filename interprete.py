@@ -43,8 +43,8 @@ class MainWindow(TemplateBaseClass):
         
         win.nextRow()
         
-        #p2 = win.addPlot()
-        #p2.addItem(self.barSuenio)
+        self.p2 = win.addPlot()
+        self.p2.plot(self.selep.consumoData, pen=(255,0,0), name="Curva consumo")
         
         #Configurar los botones
         self.ui.next_e_btn.clicked.connect(self.nextEp)
@@ -67,6 +67,9 @@ class MainWindow(TemplateBaseClass):
         self.plt.addItem(self.barSuenio)
         self.p1.clear()
         self.p1.addItem(self.selep.barConsumo)
+        self.p2.clear()
+        self.p2.plot(self.selep.consumoData, pen=(255,0,0), name="Curva consumo")
+        
     def prevEp(self):
         self.plt.clear()
         self.selep.episodioAnterior()
@@ -74,6 +77,8 @@ class MainWindow(TemplateBaseClass):
         self.plt.addItem(self.barSuenio)
         self.p1.clear()
         self.p1.addItem(self.selep.barConsumo)
+        self.p2.clear()
+        self.p2.plot(self.selep.consumoData, pen=(255,0,0), name="Curva consumo")
 
 
 #Inicializar interfaz

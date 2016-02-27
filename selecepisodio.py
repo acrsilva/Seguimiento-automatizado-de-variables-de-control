@@ -17,6 +17,7 @@ csv = np.genfromtxt ('data.csv', delimiter=",")
 x = csv[:,1] #Tiempo
 y = csv[:,25] #Clasificador de sueño
 z = csv[:,24] #Clasificador de actividad 1, 2, 3, 4, 5, 7, 9
+k = csv[:,17] #Consumo energético
 
 def trocear(y):
     print "troceando, num y: %i" % len(y)
@@ -102,8 +103,11 @@ def creaSuenoBar(ep, indices, colors):
 	barGraphItem.setOpts(x0=xGrid[:-1], x1=xGrid[1:], y0=[0] * n, height=1, brushes=colors[a:b], pens=colors[a:b])
 	return barGraphItem
 	
-def creaConsumoBar(ep, indices, colors):
-    a = indices[ep][0] - (3 * 60)
+def creaActividadBar(ep, indices, colors):
+    if(indices[ep][0] - (3 * 60) < 0):
+        a = 0
+    else:    
+        a = indices[ep][0] - (3 * 60)
     b = indices[ep][1]
     n = b-a
     xp = x[a:b]
@@ -111,11 +115,19 @@ def creaConsumoBar(ep, indices, colors):
     xGrid = np.linspace(xp[0], xp[-1], n)
     zGrid = np.interp(xGrid, xp, zp)	
     barGraphItem = pg.BarGraphItem()
-    barGraphItem.setOpts(x0=xGrid[:-1], x1=xGrid[1:], y0=[0] * n, height=1, brushes=colors[a:b], pens=colors[a:b])
+    barGraphItem.setOpts(x0=xGrid[:-1], x1=xGrid[1:], y0=[0] * n, height=0.5, brushes=colors[a:b], pens=colors[a:b])
     return barGraphItem
 
-def creaConsumoGraf(ep, indices):
+def creaConsumoData(ep, indices):
     print "creando grafica de consumo energético"
+    #return pg.LinearRegionItem(x[0:1000], bounds=[0,len(x)], movable=False)
+    if(indices[ep][0] - (3 * 60) < 0):
+        a = 0
+    else:    
+        a = indices[ep][0] - (3 * 60)
+    b = indices[ep][1]
+    return k[a:b]
+    
 
 class SelecEpisodio(object):
     #Obtener indices de cada episodio de todo el intervalo de sueño
@@ -127,21 +139,23 @@ class SelecEpisodio(object):
     #Elegir el episodio inicial
     epAct = 0
     barSuenio = creaSuenoBar(epAct, indices, colors)
-    barConsumo = creaConsumoBar(epAct, indices, consColors)
-    grafConsumo = creaConsumoGraf(epAct, indices)
-
+    barConsumo = creaActividadBar(epAct, indices, consColors)
+    consumoData = creaConsumoData(epAct, indices)
+    
     def episodioSiguiente(cls):
         if (cls.epAct < len(cls.indices) - 1): #Último episodio
             cls.epAct += 1
             cls.barSuenio = creaSuenoBar(cls.epAct, cls.indices, cls.colors)
-            cls.barConsumo = creaConsumoBar(cls.epAct, cls.indices, cls.consColors)
+            cls.barConsumo = creaActividadBar(cls.epAct, cls.indices, cls.consColors)
+            cls.consumoData = creaConsumoData(cls.epAct, cls.indices)
         print "siguiente episodio: %i" % cls.epAct
 
     def episodioAnterior(cls):
         if (cls.epAct > 0): #Primer episodio
             cls.epAct -= 1
             cls.barSuenio = creaSuenoBar(cls.epAct, cls.indices, cls.colors)
-            cls.barConsumo = creaConsumoBar(cls.epAct, cls.indices, cls.consColors)
+            cls.barConsumo = creaActividadBar(cls.epAct, cls.indices, cls.consColors)
+            cls.consumoData = creaConsumoData(cls.epAct, cls.indices)
         print "anterior episodio: %i" % cls.epAct
 
 
