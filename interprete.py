@@ -13,6 +13,8 @@ from pyqtgraph.Qt import QtCore, QtGui
 import numpy as np
 import os
 import selecepisodio
+import time
+import datetime
 
 pg.mkQApp()
 
@@ -45,7 +47,7 @@ class DateAxis(pg.AxisItem):
             label2 = ''
         for x in values:
             try:
-                strns.append(time.strftime(string, time.localtime(x)))
+                strns.append(datetime.datetime.fromtimestamp(x/1000))
             except ValueError:  ## Windows can't handle dates before 1970
                 strns.append('')
         try:
@@ -65,7 +67,7 @@ class MainWindow(TemplateBaseClass):
         #Obtener información del episodio
         self.selep = selecepisodio.SelecEpisodio()
         
-        #Obtener la ventana de gráficos
+        #Obtener la ventana de gráficos (GraphicsLayoutWidget)
         win = self.ui.plotConsumo
         
         #Insertar barra con clasificación de actividad física y sueño
@@ -79,20 +81,23 @@ class MainWindow(TemplateBaseClass):
         #Insertar gráfico de consumo energético
         win.nextRow()
         axis = DateAxis(orientation='bottom')
-        self.p2 = win.addPlot()
+        self.p2 = win.addPlot(axisItems={'bottom': axis})
         self.p2.setXLink('barClasificacion')
         self.p2.disableAutoRange(axis=pg.ViewBox.XAxis)
-        self.p2.plot(self.selep.consumoData, pen=(255,0,0), name="Curva consumo", axisItems={'bottom': axis})
+        self.p2.plot(x=self.selep.horas, y=self.selep.consumoData, pen=(255,0,0), name="Curva consumo")
         self.p2.setMouseEnabled(x=True, y=False)
         
+        #Configurar altura de la barra
+        win.ci.layout.setRowMaximumHeight(0, 80)
         
         #Configurar los botones
         self.ui.next_e_btn.clicked.connect(self.nextEp)
         self.ui.prev_e_btn.clicked.connect(self.prevEp)
         
-        
-        
-        
+        #Configurar rangos iniciales de visualización
+        self.p1.autoRange()
+        self.p2.autoRange()
+
         """
         #Configurar la gráfica de consumo energético
         self.ui.plotConsumo.setLabel('left', 'Tipo de sueño', units='');
@@ -127,7 +132,7 @@ class MainWindow(TemplateBaseClass):
 
 
 #Inicializar interfaz
-win = MainWindow()
+mwin = MainWindow()
 
 ## Start Qt event loop unless running in interactive mode or using pyside.
 if __name__ == '__main__':

@@ -12,10 +12,12 @@ Columnas: 1.tiempo, 17.consumo energético, 24. clasif actividad, 25.clasif sue�
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtGui
 import numpy as np
+import time
+import datetime
 
 #Cargar los datos
 csv = np.genfromtxt ('data.csv', delimiter=",")
-tiempos = csv[:,1] #Tiempo
+tiempos = csv[:,0] #Tiempo
 suenos = csv[:,25] #Clasificador de sueño
 actividades = csv[:,24] #Clasificador de actividad 1, 2, 3, 4, 5, 7, 9
 consumos = csv[:,24] #Consumo energético
@@ -127,11 +129,12 @@ def creaBarra(ep, ind, cs, ca):
     colors.extend(ca[efin:fin])
     
     print "%i colores en barra" % len(colors)
-    print "n %i ini %i eini %i efin %i fin %i" % (n, ini, eini, efin, fin)
+    print "n %i ini %i eini %i efin %i fin %i tiempos: %i" % (n, ini, eini, efin, fin, len(tiempos[ini:fin]))
     
-    barra = pg.BarGraphItem(x0=range(n), width=1, height=1, brushes=colors, pens=colors)
+    barra = pg.BarGraphItem(x0=(tiempos[ini:fin]), width=1, height=1, brushes=colors, pens=colors)
     
     return barra
+
 
 class SelecEpisodio(object):
     #Obtener indices de cada episodio de todo el intervalo de sueño
@@ -144,6 +147,11 @@ class SelecEpisodio(object):
     epAct = 0
     barraSuenio = creaBarra(epAct, indices, colorsuenos, coloracts)
     consumoData = creaConsumoData(epAct, indices)
+    horas = tiempos[indices[epAct][0] - 3*60 : indices[epAct][1] + 3*60]
+
+    print horas[0]
+    print datetime.datetime.fromtimestamp(horas[0]/1000)
+    
     
     def episodioSiguiente(cls):
         if (cls.epAct < len(cls.indices) - 1): #Último episodio
