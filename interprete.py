@@ -22,41 +22,37 @@ path = os.path.dirname(os.path.abspath(__file__))
 uiFile = os.path.join(path, 'interfaz.ui')
 WindowTemplate, TemplateBaseClass = pg.Qt.loadUiType(uiFile)
 
-
+#Etiquetas de tiempo del eje X
 class DateAxis(pg.AxisItem):
     def tickStrings(self, values, scale, spacing):
         strns = []
         rng = max(values)-min(values)
-        #if rng < 120:
-        #    return pg.AxisItem.tickStrings(self, values, scale, spacing)
-        if rng < 3600*24:
-            string = '%H:%M:%S'
-            label1 = '%b %d -'
-            label2 = ' %b %d, %Y'
-        elif rng >= 3600*24 and rng < 3600*24*30:
-            string = '%d'
-            label1 = '%b - '
-            label2 = '%b, %Y'
-        elif rng >= 3600*24*30 and rng < 3600*24*30*24:
-            string = '%b'
-            label1 = '%Y -'
-            label2 = ' %Y'
-        elif rng >=3600*24*30*24:
+        if rng < 3600:
+            string = '%H:%M'
+        elif rng < 3600 * 24:
+            string = '%d-%m-%y %H:%M'
+        else:
             string = '%Y'
-            label1 = ''
-            label2 = ''
         for x in values:
             try:
-                strns.append(datetime.datetime.fromtimestamp(x))
-            except ValueError:  ## Windows can't handle dates before 1970
+                strns.append(time.strftime(string, time.localtime(x)))
+            except ValueError:
                 strns.append('')
-        try:
-            label = time.strftime(label1, time.localtime(min(values)))+time.strftime(label2, time.localtime(max(values)))
-        except ValueError:
-            label = ''
-        #self.setLabel(text=label)
         return strns
 
+
+def pintarDatos(p1, p2, selep):
+    p1.clear()
+    p1.addItem(selep.barraSuenio)
+    p2.clear()
+    p2.plot(x=selep.horas, y=selep.consumoData, pen=(255,0,0), name="Curva consumo")
+    p2.plot(x=selep.horas, y=selep.flujoData, pen=(0, 255, 0))
+    p2.plot(x=selep.horas, y=selep.tempData, pen=(255, 255, 255))
+    
+    #Configurar rangos iniciales de visualización
+    p1.autoRange() #chapuza temporal
+    p2.autoRange()
+    #self.p1.setXRange(0, 100)
 
 class MainWindow(TemplateBaseClass):
     def __init__(self):
@@ -64,28 +60,29 @@ class MainWindow(TemplateBaseClass):
         self.ui = WindowTemplate()
         self.ui.setupUi(self)
         
-        #Obtener información del episodio
+        #Obtener los datos del episodio a mostrar
         self.selep = selecepisodio.SelecEpisodio()
         
-        #Obtener la ventana de gráficos (GraphicsLayoutWidget)
+        #Obtener el widget de gráficos (GraphicsLayoutWidget)
         win = self.ui.plotConsumo
         
-        #Insertar barra con clasificación de actividad física y sueño
+        #Configurar barra de colores con clasificación de actividad física y sueño
         self.p1 = win.addPlot(name='barClasificacion')
-        self.p1.addItem(self.selep.barraSuenio)
         self.p1.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.p1.setMouseEnabled(x=True, y=False)
         self.p1.hideAxis('left')
         self.p1.hideAxis('bottom')
         
-        #Insertar gráfico de consumo energético
+        #Configurar gráfica inferior (consumo energético, temperaturas, etc)
         win.nextRow()
         axis = DateAxis(orientation='bottom')
         self.p2 = win.addPlot(axisItems={'bottom': axis})
         self.p2.setXLink('barClasificacion')
         self.p2.disableAutoRange(axis=pg.ViewBox.XAxis)
-        self.p2.plot(x=self.selep.horas, y=self.selep.consumoData, pen=(255,0,0), name="Curva consumo")
         self.p2.setMouseEnabled(x=True, y=False)
+        self.p2.showGrid(x=True)
+        
+        pintarDatos(self.p1, self.p2, self.selep)
         
         #Configurar altura de la barra
         win.ci.layout.setRowMaximumHeight(0, 80)
@@ -94,43 +91,21 @@ class MainWindow(TemplateBaseClass):
         self.ui.next_e_btn.clicked.connect(self.nextEp)
         self.ui.prev_e_btn.clicked.connect(self.prevEp)
         
-        #Configurar rangos iniciales de visualización
-        self.p1.autoRange()
-        self.p2.autoRange()
         
-        self.p2.showGrid(x=True)
-        """
-        #Configurar la gráfica de consumo energético
-        self.ui.plotConsumo.setLabel('left', 'Tipo de sueño', units='');
-        self.ui.plotConsumo.setLabel('bottom', 'Instante', units='minutos');
-        self.ui.plotConsumo.setLabel('left', 'Tipo de sueño', units='');
-        self.ui.plotConsumo.setLabel('bottom', 'Instante', units='minutos');
-        """
+        #self.p1.setLabel('top', 'Clasificación de actividad y sueño', units='')
+        #self.p2.setLabel('bottom', 'Hora', units='Minutos')
         
         self.show()
         
     def nextEp(self):
-        #Obtener nuevos datos
+        #Actualizar y mostrar el nuevo episodio
         self.selep.episodioSiguiente()
-        self.p1.clear()
-        self.p1.addItem(self.selep.barraSuenio)
-        self.p2.clear()
-        self.p2.plot(self.selep.consumoData, pen=(255,0,0), name="Curva consumo")
-        #Establecer nuevo rango
-        self.p1.autoRange()
-        #self.p1.setXRange(0, 100)
+        pintarDatos(self.p1, self.p2, self.selep)
         
     def prevEp(self):
-        #Obtener nuevos datos
         self.selep.episodioAnterior()
-        self.p1.clear()
-        self.p1.addItem(self.selep.barraSuenio)
-        self.p2.clear()
-        self.p2.plot(self.selep.consumoData, pen=(255,0,0), name="Curva consumo")
-        #Establecer nuevo rango
-        self.p1.autoRange()
-        #self.p1.setXRange(0, 100)
-
+        pintarDatos(self.p1, self.p2, self.selep)
+ 
 
 #Inicializar interfaz
 mwin = MainWindow()
