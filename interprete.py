@@ -47,7 +47,7 @@ class DateAxis(pg.AxisItem):
             label2 = ''
         for x in values:
             try:
-                strns.append(datetime.datetime.fromtimestamp(x/1000))
+                strns.append(datetime.datetime.fromtimestamp(x))
             except ValueError:  ## Windows can't handle dates before 1970
                 strns.append('')
         try:
@@ -97,7 +97,8 @@ class MainWindow(TemplateBaseClass):
         #Configurar rangos iniciales de visualización
         self.p1.autoRange()
         self.p2.autoRange()
-
+        
+        self.p2.showGrid(x=True)
         """
         #Configurar la gráfica de consumo energético
         self.ui.plotConsumo.setLabel('left', 'Tipo de sueño', units='');

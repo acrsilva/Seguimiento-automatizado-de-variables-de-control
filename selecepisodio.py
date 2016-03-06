@@ -17,29 +17,55 @@ import datetime
 
 #Cargar los datos
 csv = np.genfromtxt ('data.csv', delimiter=",")
-tiempos = csv[:,0] #Tiempo
+tiempos = csv[:,0] / (1000) #Tiempo en minutos
 suenos = csv[:,25] #Clasificador de sueño
-actividades = csv[:,24] #Clasificador de actividad 1, 2, 3, 4, 5, 7, 9
+#actividades = csv[:,24] #Clasificador de actividad 1, 2, 3, 4, 5, 7, 9
 consumos = csv[:,24] #Consumo energético
+
+
+rango = 6 * 60 #6 horas
+
+def cargarActividad():
+    sedentaria = csv[:,18]
+    ligera = csv[:,19]
+    moderada = csv[:,20]
+    
+    actividad = []
+    for i in range(len(tiempos)):
+        if(sedentaria[i]):
+            actividad.append(0)
+        elif(ligera[i]):
+            actividad.append(1)
+        elif(moderada[i]):
+            actividad.append(2)
+        else:
+            print "error de actividad"
+            actividad.append(-1)
+        print actividad[i]
+    return actividad
+    print "%i actividades" % len(actividad)
 
 def trocear(y):
     print "troceando, num y: %i" % len(suenos)
     indices = []
     a = False
     c = 0
+    t = 0
     f = 0
     for i in range(len(suenos)):
         if(not a and suenos[i] != 0): #nuevo episodio
             c = i 
             a = True
-        elif(a): #dormido->despierto
+            f = i
+        elif(a): #episodio comenzado
             if(suenos[i] !=0): #dormido(resetear tiempo despierto)
-                f = 0
-            elif(f < 60): #despierto(cuanto tiempo?)
-                f = f + 1
-            else: #fin del episodio (1h seguida despierto)
+                t = 0
                 f = i
+            elif(t < 60): #despierto(cuanto tiempo?)
+                t = t + 1
+            else: #fin del episodio (1h seguida despierto)
                 indices.append([c, f])
+                t = 0
                 a = False
                 c = 0
                 f = 0
@@ -68,20 +94,15 @@ def coloreaActividades():
     colors = []
     num = 0
     for i in actividades:
-        if(i == 1):
+        if(i == 0):
             c = pg.mkColor(255, 51, 51)
-        elif(i == 2):
-            c = pg.mkColor(204, 255, 204)
-        elif(i == 3):
+        if(i == 1):
             c = pg.mkColor(102, 255, 102)
-        elif(i == 4):
-            c = pg.mkColor(0, 255, 0)
-        elif(i == 5):
-            c = pg.mkColor(0, 204, 0)
-        elif(i == 7):
-            c = pg.mkColor(0, 153, 0)    
-        elif(i==9):
+        elif(i == 2):
             c = pg.mkColor(0, 102, 0)
+        else:
+            c = pg.mkColor(255, 0, 0)  
+            print "ninguna"  
         colors.append(c)
         num = num + 1
     print "num colores de actividades %i" % len(colors)
@@ -103,8 +124,8 @@ def creaConsumoData(ep, indices):
     else:    
         a = indices[ep][0] - (3 * 60)
     """   
-    a = indices[ep][0] - (3 * 60)
-    b = indices[ep][1] + (3 * 60)
+    a = indices[ep][0] - rango
+    b = indices[ep][1] + rango
     n = b-a
     print "rango consumo: %i a:%i b:%i" % (n, a, b)
     return actividades[a:b]
@@ -118,8 +139,8 @@ def creaBarra(ep, ind, cs, ca):
     eini = ind[ep][0]
     efin = ind[ep][1]
     #comienzo y final del episodio completo
-    ini = eini - 3*60
-    fin = efin + 3*60
+    ini = eini - rango
+    fin = efin + rango
     #Longitud del episodio completo
     n = fin - ini
     
@@ -128,14 +149,15 @@ def creaBarra(ep, ind, cs, ca):
     colors.extend(cs[eini:efin])
     colors.extend(ca[efin:fin])
     
+    print colors[0]
     print "%i colores en barra" % len(colors)
     print "n %i ini %i eini %i efin %i fin %i tiempos: %i" % (n, ini, eini, efin, fin, len(tiempos[ini:fin]))
     
-    barra = pg.BarGraphItem(x0=(tiempos[ini:fin]), width=1, height=1, brushes=colors, pens=colors)
+    barra = pg.BarGraphItem(x0=(tiempos[ini:fin]), width=60, height=1, brushes=colors, pens=colors)
     
     return barra
 
-
+actividades = cargarActividad()
 class SelecEpisodio(object):
     #Obtener indices de cada episodio de todo el intervalo de sueño
     indices = trocear(suenos)
@@ -147,10 +169,9 @@ class SelecEpisodio(object):
     epAct = 0
     barraSuenio = creaBarra(epAct, indices, colorsuenos, coloracts)
     consumoData = creaConsumoData(epAct, indices)
-    horas = tiempos[indices[epAct][0] - 3*60 : indices[epAct][1] + 3*60]
+    horas = tiempos[indices[epAct][0] - rango : indices[epAct][1] + rango]
 
-    print horas[0]
-    print datetime.datetime.fromtimestamp(horas[0]/1000)
+    print datetime.datetime.fromtimestamp(horas[0])
     
     
     def episodioSiguiente(cls):
