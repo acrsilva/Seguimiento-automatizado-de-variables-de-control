@@ -53,9 +53,11 @@ def pintarDatos(p1, p2, p3, selep):
     #p2.plot(x=selep.horas, y=selep.consumoData, pen=(255,0,0), name="Curva consumo")
     #p2.plot(x=selep.horas, y=selep.flujoData, pen=(0, 255, 0))
     p2.plot(x=selep.horas, y=selep.tempData, pen=(255, 255, 255))
+    #p4.plot(
+    
     
     p3.clear()
-    p3.addItem(pg.PlotCurveItem(x=selep.horas, y=selep.flujoData, pen=(0, 255, 0)))
+    p3.addItem(pg.PlotCurveItem(x=selep.horas, y=selep.flujoDataNA, pen=(0, 255, 0)))
     
     
     #Configurar rangos iniciales de visualización

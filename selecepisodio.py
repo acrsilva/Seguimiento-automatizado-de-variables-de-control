@@ -131,6 +131,20 @@ def creaBarra(ini, fin, eini, efin, cs, ca):
     print len(tiempos[ini:fin])
     
     return pg.BarGraphItem(x0=(tiempos[ini:fin]), width=60, height=1, brushes=colors, pens=colors)
+
+def mediaMovil(x, n):
+    """
+    n = 5
+    print "Alisando"
+    nx = []
+    for i in x:
+        m = 
+        nx.append()
+    """
+    print "Alisando"
+    weights = np.repeat(1.0, n)/n
+    sma = np.convolve(x, n, 'valid')
+    return sma
     
 
 def creaEpisodio(ep, ind, colorsuenos, coloracts):
@@ -149,12 +163,16 @@ def creaEpisodio(ep, ind, colorsuenos, coloracts):
     barraSuenio = creaBarra(ini, fin, eini, efin+1, colorsuenos, coloracts)
     horas = tiempos[ini : fin]
     consumoData = consumos[ini:fin]
-    flujoData = flujos[ini:fin]
+    flujoData = flujosAlisado[ini:fin]
+    flujoDataNA = flujos[ini:fin]
     tempData = temperaturas[ini:fin]
     
-    return barraSuenio, horas, consumoData, flujoData, tempData
+    return barraSuenio, horas, consumoData, flujoData, flujoDataNA, tempData
 
 actividades = cargarActividad()
+flujosAlisado = mediaMovil(flujos, 10)
+temperaturasAlisado = mediaMovil(temperaturas, 10)
+
 
 class SelecEpisodio(object):
     #Obtener indices de cada episodio de todo el intervalo de sueño
@@ -165,7 +183,7 @@ class SelecEpisodio(object):
 
     #Elegir el episodio inicial
     epAct = 0
-    barraSuenio, horas, consumoData, flujoData, tempData = creaEpisodio(epAct, indices, colorsuenos, coloracts)
+    barraSuenio, horas, consumoData, flujoData, flujoDataNA, tempData = creaEpisodio(epAct, indices, colorsuenos, coloracts)
     
     #Debug
     print "Debug:"
@@ -175,14 +193,14 @@ class SelecEpisodio(object):
         if (cls.epAct < len(cls.indices) - 1): #Último episodio
             cls.epAct += 1
             print "Episodio: %i" % cls.epAct
-            cls.barraSuenio, cls.horas, cls.consumoData, cls.flujoData, cls.tempData = creaEpisodio(cls.epAct, cls.indices, cls.colorsuenos, cls.coloracts)
+            cls.barraSuenio, cls.horas, cls.consumoData, cls.flujoData, cls.flujoDataNA, cls.tempData = creaEpisodio(cls.epAct, cls.indices, cls.colorsuenos, cls.coloracts)
             #Establecer el rango nuevo
 
     def episodioAnterior(cls):
         if (cls.epAct > 0): #Primer episodio
             cls.epAct -= 1
             print "Episodio: %i" % cls.epAct
-            cls.barraSuenio, cls.horas, cls.consumoData, cls.flujoData, cls.tempData = creaEpisodio(cls.epAct, cls.indices, cls.colorsuenos, cls.coloracts)
+            cls.barraSuenio, cls.horas, cls.consumoData, cls.flujoData, cls.flujoDataNA, cls.tempData = creaEpisodio(cls.epAct, cls.indices, cls.colorsuenos, cls.coloracts)
         
     
         
