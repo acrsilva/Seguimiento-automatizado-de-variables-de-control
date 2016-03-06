@@ -127,6 +127,9 @@ def creaBarra(ini, fin, eini, efin, cs, ca):
     colors.extend(cs[eini:efin])
     colors.extend(ca[efin:fin])
     
+    print len(colors)
+    print len(tiempos[ini:fin])
+    
     return pg.BarGraphItem(x0=(tiempos[ini:fin]), width=60, height=1, brushes=colors, pens=colors)
     
 
@@ -143,7 +146,7 @@ def creaEpisodio(ep, ind, colorsuenos, coloracts):
     if(fin > len(tiempos)):
         fin = len(tiempos)-1
     
-    barraSuenio = creaBarra(ini, fin, eini, efin, colorsuenos, coloracts)
+    barraSuenio = creaBarra(ini, fin, eini, efin+1, colorsuenos, coloracts)
     horas = tiempos[ini : fin]
     consumoData = consumos[ini:fin]
     flujoData = flujos[ini:fin]

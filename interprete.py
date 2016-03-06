@@ -6,6 +6,11 @@ Prueba para insertar la prueba de gráfico de barras con episodio de sueño
 utilizando Qt designer y generando el código dinámicamente, es decir, sin 
 compilar previamente
 
+Versión sin bugs
+git clone https://github.com/pyqtgraph/pyqtgraph
+cd pyqtgraph
+sudo python setup.py install
+
 """
 
 import pyqtgraph as pg
@@ -41,13 +46,17 @@ class DateAxis(pg.AxisItem):
         return strns
 
 
-def pintarDatos(p1, p2, selep):
+def pintarDatos(p1, p2, p3, selep):
     p1.clear()
     p1.addItem(selep.barraSuenio)
     p2.clear()
-    p2.plot(x=selep.horas, y=selep.consumoData, pen=(255,0,0), name="Curva consumo")
-    p2.plot(x=selep.horas, y=selep.flujoData, pen=(0, 255, 0))
+    #p2.plot(x=selep.horas, y=selep.consumoData, pen=(255,0,0), name="Curva consumo")
+    #p2.plot(x=selep.horas, y=selep.flujoData, pen=(0, 255, 0))
     p2.plot(x=selep.horas, y=selep.tempData, pen=(255, 255, 255))
+    
+    p3.clear()
+    p3.addItem(pg.PlotCurveItem(x=selep.horas, y=selep.flujoData, pen=(0, 255, 0)))
+    
     
     #Configurar rangos iniciales de visualización
     p1.autoRange() #chapuza temporal
@@ -55,6 +64,15 @@ def pintarDatos(p1, p2, selep):
     #self.p1.setXRange(0, 100)
 
 class MainWindow(TemplateBaseClass):
+    def updateViews(self):
+        ## view has resized; update auxiliary views to match
+        self.p3.setGeometry(self.p2.vb.sceneBoundingRect())
+        
+        ## need to re-update linked axes since this was called
+        ## incorrectly while views had different shapes.
+        ## (probably this should be handled in ViewBox.resizeEvent)
+        self.p3.linkedViewChanged(self.p2.vb, self.p3.XAxis)
+        
     def __init__(self):
         TemplateBaseClass.__init__(self)
         self.ui = WindowTemplate()
@@ -68,21 +86,33 @@ class MainWindow(TemplateBaseClass):
         
         #Configurar barra de colores con clasificación de actividad física y sueño
         self.p1 = win.addPlot(name='barClasificacion')
+        self.p1.hideButtons()
         self.p1.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.p1.setMouseEnabled(x=True, y=False)
         self.p1.hideAxis('left')
         self.p1.hideAxis('bottom')
+        self.p1.hideAxis('top')
+        self.p1.hideAxis('right')
         
         #Configurar gráfica inferior (consumo energético, temperaturas, etc)
-        win.nextRow()
+        #win.nextRow()
         axis = DateAxis(orientation='bottom')
-        self.p2 = win.addPlot(axisItems={'bottom': axis})
+        self.p2 = win.addPlot(row=1, col=0, axisItems={'bottom': axis})
         self.p2.setXLink('barClasificacion')
         self.p2.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.p2.setMouseEnabled(x=True, y=False)
         self.p2.showGrid(x=True)
+        self.p2.getAxis('left').setLabel('Temperatura (ºC)', color='#FFFFFF')
         
-        pintarDatos(self.p1, self.p2, self.selep)
+        self.p3 = pg.ViewBox()
+        self.p2.showAxis('right')
+        self.p2.scene().addItem(self.p3)
+        self.p2.getAxis('right').linkToView(self.p3)
+        self.p3.setXLink(self.p2)
+        self.p2.getAxis('right').setLabel('Flujo térmico', color='#00FF00')
+        self.p2.vb.sigResized.connect(self.updateViews)
+
+        pintarDatos(self.p1, self.p2, self.p3, self.selep)
         
         #Configurar altura de la barra
         win.ci.layout.setRowMaximumHeight(0, 80)
@@ -96,15 +126,17 @@ class MainWindow(TemplateBaseClass):
         #self.p2.setLabel('bottom', 'Hora', units='Minutos')
         
         self.show()
+    
+    
         
     def nextEp(self):
         #Actualizar y mostrar el nuevo episodio
         self.selep.episodioSiguiente()
-        pintarDatos(self.p1, self.p2, self.selep)
+        pintarDatos(self.p1, self.p2, self.p3, self.selep)
         
     def prevEp(self):
         self.selep.episodioAnterior()
-        pintarDatos(self.p1, self.p2, self.selep)
+        pintarDatos(self.p1, self.p2, self.p3, self.selep)
  
 
 #Inicializar interfaz
