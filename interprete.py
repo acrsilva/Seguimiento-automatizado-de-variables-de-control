@@ -46,18 +46,21 @@ class DateAxis(pg.AxisItem):
         return strns
 
 
-def pintarDatos(p1, p2, p3, selep):
+def pintarDatos(p1, p2, p3, p12, selep):
     p1.clear()
     p1.addItem(selep.barraSuenio)
+    
+    p12.clear()
+    p12.plot(x=selep.horas, y=selep.acelData, pen=(255,0,0))
+    
     p2.clear()
-    #p2.plot(x=selep.horas, y=selep.consumoData, pen=(255,0,0), name="Curva consumo")
     #p2.plot(x=selep.horas, y=selep.flujoData, pen=(0, 255, 0))
     p2.plot(x=selep.horas, y=selep.tempData, pen=(255, 255, 255))
-    #p4.plot(
-    
+    #p2.plot(x=selep.horas, y=selep.tempDataNA, pen=(0,0,255))
+    p2.plot(x=selep.horas, y=selep.consumoData, pen=(0,0,255))
     
     p3.clear()
-    p3.addItem(pg.PlotCurveItem(x=selep.horas, y=selep.flujoDataNA, pen=(0, 255, 0)))
+    p3.addItem(pg.PlotCurveItem(x=selep.horas, y=selep.flujoData, pen=(0, 255, 0)))
     
     
     #Configurar rangos iniciales de visualización
@@ -93,13 +96,21 @@ class MainWindow(TemplateBaseClass):
         self.p1.setMouseEnabled(x=True, y=False)
         self.p1.hideAxis('left')
         self.p1.hideAxis('bottom')
-        self.p1.hideAxis('top')
-        self.p1.hideAxis('right')
+        
+        win.nextRow()
+        self.p12 = win.addPlot()
+        self.p12.hideButtons()
+        self.p12.disableAutoRange(axis=pg.ViewBox.XAxis)
+        self.p12.setMouseEnabled(x=True, y=False)
+        self.p12.hideAxis('left')
+        self.p12.hideAxis('bottom')
+        self.p12.setXLink('barClasificacion')
+        
         
         #Configurar gráfica inferior (consumo energético, temperaturas, etc)
-        #win.nextRow()
+        win.nextRow()
         axis = DateAxis(orientation='bottom')
-        self.p2 = win.addPlot(row=1, col=0, axisItems={'bottom': axis})
+        self.p2 = win.addPlot(axisItems={'bottom': axis})
         self.p2.setXLink('barClasificacion')
         self.p2.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.p2.setMouseEnabled(x=True, y=False)
@@ -114,10 +125,11 @@ class MainWindow(TemplateBaseClass):
         self.p2.getAxis('right').setLabel('Flujo térmico', color='#00FF00')
         self.p2.vb.sigResized.connect(self.updateViews)
 
-        pintarDatos(self.p1, self.p2, self.p3, self.selep)
+        pintarDatos(self.p1, self.p2, self.p3, self.p12, self.selep)
         
         #Configurar altura de la barra
         win.ci.layout.setRowMaximumHeight(0, 80)
+        win.ci.layout.setRowMaximumHeight(1, 50)
         
         #Configurar los botones
         self.ui.next_e_btn.clicked.connect(self.nextEp)
@@ -134,11 +146,11 @@ class MainWindow(TemplateBaseClass):
     def nextEp(self):
         #Actualizar y mostrar el nuevo episodio
         self.selep.episodioSiguiente()
-        pintarDatos(self.p1, self.p2, self.p3, self.selep)
+        pintarDatos(self.p1, self.p2, self.p3, self.p12, self.selep)
         
     def prevEp(self):
         self.selep.episodioAnterior()
-        pintarDatos(self.p1, self.p2, self.p3, self.selep)
+        pintarDatos(self.p1, self.p2, self.p3, self.p12, self.selep)
  
 
 #Inicializar interfaz
