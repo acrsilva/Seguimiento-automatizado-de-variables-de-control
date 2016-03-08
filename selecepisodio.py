@@ -15,16 +15,7 @@ import numpy as np
 import time
 import datetime
 
-#Cargar los datos
-csv = np.genfromtxt ('data.csv', delimiter=",")
-tiempos = csv[:,0] / (1000) #Tiempo en minutos
-suenos = csv[:,25] #Clasificador de sueño
-consumos = csv[:,17] #Consumo energético
-temperaturas = csv[:,8] #Temperatura media (piel-4, 8-cuerpo)
-flujos = csv[:,26] #Flujo térmico
-aceleraciones = csv[:,1] #Acel. transversal
 
-rango = 6 * 60 #Horas antes y después del episodio de sueño
 
 def cargarActividad():
     print "Cargando clasificación de actividad física"
@@ -150,7 +141,7 @@ def mediaMovil(x, n):
     window= np.ones(int(n))/float(n)
     return np.convolve(x, window, 'same')
 
-def creaEpisodio(ep, ind, colorsuenos, coloracts):
+def rangoEpisodio(ep, ind, colorsuenos, coloracts):
     print "Creando episodio completo"
     #comienzo y final del episodio de sueño
     eini = ind[ep][0]
@@ -163,50 +154,77 @@ def creaEpisodio(ep, ind, colorsuenos, coloracts):
     if(fin > len(tiempos)):
         fin = len(tiempos)-1
     
-    barraSuenio = creaBarra(ini, fin, eini, efin+1, colorsuenos, coloracts)
-    horas = tiempos[ini : fin]
-    consumoData = consumos[ini:fin]
-    flujoData = flujosAlisado[ini:fin]
-    flujoDataNA = flujos[ini:fin]
-    tempData = temperaturasAlisado[ini:fin]
-    tempDataNA = temperaturas[ini:fin]
-    acelData = aceleraciones[ini:fin]
-    
-    return barraSuenio, horas, consumoData, flujoData, flujoDataNA, tempData, tempDataNA, acelData
+    return ini, fin, eini, efin
 
+
+#Cargar datos
+csv = np.genfromtxt ('data.csv', delimiter=",")
+tiempos = csv[:,0] / (1000) #Tiempo en minutos
+suenos = csv[:,25] #Clasificador de sueño
+consumos = csv[:,17] #Consumo energético
+temperaturas = csv[:,8] #Temperatura media (piel-4, 8-cuerpo)
+flujos = csv[:,26] #Flujo térmico
+aceleraciones = csv[:,1] #Acel. transversal
 actividades = cargarActividad()
 flujosAlisado = mediaMovil(flujos, 5)
 temperaturasAlisado = mediaMovil(temperaturas, 5)
+rango = 6 * 60 #Horas antes y después del episodio de sueño
 
 
 class SelecEpisodio(object):
-    #Obtener indices de cada episodio de todo el intervalo de sueño
-    indices = trocear()
-    imprimeIndicesEp(indices)
-    colorsuenos = coloreaSueno()
-    coloracts = coloreaActividades()
-
-    #Elegir el episodio inicial
-    epAct = 0
-    barraSuenio, horas, consumoData, flujoData, flujoDataNA, tempData, tempDataNA, acelData = creaEpisodio(epAct, indices, colorsuenos, coloracts)
-    
-    #Debug
-    print "hora primer dato: %s \nhora comienzo primer episodio: %s" % (datetime.datetime.fromtimestamp(tiempos[0]),  datetime.datetime.fromtimestamp(horas[0]))
+    def actualizar(cls):
+        cls.ini, cls.fin, cls.eini, cls.efin = rangoEpisodio(cls.episodio, cls.indices, cls.colorsuenos, cls.coloracts)
+        cls.barraSuenio = creaBarra(cls.ini, cls.fin, cls.eini, cls.efin+1, cls.colorsuenos, cls.coloracts)
+        cls.horas = tiempos[cls.ini : cls.fin]
+        cls.consumoData = consumos[cls.ini:cls.fin]
+        cls.flujoData = flujosAlisado[cls.ini:cls.fin]
+        cls.flujoDataNA = flujos[cls.ini:cls.fin]
+        cls.tempData = temperaturasAlisado[cls.ini:cls.fin]
+        cls.tempDataNA = temperaturas[cls.ini:cls.fin]
+        cls.acelData = aceleraciones[cls.ini:cls.fin]
+        
+    def __init__(self):
+        self.ini = 0
+        self.fin = 0
+        self.eini = 0
+        self.efin = 0
+        self.barraSuenio = []
+        self.horas = []
+        self.consumoData = []
+        self.flujoData = []
+        self.flujoDataNA = []
+        self.tempData = []
+        self.tempDataNA = []
+        self.acelData = []
+        
+        #Obtener indices de cada episodio de todo el intervalo de sueño
+        self.indices = trocear()
+        imprimeIndicesEp(self.indices)
+        self.colorsuenos = coloreaSueno()
+        self.coloracts = coloreaActividades()
+        
+        #Elegir el episodio inicial
+        self.episodio = 0
+        
+        self.actualizar()   
+        
+        #Debug
+        print "hora primer dato: %s" % datetime.datetime.fromtimestamp(tiempos[0])
+        print "hora comienzo primer episodio: %s" % datetime.datetime.fromtimestamp(self.horas[0])
     
     def episodioSiguiente(cls):
-        if (cls.epAct < len(cls.indices) - 1): #Último episodio
-            cls.epAct += 1
-            print "Episodio: %i" % cls.epAct
-            cls.barraSuenio, cls.horas, cls.consumoData, cls.flujoData, cls.flujoDataNA, cls.tempData, cls.tempDataNA, cls.acelData = creaEpisodio(cls.epAct, cls.indices, cls.colorsuenos, cls.coloracts)
-            #Establecer el rango nuevo
+        if (cls.episodio < len(cls.indices) - 1): #Último episodio
+            cls.episodio += 1
+            print "Episodio: %i" % cls.episodio
+            cls.actualizar()
 
     def episodioAnterior(cls):
-        if (cls.epAct > 0): #Primer episodio
-            cls.epAct -= 1
-            print "Episodio: %i" % cls.epAct
-            cls.barraSuenio, cls.horas, cls.consumoData, cls.flujoData, cls.flujoDataNA, cls.tempData, cls.tempDataNA, cls.acelData = creaEpisodio(cls.epAct, cls.indices, cls.colorsuenos, cls.coloracts)
-        
+        if (cls.episodio > 0): #Primer episodio
+            cls.episodio -= 1
+            print "Episodio: %i" % cls.episodio
+            cls.actualizar()
     
-        
+    
+    
 
 		

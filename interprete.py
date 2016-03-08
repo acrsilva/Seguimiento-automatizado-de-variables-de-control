@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 
 """
-v.02
-Prueba para insertar la prueba de gráfico de barras con episodio de sueño
-utilizando Qt designer y generando el código dinámicamente, es decir, sin 
-compilar previamente
+v.03
 
-Versión sin bugs
+pyqtgraph sin bugs:
 git clone https://github.com/pyqtgraph/pyqtgraph
 cd pyqtgraph
 sudo python setup.py install
@@ -46,29 +43,28 @@ class DateAxis(pg.AxisItem):
         return strns
 
 
-def pintarDatos(p1, p2, p3, p12, selep):
-    p1.clear()
-    p1.addItem(selep.barraSuenio)
-    
-    p12.clear()
-    p12.plot(x=selep.horas, y=selep.acelData, pen=(255,0,0))
-    
-    p2.clear()
-    #p2.plot(x=selep.horas, y=selep.flujoData, pen=(0, 255, 0))
-    p2.plot(x=selep.horas, y=selep.tempData, pen=(255, 255, 255))
-    #p2.plot(x=selep.horas, y=selep.tempDataNA, pen=(0,0,255))
-    p2.plot(x=selep.horas, y=selep.consumoData, pen=(0,0,255))
-    
-    p3.clear()
-    p3.addItem(pg.PlotCurveItem(x=selep.horas, y=selep.flujoData, pen=(0, 255, 0)))
-    
-    
-    #Configurar rangos iniciales de visualización
-    p1.autoRange() #chapuza temporal
-    p2.autoRange()
-    #self.p1.setXRange(0, 100)
-
 class MainWindow(TemplateBaseClass):
+    def pintarDatos(self):
+        self.p1.clear()
+        self.p1.addItem(self.selep.barraSuenio)
+        
+        self.p12.clear()
+        self.p12.plot(x=self.selep.horas, y=self.selep.acelData, pen=(255,0,0))
+        
+        self.p2.clear()
+        self.p2.plot(x=self.selep.horas, y=self.selep.tempData, pen=(255, 255, 255))
+        self.p2.plot(x=self.selep.horas, y=self.selep.consumoData, pen=(0,0,255))
+        
+        self.p3.clear()
+        self.p3.addItem(pg.PlotCurveItem(x=self.selep.horas, y=self.selep.flujoData, pen=(0, 255, 0)))
+        
+        
+        #Configurar rangos iniciales de visualización
+        self.p1.autoRange() #chapuza temporal
+        self.p2.autoRange()
+        #self.p1.setXRange(0, 100)
+        #p1.setRange()
+    
     def updateViews(self):
         ## view has resized; update auxiliary views to match
         self.p3.setGeometry(self.p2.vb.sceneBoundingRect())
@@ -91,6 +87,7 @@ class MainWindow(TemplateBaseClass):
         
         #Configurar barra de colores con clasificación de actividad física y sueño
         self.p1 = win.addPlot(name='barClasificacion')
+        self.p1.setTitle('Clasificación de actividad y sueño')
         self.p1.hideButtons()
         self.p1.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.p1.setMouseEnabled(x=True, y=False)
@@ -116,6 +113,7 @@ class MainWindow(TemplateBaseClass):
         self.p2.setMouseEnabled(x=True, y=False)
         self.p2.showGrid(x=True)
         self.p2.getAxis('left').setLabel('Temperatura (ºC)', color='#FFFFFF')
+        self.p2.setYRange(20, 45)
         
         self.p3 = pg.ViewBox()
         self.p2.showAxis('right')
@@ -125,7 +123,7 @@ class MainWindow(TemplateBaseClass):
         self.p2.getAxis('right').setLabel('Flujo térmico', color='#00FF00')
         self.p2.vb.sigResized.connect(self.updateViews)
 
-        pintarDatos(self.p1, self.p2, self.p3, self.p12, self.selep)
+        self.pintarDatos()
         
         #Configurar altura de la barra
         win.ci.layout.setRowMaximumHeight(0, 80)
@@ -135,23 +133,17 @@ class MainWindow(TemplateBaseClass):
         self.ui.next_e_btn.clicked.connect(self.nextEp)
         self.ui.prev_e_btn.clicked.connect(self.prevEp)
         
-        
-        #self.p1.setLabel('top', 'Clasificación de actividad y sueño', units='')
-        #self.p2.setLabel('bottom', 'Hora', units='Minutos')
-        
         self.show()
     
-    
-        
     def nextEp(self):
         #Actualizar y mostrar el nuevo episodio
         self.selep.episodioSiguiente()
-        pintarDatos(self.p1, self.p2, self.p3, self.p12, self.selep)
+        self.pintarDatos()
         
     def prevEp(self):
         self.selep.episodioAnterior()
-        pintarDatos(self.p1, self.p2, self.p3, self.p12, self.selep)
- 
+        self.pintarDatos()
+
 
 #Inicializar interfaz
 mwin = MainWindow()
