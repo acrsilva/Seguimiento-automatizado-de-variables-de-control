@@ -16,14 +16,11 @@ import time
 import datetime
 
 
-
 def cargarActividad():
     print "Cargando clasificación de actividad física"
-    
     sedentaria = csv[:,18]
     ligera = csv[:,19]
     moderada = csv[:,20]
-    
     actividad = []
     for i in range(len(tiempos)):
         if(sedentaria[i]):
@@ -39,19 +36,18 @@ def cargarActividad():
 
 def trocear():
     print "Cargando índices de episodios de sueño"
-    
     indices = []
-    a = False
-    c = 0
-    t = 0
-    f = 0
+    a = False #Episodio empezado
+    c = 0 #Indice de comienzo
+    t = 0 #Contador de minutos despierto
+    f = 0 #
     for i in range(len(suenos)):
         if(not a and suenos[i] != 0): #nuevo episodio
-            c = i 
+            c = i
             a = True
             f = i
         elif(a): #episodio comenzado
-            if(suenos[i] !=0): #dormido(resetear tiempo despierto)
+            if(suenos[i] != 0): #dormido(resetear tiempo despierto)
                 t = 0
                 f = i
             elif(t < 60): #despierto(cuanto tiempo?)
@@ -159,7 +155,7 @@ def rangoEpisodio(ep, ind, colorsuenos, coloracts):
 
 #Cargar datos
 csv = np.genfromtxt ('data.csv', delimiter=",")
-tiempos = csv[:,0] / (1000) #Tiempo en minutos
+tiempos = csv[:,0] / 1000 #Tiempo en minutos
 suenos = csv[:,25] #Clasificador de sueño
 consumos = csv[:,17] #Consumo energético
 temperaturas = csv[:,8] #Temperatura media (piel-4, 8-cuerpo)
@@ -168,6 +164,8 @@ aceleraciones = csv[:,1] #Acel. transversal
 actividades = cargarActividad()
 flujosAlisado = mediaMovil(flujos, 5)
 temperaturasAlisado = mediaMovil(temperaturas, 5)
+mets = csv[:,21]
+
 rango = 6 * 60 #Horas antes y después del episodio de sueño
 
 
@@ -178,10 +176,12 @@ class SelecEpisodio(object):
         cls.horas = tiempos[cls.ini : cls.fin]
         cls.consumoData = consumos[cls.ini:cls.fin]
         cls.flujoData = flujosAlisado[cls.ini:cls.fin]
-        cls.flujoDataNA = flujos[cls.ini:cls.fin]
+        #cls.flujoDataNA = flujos[cls.ini:cls.fin]
         cls.tempData = temperaturasAlisado[cls.ini:cls.fin]
-        cls.tempDataNA = temperaturas[cls.ini:cls.fin]
+        #cls.tempDataNA = temperaturas[cls.ini:cls.fin]
         cls.acelData = aceleraciones[cls.ini:cls.fin]
+        cls.metsData = mets[cls.ini:cls.fin]
+        cls.activiData = actividades[cls.ini:cls.fin]
         
     def __init__(self):
         self.ini = 0
@@ -192,10 +192,12 @@ class SelecEpisodio(object):
         self.horas = []
         self.consumoData = []
         self.flujoData = []
-        self.flujoDataNA = []
+        #self.flujoDataNA = []
         self.tempData = []
-        self.tempDataNA = []
+        #self.tempDataNA = []
         self.acelData = []
+        self.metsData = []
+        self.activiData = []
         
         #Obtener indices de cada episodio de todo el intervalo de sueño
         self.indices = trocear()
@@ -209,8 +211,6 @@ class SelecEpisodio(object):
         self.actualizar()   
         
         #Debug
-        print "hora primer dato: %s" % datetime.datetime.fromtimestamp(tiempos[0])
-        print "hora comienzo primer episodio: %s" % datetime.datetime.fromtimestamp(self.horas[0])
     
     def episodioSiguiente(cls):
         if (cls.episodio < len(cls.indices) - 1): #Último episodio
