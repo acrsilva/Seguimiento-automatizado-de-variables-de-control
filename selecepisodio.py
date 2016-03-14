@@ -82,14 +82,14 @@ def coloreaActividades():
     colors = []
     num = 0
     for i in actividades:
-        if(i == 0):
+        if(i == 0): #ligera
             c = pg.mkColor(255, 51, 51)
-        if(i == 1):
+        if(i == 1): #moderada
             c = pg.mkColor(102, 255, 102)
-        elif(i == 2):
+        elif(i == 2): #alta
             c = pg.mkColor(0, 102, 0)
-        else:
-            c = pg.mkColor(255, 0, 0)  
+        else: #sin actividad
+            c = pg.mkColor(85, 120, 85)  
         colors.append(c)
         num = num + 1
     return colors
@@ -122,20 +122,8 @@ def creaBarra(ini, fin, eini, efin, cs, ca):
 
 def mediaMovil(x, n):
     print "Alisando"
-    """
-    nx = []
-    m = 0
-    for i in range(len(x)):
-        if i >= (n/2) and i < len(x)-(n/2):
-            for j in range(int(n/2)):
-                m = m + x[i-j] + x[i+j]
-                nx.append()
-    """
-    #weights = np.repeat(1.0, n)/n
-    #sma = np.convolve(x, n, 'valid')
-    #return sma
     window= np.ones(int(n))/float(n)
-    return np.convolve(x, window, 'same')
+    return np.convolve(x, window, 'full') #full|same
 
 def rangoEpisodio(ep, ind, colorsuenos, coloracts):
     print "Creando episodio completo"

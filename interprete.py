@@ -57,6 +57,9 @@ class MainWindow(TemplateBaseClass):
         self.pAcel.clear()
         self.pAcel.plot(x=self.selep.horas, y=self.selep.acelData, pen=(255,0,0))
         
+        self.pCons.clear()
+        self.pCons.addItem(pg.PlotCurveItem(x=self.selep.horas, y=self.selep.metsData, pen=(0, 255, 0)))
+        
         self.p2.clear()
         self.p2.plot(x=self.selep.horas, y=self.selep.tempData, pen=(255, 255, 255))
         
@@ -77,6 +80,9 @@ class MainWindow(TemplateBaseClass):
         ## (probably this should be handled in ViewBox.resizeEvent)
         self.p3.linkedViewChanged(self.p2.vb, self.p3.XAxis)
         
+        self.pCons.setGeometry(self.p12.vb.sceneBoundingRect())
+        self.pCons.linkedViewChanged(self.p12.vb, self.pCons.XAxis)
+        
     def __init__(self):
         TemplateBaseClass.__init__(self)
         self.ui = WindowTemplate()
@@ -90,17 +96,27 @@ class MainWindow(TemplateBaseClass):
         
         #Configurar barra de colores con clasificación de actividad física y sueño
         self.p1 = win.addPlot(name='barClasificacion')
-        self.p1.setTitle('Clasificación de actividad y sueño')
+        self.p1.setTitle('Clasificaci&oacute;n de actividad y sue&ntilde;o')
         self.p1.hideButtons()
         self.p1.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.p1.setMouseEnabled(x=True, y=False)
         self.p1.hideAxis('left')
         self.p1.hideAxis('bottom')
         
+        #Configurar segunda gráfica con acelerómetros
+        win.nextRow()
+        self.pAcel = win.addPlot()
+        self.pAcel.setTitle('Aceler&oacute;metros')
+        self.pAcel.hideButtons()
+        self.pAcel.setMouseEnabled(x=True, y=False)
+        self.pAcel.hideAxis('left')
+        self.pAcel.hideAxis('bottom')
+        self.pAcel.setXLink('barClasificacion')
+        
         #Configurar primera gráfica con actividad física y mets
         win.nextRow()
         self.p12 = win.addPlot()
-        self.p12.setTitle('Actividad física, consumo energético y MET')
+        self.p12.setTitle('Actividad f&iacute;sica, consumo energ&eacute;tico y MET')
         self.p12.hideButtons()
         self.p12.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.p12.setMouseEnabled(x=True, y=False)
@@ -108,15 +124,15 @@ class MainWindow(TemplateBaseClass):
         self.p12.hideAxis('bottom')
         self.p12.setXLink('barClasificacion')
         
-        #Configurar segunda gráfica con acelerómetros
-        win.nextRow()
-        self.pAcel = win.addPlot()
-        self.pAcel.setTitle('Acelerómetros')
-        self.pAcel.hideButtons()
-        self.pAcel.setMouseEnabled(x=True, y=False)
-        self.pAcel.hideAxis('left')
-        self.pAcel.hideAxis('bottom')
-        self.pAcel.setXLink('barClasificacion')
+        self.pCons = pg.ViewBox()
+        self.p12.showAxis('right')
+        self.p12.scene().addItem(self.pCons)
+        self.p12.getAxis('right').linkToView(self.pCons)
+        self.pCons.setXLink(self.p12)
+        #self.p3.disableAutoRange(axis=pg.ViewBox.XAxis)
+        self.p12.getAxis('right').setLabel('Consumo', color='#00FF00')
+        self.p12.vb.sigResized.connect(self.updateViews)
+        
         
         #Configurar tercera gráfica con temperatura y flujo térmico
         win.nextRow()
@@ -145,7 +161,6 @@ class MainWindow(TemplateBaseClass):
         win.ci.layout.setRowMaximumHeight(0, 60)
         win.ci.layout.setRowMaximumHeight(1, 80)
         win.ci.layout.setRowMaximumHeight(2, 80)
-        #win.ci.layout.setRowMaximumWidth(2, 80)
         
         #Configurar los botones
         self.ui.next_e_btn.clicked.connect(self.nextEp)
