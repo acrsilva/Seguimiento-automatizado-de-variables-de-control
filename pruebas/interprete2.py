@@ -50,7 +50,7 @@ if __name__ == '__main__':
         QtGui.QApplication.instance().exec_()
 
 """
-
+# -*- coding: utf-8 -*-
 
 from PyQt4.uic import loadUiType
  
@@ -63,28 +63,50 @@ from matplotlib.backends.backend_qt4agg import (
 Ui_MainWindow, QMainWindow = loadUiType('interfaz_episodios.ui')
 
 
+csv = np.genfromtxt ('data.csv', delimiter=",")
+t = csv[:,0] / 1000 #Tiempo
+a = csv[:,8] #Temperatura
+b = csv[:,26] #Flujo
+X = np.c_[a,b]
+
+
 
 class Main(QMainWindow, Ui_MainWindow):
     def __init__(self, ):
         super(Main, self).__init__()
         self.setupUi(self)
+    
+    def addGraphic(self, fig):
+        self.gv1 = fig
+        #self.gv1.draw()
         
-    def addmpl(self, fig):
-        self.canvas = FigureCanvas(fig)
+    def addmpl(self, fig1, fig2):
+        self.canvas = FigureCanvas(fig1)
+        self.canvas2 = FigureCanvas(fig2)
         self.layoutMatplot.addWidget(self.canvas)
+        self.layoutMatplot.addWidget(self.canvas2)
         self.canvas.draw()
  
 if __name__ == '__main__':
     import sys
     from PyQt4 import QtGui
- 
+    
+    fig0 = Figure()
+    a0 = fig0.add_subplot(111)
+    a0.plot(t[0:250], a[0:250])
+    a1 = fig0.add_subplot(111)
+    a1.plot(t[0:250], b[0:250])
+    
     fig1 = Figure()
     ax1f1 = fig1.add_subplot(111)
-    ax1f1.plot(np.random.rand(5))
+    ax1f1.scatter(a[0:250], b[0:250])
  
     app = QtGui.QApplication(sys.argv)
     main = Main()
-    main.addmpl(fig1)
+    
+    main.addmpl(fig0,fig1)
+    
+    
     main.show()
     sys.exit(app.exec_())
     

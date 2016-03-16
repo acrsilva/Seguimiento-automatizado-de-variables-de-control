@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>836</width>
+    <width>1143</width>
     <height>593</height>
    </rect>
   </property>
@@ -14,54 +14,77 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QFormLayout" name="formLayout">
-    <item row="0" column="0">
-     <widget class="QGraphicsView" name="graphicsView"/>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="2" column="1">
+     <widget class="QWidget" name="widget" native="true"/>
     </item>
-    <item row="10" column="0">
-     <widget class="QPushButton" name="pushButton_2">
-      <property name="text">
-       <string>Episodio anterior</string>
+    <item row="0" column="2">
+     <widget class="QGraphicsView" name="gv3">
+      <property name="maximumSize">
+       <size>
+        <width>300</width>
+        <height>100</height>
+       </size>
       </property>
      </widget>
     </item>
-    <item row="11" column="0">
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>Episodio siguiente</string>
-      </property>
-     </widget>
+    <item row="2" column="2">
+     <widget class="QWidget" name="widget_2" native="true"/>
     </item>
-    <item row="9" column="0">
-     <widget class="QCheckBox" name="checkBox_4">
-      <property name="text">
-       <string>Actividad moderada</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="0">
-     <widget class="QCheckBox" name="checkBox">
-      <property name="text">
-       <string>Clasifiación de sueño</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="0">
+    <item row="5" column="0">
      <widget class="QCheckBox" name="checkBox_3">
       <property name="text">
        <string>Actividad ligera</string>
       </property>
      </widget>
     </item>
-    <item row="6" column="0">
+    <item row="3" column="0">
+     <widget class="QCheckBox" name="checkBox">
+      <property name="text">
+       <string>Clasifiación de sueño</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QGraphicsView" name="gv2">
+      <property name="maximumSize">
+       <size>
+        <width>300</width>
+        <height>100</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="0">
+     <widget class="QCheckBox" name="checkBox_4">
+      <property name="text">
+       <string>Actividad moderada</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
      <widget class="QCheckBox" name="checkBox_2">
       <property name="text">
        <string>Sedentario</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="0">
-     <widget class="QWidget" name="wScatterSueno" native="true">
+    <item row="11" column="2">
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>Avanzar</string>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="0">
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="text">
+       <string>Retroceder</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QWidget" name="wScatter1" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
         <horstretch>0</horstretch>
@@ -71,7 +94,7 @@
       <property name="maximumSize">
        <size>
         <width>300</width>
-        <height>300</height>
+        <height>1000</height>
        </size>
       </property>
       <layout class="QVBoxLayout" name="layoutMatplot"/>
@@ -84,7 +107,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>836</width>
+     <width>1143</width>
      <height>25</height>
     </rect>
    </property>
