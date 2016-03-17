@@ -142,7 +142,7 @@ def rangoEpisodio(ep, ind, colorsuenos, coloracts):
 
 
 #Cargar datos
-csv = np.genfromtxt ('data.csv', delimiter=",")
+csv = np.genfromtxt ('../data.csv', delimiter=",")
 tiempos = csv[:,0] / 1000 #Tiempo en minutos
 suenos = csv[:,25] #Clasificador de sueño
 consumos = csv[:,17] #Consumo energético

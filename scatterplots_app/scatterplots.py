@@ -63,7 +63,7 @@ from matplotlib.backends.backend_qt4agg import (
 Ui_MainWindow, QMainWindow = loadUiType('scatterplots.ui')
 
 
-csv = np.genfromtxt ('data.csv', delimiter=",")
+csv = np.genfromtxt ('../data.csv', delimiter=",")
 t = csv[:,0] / 1000 #Tiempo
 a = csv[:,8] #Temperatura
 b = csv[:,26] #Flujo
