@@ -57,8 +57,6 @@ def trocear():
                     indices.append([c, f])
                 t = 0
                 a = False
-                c = 0
-                f = 0
     return indices
 
 def coloreaSueno():
