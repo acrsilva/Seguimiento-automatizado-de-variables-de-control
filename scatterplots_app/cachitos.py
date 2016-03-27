@@ -116,45 +116,22 @@ class selEpisodio():
         self.filSedentario = True
         self.filLigero = True
         self.filModerado = True
-        
-        self.epFiltro = self.creaEpisodios()
-        #self.update()
+        self.epFiltro = []
+        self.update()
         
     #Crea el array de episodios con los filtros aplicados
-    def creaEpisodios(self):
-        filt = []
+    def update(self):
+        print self.filSueno, self.filSedentario, self.filLigero, self.filModerado, len(self.epFiltro)
+        self.epFiltro = []
         for i in self.episodios:
             if((i.tipo == tipoSueno and self.filSueno) 
                 or (i.tipo == tipoSedentario and self.filSedentario)
                 or (i.tipo == tipoLigera and self.filLigero)
                 or (i.tipo == tipoModerado and self.filModerado)):
-                i.filtrar()
-                filt.append(i)
-        return filt        
-                
-    
-    def update(self):
-        print len(self.epFiltro) , "episodios"
-        if(len(self.epFiltro) > 0):
-            i, f = self.epFiltro[self.epAct].ini, self.epFiltro[self.epAct].fin
-            self.lbl1 = self.epFiltro[self.epAct].tipo
-            self.tiempo1 = dt[i:f]
-            self.temp1 = temperaturas[i:f]
-            self.flujo1 = flujos[i:f]
-            if(len(self.epFiltro) > 1):
-                i, f = self.epFiltro[self.epAct+1].ini, self.epFiltro[self.epAct+1].fin
-                self.lbl2 = self.epFiltro[self.epAct+1].tipo
-                self.tiempo2 = dt[i:f]
-                self.temp2 = temperaturas[i:f]
-                self.flujo2 = flujos[i:f]
-                if(len(self.epFiltro) > 2):
-                    i, f = self.epFiltro[self.epAct+2].ini, self.epFiltro[self.epAct+2].fin
-                    self.lbl3 = self.epFiltro[self.epAct+2].tipo
-                    self.tiempo3 = dt[i:f]
-                    self.temp3 = temperaturas[i:f]
-                    self.flujo3 = flujos[i:f]
+                self.epFiltro.append(i)
+                self.epFiltro[-1].filtrar()
         
-
+        
 #pruba = selEpisodio()
 
 

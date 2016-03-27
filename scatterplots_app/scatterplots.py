@@ -22,9 +22,9 @@ class Main(QMainWindow, Ui_MainWindow):
         super(Main, self).__init__()
         self.setupUi(self)
         
-        self.epAct = 0
+        self.epActual = 0
         
-        self.eps = cachitos.selEpisodio() #Obtener el selector de episodios
+        self.selep = cachitos.selEpisodio() #Obtener el selector de episodios
         
         self.updateView()
         
@@ -67,89 +67,102 @@ class Main(QMainWindow, Ui_MainWindow):
         
         return fig0, fig1
     
+    #Inserta elementos en el layout con los nuevos episodios
     def updateView(self):
-        fig10, fig11 = self.creaFiguras(self.eps.tiempo1, self.eps.temp1, self.eps.flujo1)
-        fig20, fig21 = self.creaFiguras(self.eps.tiempo2, self.eps.temp2, self.eps.flujo2)
-        fig30, fig31 = self.creaFiguras(self.eps.tiempo3, self.eps.temp3, self.eps.flujo3)
-        
-        canvas1 = FigureCanvas(fig10)
-        canvas2 = FigureCanvas(fig11)
-        canvas3 = FigureCanvas(fig20)
-        canvas4 = FigureCanvas(fig21)
-        canvas5 = FigureCanvas(fig30)
-        canvas6 = FigureCanvas(fig31)
-        
-        lbl1 = QtGui.QLabel("Episodio " + self.eps.lbl1)
-        lbl11 = QtGui.QLabel("Comienzo: " + str(self.eps.tiempo1[0]))
-        #lbl12 = QtGui.QLabel("Fin: " + str(sel.eps.tiempo1[
-        lbl12 = QtGui.QLabel("Fin: ")
-        lbl13 = QtGui.QLabel("Duración: " + str(len(self.eps.tiempo1)))
-        lbl2 = QtGui.QLabel(self.eps.lbl2)
-        lbl3 = QtGui.QLabel(self.eps.lbl3)
-        
-        self.vbox = QtGui.QGridLayout()
-        self.vbox.addWidget(lbl1)
-        self.vbox.addWidget(lbl11)
-        self.vbox.addWidget(lbl12)
-        self.vbox.addWidget(lbl13)
-        self.vbox.addWidget(canvas1)
-        self.vbox.addWidget(canvas2)
-        
-        vbox2 = QtGui.QVBoxLayout()
-        vbox2.addWidget(lbl2)
-        vbox2.addWidget(canvas3)
-        vbox2.addWidget(canvas4)
-        
-        vbox3 = QtGui.QVBoxLayout()
-        vbox3.addWidget(lbl3)
-        vbox3.addWidget(canvas5)
-        vbox3.addWidget(canvas6)
-        
-        self.layoutMatplot1.addLayout(self.vbox)
-        self.layoutMatplot1.addLayout(vbox2)
-        self.layoutMatplot1.addLayout(vbox3)
+        filtro = self.selep.epFiltro
+        if(len(filtro) > 0):
+            fig10, fig11 = self.creaFiguras(filtro[self.epActual].tiempo, filtro[self.epActual].temp, filtro[self.epActual].flujo)
+            #fig20, fig21 = self.creaFiguras(self.selep.tiempo2, self.selep.temp2, self.selep.flujo2)
+            #fig30, fig31 = self.creaFiguras(self.selep.tiempo3, self.selep.temp3, self.selep.flujo3)
             
-    def addmpl(self, fig1, fig2):
-        self.canvas = FigureCanvas(fig1)
-        self.canvas2 = FigureCanvas(fig2)
-        self.lbl1 = QtGui.QLabel("Tipo de actividad")
-        self.layoutMatplot1.addWidget(self.lbl1)
-        self.layoutMatplot1.addWidget(self.canvas)
-        self.layoutMatplot1.addWidget(self.canvas2)
-        self.canvas.draw()
+            canvas1 = FigureCanvas(fig10)
+            canvas2 = FigureCanvas(fig11)
+            #canvas3 = FigureCanvas(fig20)
+            #canvas4 = FigureCanvas(fig21)
+            #canvas5 = FigureCanvas(fig30)
+            #canvas6 = FigureCanvas(fig31)
+            
+            lbl1 = QtGui.QLabel("Episodio " + filtro[self.epActual].tipo)
+            #lbl11 = QtGui.QLabel("Comienzo: " + str(self.selep.tiempo1[0]))
+            #lbl12 = QtGui.QLabel("Fin: " + str(sel.eps.tiempo1[
+            #lbl12 = QtGui.QLabel("Fin: ")
+            #lbl13 = QtGui.QLabel("Duración: " + str(len(self.selep.tiempo1)))
+            #lbl2 = QtGui.QLabel(self.selep.lbl2)
+            #lbl3 = QtGui.QLabel(self.selep.lbl3)
+            
+            self.vbox = QtGui.QGridLayout()
+            self.vbox.addWidget(QtGui.QLabel("Episodio " + filtro[self.epActual].tipo))
+            self.vbox.addWidget(QtGui.QLabel("Comienzo " + str(filtro[self.epActual].ini)))
+            #self.vbox.addWidget(lbl12)
+            #self.vbox.addWidget(lbl13)
+            self.vbox.addWidget(canvas1)
+            self.vbox.addWidget(canvas2)
+        
+            """
+            vbox2 = QtGui.QVBoxLayout()
+            vbox2.addWidget(lbl2)
+            vbox2.addWidget(canvas3)
+            vbox2.addWidget(canvas4)
+            
+            vbox3 = QtGui.QVBoxLayout()
+            vbox3.addWidget(lbl3)
+            vbox3.addWidget(canvas5)
+            vbox3.addWidget(canvas6)
+            """
+        
+            self.layoutMatplot1.addLayout(self.vbox)
+            #self.layoutMatplot1.addLayout(vbox2)
+            #self.layoutMatplot1.addLayout(vbox3)
     
+    #Elimina el contenido del layout actual        
+    def limpiarLayout(self):
+        for cnt in reversed(range(self.vbox.count())):
+            widget = self.vbox.takeAt(cnt).widget()
+            if widget is not None: 
+                widget.deleteLater() 
+            
     def filtrarSueno(self):
-        if self.cbSueno.isChecked():
-            print "mostrar clasificación sueno"
-        else:
-            print "ocultar clasificación sueno"
-    
+        print "Filtrar sueño"
+        self.selep.filSueno = self.cbSueno.isChecked() #Cambiar el filtro
+        self.selep.update() #Actualizar el array de episodios filtrados
+        self.limpiarLayout() 
+        self.updateView() 
+        
     def filtrarSedentario(self):
-        if self.cbSedentario.isChecked():
-            print "mostrar actividad sedentario"
-        else:
-            print "ocultar actividad sedentario"
-    
+        print "Filtrar sedentario"
+        self.selep.filSedentario = self.cbSedentario.isChecked()
+        self.selep.update()
+        self.limpiarLayout()
+        self.updateView()
+        
     def filtrarLigera(self):
-        if self.cbLigera.isChecked():
-            print "mostrar actividad ligera"
-        else:
-            print "ocultar actividad ligera"
+        print "Filtrar ligera"
+        self.selep.filLigero = self.cbLigera.isChecked()
+        self.selep.update()
+        self.limpiarLayout()
+        self.updateView()
         
     def filtrarModerada(self):
-        if self.cbModerada.isChecked():
-            print "mostrar actividad moderada"
-        else:
-            print "ocultar actividad moderada"
+        print "Filtrar moderada"
+        self.selep.filModerado = self.cbModerada.isChecked()
+        self.selep.update()
+        self.limpiarLayout()
+        self.updateView()
     
     def retroceder(self):
-        self.eps.epAnterior()
-        #self.layoutMatplot1.clear()
-        self.epAct -= 1
+        if (self.epActual > 0):
+            self.epActual -= 1
+        print "episodio", self.epActual
+        self.limpiarLayout()
+        self.updateView()
         
     def avanzar(self):
-        self.eps.epSiguiente()
-        self.epAct += 1
+        if (self.epActual < len(self.selep.epFiltro) - 1):
+            self.epActual += 1
+        print "episodio", self.epActual
+        self.limpiarLayout()
+        self.updateView()
+        
         
  
 if __name__ == '__main__':

@@ -31,12 +31,18 @@
       <property name="text">
        <string>Clasificación de sueño</string>
       </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
     <item>
      <widget class="QCheckBox" name="cbSedentario">
       <property name="text">
        <string>Sedentario</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -45,12 +51,18 @@
       <property name="text">
        <string>Actividad moderada</string>
       </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
     <item>
      <widget class="QCheckBox" name="cbLigera">
       <property name="text">
        <string>Actividad ligera</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -78,9 +90,6 @@
         </widget>
        </item>
       </layout>
-      <zorder>btnNext</zorder>
-      <zorder>btnNext</zorder>
-      <zorder>btnPrev</zorder>
      </widget>
     </item>
    </layout>
