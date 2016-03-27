@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 from PyQt4.uic import loadUiType
 from pyqtgraph.Qt import QtCore, QtGui
 from matplotlib.figure import Figure
@@ -29,16 +31,27 @@ class Main(QMainWindow, Ui_MainWindow):
         self.btnNext.clicked.connect(self.avanzar)
     
     def creaFiguras(self, t, a, b):
+        #Serie temporal
         fig0 = Figure()
-        a0 = fig0.add_subplot(111)
-        a0.plot(t, a)
-        a1 = fig0.add_subplot(111)
-        a1.plot(t, b)
-
+        #Escala temperaturas
+        ax1 = fig0.add_subplot(111)
+        ax1.plot(t, a, 'b-')
+        ax1.set_xlabel('tiempo (m)')
+        ax1.set_ylabel('Temperatura (ºC)', color='b')
+        for tl in ax1.get_yticklabels():
+            tl.set_color('b')
+        #Escala flujo térmico
+        ax2 = ax1.twinx()
+        ax2.plot(t, b, 'r-')
+        ax2.set_ylabel('Flujo térmico', color='r')
+        for tl in ax2.get_yticklabels():
+            tl.set_color('r')
+        
+        #Scatterplot
         fig1 = Figure()
         ax1f1 = fig1.add_subplot(111)
         ax1f1.scatter(a, b)
-
+        
         return fig0, fig1
     
     def updateView(self):
@@ -110,11 +123,10 @@ class Main(QMainWindow, Ui_MainWindow):
             print "ocultar actividad moderada"
     
     def retroceder(self):
-        print "episodio anterior"
+        self.eps.epAnterior()
         
     def avanzar(self):
-        print "episodio siguiente"
-        print self.eps.numEpisodios
+        self.eps.epSiguiente()
         
  
 if __name__ == '__main__':

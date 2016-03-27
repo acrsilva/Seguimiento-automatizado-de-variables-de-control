@@ -8,6 +8,12 @@ actLig = csv[:,19] #Ligera
 actMod = csv[:,20] #Moderada
 sueno = csv[:,25] #Sueño
 
+class Episodio():
+    def __init__(self, ini, fin, tipo):
+        self.ini = ini
+        self.fin = fin
+        self.tipo = tipo
+
 def cachitos(minep, maxct):
     indices = []
     a = False #Episodio empezado
@@ -120,3 +126,5 @@ def cachitosT(minep, maxin):
 trocitos = cachitosT(15, 9)
 print  "Hay " + str(len(trocitos)) + " trocitos"
 print trocitos
+
+

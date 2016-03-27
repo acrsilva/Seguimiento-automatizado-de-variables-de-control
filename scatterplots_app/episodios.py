@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 from PyQt4.uic import loadUiType
 from pyqtgraph.Qt import QtCore, QtGui
@@ -37,3 +38,9 @@ class Episodios():
         self.lbl1 = "sueño"
         self.lbl2 = "sedentario"
         self.lbl3 = "ligera"
+    
+    def epSiguiente(self):
+        print "episodio siguiente"
+        
+    def epAnterior(self):
+        print "episodio anterior"
