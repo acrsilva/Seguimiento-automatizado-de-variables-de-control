@@ -53,7 +53,7 @@ def trocear():
             elif(t < 60): #despierto(cuanto tiempo?)
                 t = t + 1
             else: #fin del episodio (1h seguida despierto)
-                if (abs(f-c)>10):
+                if ((f-c)>10):
                     indices.append([c, f])
                 t = 0
                 a = False

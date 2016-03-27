@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 import numpy as np
 import datetime
@@ -52,6 +53,30 @@ def comprobar(ls1, ls2, ls3, i, c1, c2, c3, f, t, maxin, final):
     else:
         final = True
     return f, c2, c3, t, final
+    
+def cachitoSueno():
+    indices = []
+    a = False #Episodio empezado
+    c = 0 #Indice de comienzo
+    t = 0 #Contador de minutos despierto
+    f = 0 #Indice de final
+    for i in range(len(sueno)):
+        if(not a and sueno[i] != 0): #nuevo episodio
+            c = i
+            a = True
+            f = i
+        elif(a): #episodio comenzado
+            if(sueno[i] != 0): #dormido(resetear tiempo despierto)
+                t = 0
+                f = i
+            elif(t < 60): #despierto(cuanto tiempo?)
+                t = t + 1
+            else: #fin del episodio (1h seguida despierto)
+                if ((f-c)>10):
+                    indices.append(Episodio(c, f, tipoSueno))
+                t = 0
+                a = False
+    return indices
 
 #minep: intervalo mínimo por episodio en minutos
 #maxin: intervalo máximo para considerar interrupción
@@ -107,11 +132,29 @@ def cachitos(minep, maxin):
                 a, final, mod = False, False, False
     return indices
 
+#minep: intervalo mínimo por episodio en minutos
+#maxin: intervalo máximo para considerar interrupción
+def creaEpisodios(minep, maxin):
+    s = cachitoSueno()
+    actividad = cachitos(minep, maxin)
+    eps = []
+    j = 0
+    for a in actividad:
+        if(s[j].ini < a.fin and s[j].ini > a.ini and s[j].fin < a.fin):
+            if (s[j].ini-1 - a.ini >= minep):
+                eps.append(Episodio(a.ini, s[j].ini-1, a.tipo))
+            eps.append(Episodio(s[j].ini, s[j].fin, s[j].tipo))
+            if (a.fin - s[j].fin+1 >= minep):
+                eps.append(Episodio(s[j].fin+1, a.fin, a.tipo))
+            if(j < len(s)-1):
+                j += 1
+        else:
+            eps.append(a)
+    return eps
 
 class selEpisodio():
     def __init__(self):
-        self.episodios = cachitos(15,6)
-        self.epAct = 0
+        self.episodios = creaEpisodios(15,9)
         self.filSueno = True
         self.filSedentario = True
         self.filLigero = True
@@ -141,7 +184,6 @@ s, l, m = 0, 0, 0
 #print trocitos
 
 for i in trocitos:
-    
     if (i.tipo == tipoSedentario):
         s += 1
         print i.ini, i.fin, i.tipo
@@ -153,4 +195,14 @@ for i in trocitos:
         print i.ini, i.fin, i.tipo
 print str(s) + "S " + str(l) + "L " + str(m) + "M "
 print len(trocitos)
+"""
+"""
+suenete = cachitoSueno()
+for i in suenete:
+    print i.ini, i.fin, i.tipo
+
+epis = creaEpisodios(15, 9)
+for i in epis:
+    print i.ini, i.fin, i.tipo
+print len(epis)
 """

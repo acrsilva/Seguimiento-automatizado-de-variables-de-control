@@ -69,40 +69,29 @@ class Main(QMainWindow, Ui_MainWindow):
     
     #Inserta elementos en el layout con los nuevos episodios
     def updateView(self):
-        filtro = self.selep.epFiltro
-        if(len(filtro) > 0):
-            fig10, fig11 = self.creaFiguras(filtro[self.epActual].tiempo, filtro[self.epActual].temp, filtro[self.epActual].flujo)
-            #fig20, fig21 = self.creaFiguras(self.selep.tiempo2, self.selep.temp2, self.selep.flujo2)
+                
+        if(len(self.selep.epFiltro) > 0):
+            filtro = self.selep.epFiltro[self.epActual]
+            
+            fig10, fig11 = self.creaFiguras(filtro.tiempo, filtro.temp, filtro.flujo)
+            
             #fig30, fig31 = self.creaFiguras(self.selep.tiempo3, self.selep.temp3, self.selep.flujo3)
             
             canvas1 = FigureCanvas(fig10)
             canvas2 = FigureCanvas(fig11)
-            #canvas3 = FigureCanvas(fig20)
-            #canvas4 = FigureCanvas(fig21)
+            
             #canvas5 = FigureCanvas(fig30)
             #canvas6 = FigureCanvas(fig31)
             
-            lbl1 = QtGui.QLabel("Episodio " + filtro[self.epActual].tipo)
-            #lbl11 = QtGui.QLabel("Comienzo: " + str(self.selep.tiempo1[0]))
-            #lbl12 = QtGui.QLabel("Fin: " + str(sel.eps.tiempo1[
-            #lbl12 = QtGui.QLabel("Fin: ")
-            #lbl13 = QtGui.QLabel("Duración: " + str(len(self.selep.tiempo1)))
-            #lbl2 = QtGui.QLabel(self.selep.lbl2)
-            #lbl3 = QtGui.QLabel(self.selep.lbl3)
-            
             self.vbox = QtGui.QGridLayout()
-            self.vbox.addWidget(QtGui.QLabel("Episodio " + filtro[self.epActual].tipo))
-            self.vbox.addWidget(QtGui.QLabel("Comienzo " + str(filtro[self.epActual].ini)))
-            #self.vbox.addWidget(lbl12)
-            #self.vbox.addWidget(lbl13)
+            self.vbox.addWidget(QtGui.QLabel("Episodio " + filtro.tipo))
+            self.vbox.addWidget(QtGui.QLabel("Comienzo " + str(filtro.tiempo[0])))
+            self.vbox.addWidget(QtGui.QLabel("Fin " + str(filtro.tiempo[-1])))
+            self.vbox.addWidget(QtGui.QLabel("Duración %i min" % (len(filtro.tiempo))))
             self.vbox.addWidget(canvas1)
             self.vbox.addWidget(canvas2)
         
             """
-            vbox2 = QtGui.QVBoxLayout()
-            vbox2.addWidget(lbl2)
-            vbox2.addWidget(canvas3)
-            vbox2.addWidget(canvas4)
             
             vbox3 = QtGui.QVBoxLayout()
             vbox3.addWidget(lbl3)
@@ -111,15 +100,33 @@ class Main(QMainWindow, Ui_MainWindow):
             """
         
             self.layoutMatplot1.addLayout(self.vbox)
-            #self.layoutMatplot1.addLayout(vbox2)
             #self.layoutMatplot1.addLayout(vbox3)
-    
+            
+            if(len(self.selep.epFiltro) > 1):
+                filtro = self.selep.epFiltro[self.epActual+1]
+                fig20, fig21 = self.creaFiguras(filtro.tiempo, filtro.temp, filtro.flujo)
+                canvas3 = FigureCanvas(fig20)
+                canvas4 = FigureCanvas(fig21)
+                self.vbox2 = QtGui.QVBoxLayout()
+                self.vbox2.addWidget(QtGui.QLabel("Episodio " + filtro.tipo))
+                self.vbox2.addWidget(QtGui.QLabel("Comienzo " + str(filtro.tiempo[0])))
+                self.vbox2.addWidget(QtGui.QLabel("Fin " + str(filtro.tiempo[-1])))
+                self.vbox2.addWidget(QtGui.QLabel("Duración %i min" % (len(filtro.tiempo))))
+                self.vbox2.addWidget(canvas3)
+                self.vbox2.addWidget(canvas4)
+                self.layoutMatplot1.addLayout(self.vbox2)
+                
+                
     #Elimina el contenido del layout actual        
     def limpiarLayout(self):
         for cnt in reversed(range(self.vbox.count())):
             widget = self.vbox.takeAt(cnt).widget()
             if widget is not None: 
                 widget.deleteLater() 
+        for cnt in reversed(range(self.vbox2.count())):
+            widget = self.vbox2.takeAt(cnt).widget()
+            if widget is not None: 
+                widget.deleteLater()
             
     def filtrarSueno(self):
         print "Filtrar sueño"
