@@ -14,117 +14,90 @@ class Episodio():
         self.fin = fin
         self.tipo = tipo
 
-def cachitos(minep, maxct):
-    indices = []
-    a = False #Episodio empezado
-    c = 0 #Indice de comienzo
-    t = 0 #Contador de minutos de otra actividad
-    f = 0 #Indice de final
-    for i in range(len(sueno)):
-        if(not a and sueno[i] != 0): #nuevo episodio
-            c = i
-            a = True
-            f = i
-        elif(a): #episodio comenzado
-            if(sueno[i] != 0): #resetear tiempo otra actividad
-                t = 0
-                f = i
-            elif(t < maxct): #otra actividad
-                t = t + 1
-            else: #fin del episodio
-                if ((f-c) >= minep):
-                    indices.append([c, f])
-                t = 0
-                a = False
-                c = 0
-                f = 0
-    return indices
+def comprobar(ls1, ls2, ls3, i, c1, c2, c3, f, t, maxin, final):
+    if(ls1[i] == 1):
+        t = 0
+        f = i
+    elif(t <= maxin):
+        t += 1
+        if(t == 1 and ls2[i] == 1):
+            c2 = i
+            c3 = 0
+        elif(t == 1 and ls3[i] == 1):
+            c3 = i
+            c2 = 0
+    else:
+        final = True
+    return f, c2, c3, t, final
 
-def cachitosT(minep, maxin):
+def cachitos(minep, maxin):
     indices = []
     a = False #Episodio empezado
     t = 0 #Contador de minutos de otra actividad
-    sed = False
-    lig = False
-    mod = False
-    cs = 0
-    cl = 0
-    cm = 0
+    sed, lig, mod, final = False, False, False, False
+    cs, cl, cm = 0, 0, 0
+    fs, fl, fm = 0, 0, 0
     for i in range(len(actSed)):
-        if (actSed[i] and not a):
-            sed = True
-            a = True
+        if (actSed[i] == 1 and not a):
+            a, sed = True, True            
             fs = i
+            t = 0
             if (cs == 0):
                 cs = i
         elif(sed and a):
-            if(actSed[i]):
-                t = 0
-                fs = i
-            elif(t<=maxin and actLig[i] or actMod[i]):
-                t += 1
-                if(t == 1 and actLig[i]):
-                    cl = i
-                elif(t == 1 and actMod[i]):
-                    cm = i
-            else:
+            fs, cl, cm, t, final = comprobar(actSed, actLig, actMod, i, cs, cl, cm, fs, t, maxin, final)
+            if (final):
                 if (fs > cs and (fs-cs) >= minep):
-                    indices.append([cs, fs])
-                t = 0
-                cs = 0
-                a = False
-                sed = False
-        if(actLig[i] and not a):
-            lig = True
-            a = True
+                    #indices.append([cs,fs])
+                    indices.append(Episodio(cs, fs, "Sedentario"))
+                t, cs = 0, 0
+                a, final, sed = False, False, False
+        if(actLig[i] == 1 and not a):
+            a, lig = True, True
+            t = 0
             fl = i
             if(cl == 0):
                 cl = i
         elif(lig and a):
-            if(actLig[i]):
-                t = 0
-                fl = i
-            elif(t<=maxin and actSed[i] or actMod[i]):
-                t += 1
-                if(t == 1 and actSed[i]):
-                    cs = i
-                elif(t == 1 and actMod[i]):
-                    cm = i
-            else:
-                if (fl > cl and fl-cl >= minep):
-                    indices.append([cl, fl])
-                t = 0
-                cl = 0
-                a = False
-                lig = False
-        if(actMod[i] and not a):
-            mod = True
-            a = True
+            fl, cs, cm, t, final = comprobar(actLig, actSed, actMod, i, cl, cs, cm, fl, t, maxin, final)
+            if (final):
+                if (fl > cl and (fl-cl) >= minep):
+                    #indices.append([cs,fs])
+                    indices.append(Episodio(cl, fl, "Ligera"))
+                t, cl = 0, 0
+                a, final, lig = False, False, False
+        if(actMod[i] == 1 and not a):
+            a, mod = True, True
+            t = 0
             fm = i
             if(cm == 0):
                 cm = i
         elif(mod and a):
-            if(actMod[i]):
-                t = 0
-                f = i
-            elif(t<=maxin and actSed[i] or actLig[i]):
-                t += 1
-                if(t == 1 and actLig[i]):
-                    cl = i
-                elif(t == 1 and actSed[i]):
-                    cs = i
-            else:
+            fm, cs, cl, t, final = comprobar(actMod, actSed, actLig, i, cm, cs, cl, fm, t, maxin, final)
+            if (final):
                 if (fm > cm and (fm-cm) >= minep):
-                    indices.append([cm, fm])
-                t = 0
-                cm = 0
-                a = False
-                mod = False
+                    #indices.append([cs,fs])
+                    indices.append(Episodio(cm, fm, "Moderada"))
+                t, cm = 0, 0
+                a, final, mod = False, False, False
     return indices
 
+"""
+trocitos =  cachitos(15,6)
+s, l, m = 0, 0, 0
+#print trocitos
 
-trocitos = cachitosT(15, 9)
-print  "Hay " + str(len(trocitos)) + " trocitos"
-print trocitos
-
-
+for i in trocitos:
+    
+    if (i.tipo == "Sedentario"):
+        s += 1
+        print i.ini, i.fin, i.tipo
+    elif(i.tipo == "Ligera"):
+        l += 1
+        print i.ini, i.fin, i.tipo
+    elif(i.tipo == "Moderada"):
+        m += 1
+        print i.ini, i.fin, i.tipo
+print str(s) + "S " + str(l) + "L " + str(m) + "M "
+print len(trocitos)
+"""
