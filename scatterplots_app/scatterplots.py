@@ -1,110 +1,128 @@
-"""
-
-import pyqtgraph as pg
-from pyqtgraph.Qt import QtCore, QtGui
-import numpy as np
-import os
-import time
-import datetime
-
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_qt4agg import (
-    FigureCanvasQTAgg as FigureCanvas,
-    NavigationToolbar2QT as NavigationToolbar)
-
-pg.mkQApp()
-
-path = os.path.dirname(os.path.abspath(__file__))
-uiFile = os.path.join(path, 'interfaz_episodios.ui')
-WindowTemplate, TemplateBaseClass = pg.Qt.loadUiType(uiFile)
-
-class MainWindow(TemplateBaseClass):
-    def __init__(self):
-        TemplateBaseClass.__init__(self)
-        self.ui = WindowTemplate()
-        self.ui.setupUi(self)
-        
-        #scSueno = self.ui.wScatterSueno
-        
-        self.canvas
-        
-        self.show()
-        
-    def addmpl(self, fig):
-        self.canvas.setParent(self.mplwindow)
-        self.ui.wScatterSueno.add(self.canvas)
-        self.canvas.draw()    
-        
-
-fig1 = Figure()
-ax1f1 = fig1.add_subplot(111)
-ax1f1.plot(np.random.rand(5))  
-        
-mwin = MainWindow()      
-mwin.addmpl(fig1)  
-
-## Start Qt event loop unless running in interactive mode or using pyside.
-if __name__ == '__main__':
-    import sys
-    if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-        QtGui.QApplication.instance().exec_()
-
-"""
 # -*- coding: utf-8 -*-
 
 from PyQt4.uic import loadUiType
- 
+from pyqtgraph.Qt import QtCore, QtGui
 from matplotlib.figure import Figure
 import numpy as np
 from matplotlib.backends.backend_qt4agg import (
     FigureCanvasQTAgg as FigureCanvas,
     NavigationToolbar2QT as NavigationToolbar)
+import episodios    
     
 Ui_MainWindow, QMainWindow = loadUiType('scatterplots.ui')
 
-
-csv = np.genfromtxt ('../data.csv', delimiter=",")
-t = csv[:,0] / 1000 #Tiempo
-a = csv[:,8] #Temperatura
-b = csv[:,26] #Flujo
-X = np.c_[a,b]
-
-
-
+    
 class Main(QMainWindow, Ui_MainWindow):
     def __init__(self, ):
         super(Main, self).__init__()
         self.setupUi(self)
-    
-    def addGraphic(self, fig):
-        self.gv1 = fig
-        #self.gv1.draw()
         
+        self.eps = episodios.Episodios() #Obtener el selector de episodios
+        
+        self.updateView()
+        
+        self.cbSueno.clicked.connect(self.filtrarSueno)
+        self.cbSedentario.clicked.connect(self.filtrarSedentario)
+        self.cbLigera.clicked.connect(self.filtrarLigera)
+        self.cbModerada.clicked.connect(self.filtrarModerada)
+        self.btnPrev.clicked.connect(self.retroceder)
+        self.btnNext.clicked.connect(self.avanzar)
+    
+    def creaFiguras(self, t, a, b):
+        fig0 = Figure()
+        a0 = fig0.add_subplot(111)
+        a0.plot(t, a)
+        a1 = fig0.add_subplot(111)
+        a1.plot(t, b)
+
+        fig1 = Figure()
+        ax1f1 = fig1.add_subplot(111)
+        ax1f1.scatter(a, b)
+
+        return fig0, fig1
+    
+    def updateView(self):
+        fig10, fig11 = self.creaFiguras(self.eps.tiempo1, self.eps.temp1, self.eps.flujo1)
+        fig20, fig21 = self.creaFiguras(self.eps.tiempo2, self.eps.temp2, self.eps.flujo2)
+        fig30, fig31 = self.creaFiguras(self.eps.tiempo3, self.eps.temp3, self.eps.flujo3)
+        
+        canvas1 = FigureCanvas(fig10)
+        canvas2 = FigureCanvas(fig11)
+        canvas3 = FigureCanvas(fig20)
+        canvas4 = FigureCanvas(fig21)
+        canvas5 = FigureCanvas(fig30)
+        canvas6 = FigureCanvas(fig31)
+        
+        lbl1 = QtGui.QLabel(self.eps.lbl1)
+        lbl2 = QtGui.QLabel(self.eps.lbl2)
+        lbl3 = QtGui.QLabel(self.eps.lbl3)
+        
+        vbox = QtGui.QGridLayout()
+        vbox.addWidget(lbl1)
+        vbox.addWidget(canvas1)
+        vbox.addWidget(canvas2)
+        
+        vbox2 = QtGui.QVBoxLayout()
+        vbox2.addWidget(lbl2)
+        vbox2.addWidget(canvas3)
+        vbox2.addWidget(canvas4)
+        
+        vbox3 = QtGui.QVBoxLayout()
+        vbox3.addWidget(lbl3)
+        vbox3.addWidget(canvas5)
+        vbox3.addWidget(canvas6)
+        
+        self.layoutMatplot1.addLayout(vbox)
+        self.layoutMatplot1.addLayout(vbox2)
+        self.layoutMatplot1.addLayout(vbox3)
+            
     def addmpl(self, fig1, fig2):
         self.canvas = FigureCanvas(fig1)
         self.canvas2 = FigureCanvas(fig2)
-        self.layoutMatplot.addWidget(self.canvas)
-        self.layoutMatplot.addWidget(self.canvas2)
+        self.lbl1 = QtGui.QLabel("Tipo de actividad")
+        self.layoutMatplot1.addWidget(self.lbl1)
+        self.layoutMatplot1.addWidget(self.canvas)
+        self.layoutMatplot1.addWidget(self.canvas2)
         self.canvas.draw()
+    
+    def filtrarSueno(self):
+        if self.cbSueno.isChecked():
+            print "mostrar clasificación sueno"
+        else:
+            print "ocultar clasificación sueno"
+    
+    def filtrarSedentario(self):
+        if self.cbSedentario.isChecked():
+            print "mostrar actividad sedentario"
+        else:
+            print "ocultar actividad sedentario"
+    
+    def filtrarLigera(self):
+        if self.cbLigera.isChecked():
+            print "mostrar actividad ligera"
+        else:
+            print "ocultar actividad ligera"
+        
+    def filtrarModerada(self):
+        if self.cbModerada.isChecked():
+            print "mostrar actividad moderada"
+        else:
+            print "ocultar actividad moderada"
+    
+    def retroceder(self):
+        print "episodio anterior"
+        
+    def avanzar(self):
+        print "episodio siguiente"
+        print self.eps.numEpisodios
+        
  
 if __name__ == '__main__':
     import sys
     from PyQt4 import QtGui
     
-    fig0 = Figure()
-    a0 = fig0.add_subplot(111)
-    a0.plot(t[0:250], a[0:250])
-    a1 = fig0.add_subplot(111)
-    a1.plot(t[0:250], b[0:250])
-    
-    fig1 = Figure()
-    ax1f1 = fig1.add_subplot(111)
-    ax1f1.scatter(a[0:250], b[0:250])
- 
     app = QtGui.QApplication(sys.argv)
     main = Main()
-    
-    main.addmpl(fig0,fig1)
     
     
     main.show()

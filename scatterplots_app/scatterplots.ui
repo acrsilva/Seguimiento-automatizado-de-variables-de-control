@@ -6,98 +6,81 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1143</width>
-    <height>593</height>
+    <width>1002</width>
+    <height>782</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Temperaturas y flujos por episodios</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="1">
-     <widget class="QWidget" name="widget" native="true"/>
-    </item>
-    <item row="0" column="2">
-     <widget class="QGraphicsView" name="gv3">
-      <property name="maximumSize">
-       <size>
-        <width>300</width>
-        <height>100</height>
-       </size>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QWidget" name="wScatter1" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
+      <layout class="QHBoxLayout" name="layoutMatplot1"/>
      </widget>
     </item>
-    <item row="2" column="2">
-     <widget class="QWidget" name="widget_2" native="true"/>
-    </item>
-    <item row="5" column="0">
-     <widget class="QCheckBox" name="checkBox_3">
+    <item>
+     <widget class="QCheckBox" name="cbSueno">
       <property name="text">
-       <string>Actividad ligera</string>
+       <string>Clasificación de sueño</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="0">
-     <widget class="QCheckBox" name="checkBox">
-      <property name="text">
-       <string>Clasifiación de sueño</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QGraphicsView" name="gv2">
-      <property name="maximumSize">
-       <size>
-        <width>300</width>
-        <height>100</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="10" column="0">
-     <widget class="QCheckBox" name="checkBox_4">
-      <property name="text">
-       <string>Actividad moderada</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QCheckBox" name="checkBox_2">
+    <item>
+     <widget class="QCheckBox" name="cbSedentario">
       <property name="text">
        <string>Sedentario</string>
       </property>
      </widget>
     </item>
-    <item row="11" column="2">
-     <widget class="QPushButton" name="pushButton">
+    <item>
+     <widget class="QCheckBox" name="cbModerada">
       <property name="text">
-       <string>Avanzar</string>
+       <string>Actividad moderada</string>
       </property>
      </widget>
     </item>
-    <item row="11" column="0">
-     <widget class="QPushButton" name="pushButton_2">
+    <item>
+     <widget class="QCheckBox" name="cbLigera">
       <property name="text">
-       <string>Retroceder</string>
+       <string>Actividad ligera</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="0">
-     <widget class="QWidget" name="wScatter1" native="true">
+    <item>
+     <widget class="QWidget" name="widget" native="true">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <property name="maximumSize">
-       <size>
-        <width>300</width>
-        <height>1000</height>
-       </size>
-      </property>
-      <layout class="QVBoxLayout" name="layoutMatplot"/>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="1" column="1">
+        <widget class="QPushButton" name="btnNext">
+         <property name="text">
+          <string>Avanzar</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="btnPrev">
+         <property name="text">
+          <string>Retroceder</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+      <zorder>btnNext</zorder>
+      <zorder>btnNext</zorder>
+      <zorder>btnPrev</zorder>
      </widget>
     </item>
    </layout>
@@ -107,23 +90,12 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1143</width>
+     <width>1002</width>
      <height>25</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QToolBar" name="toolBar">
-   <property name="windowTitle">
-    <string>toolBar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
  </widget>
  <resources/>
  <connections/>
