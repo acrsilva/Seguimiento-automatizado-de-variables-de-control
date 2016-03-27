@@ -40,7 +40,7 @@ def trocear():
     a = False #Episodio empezado
     c = 0 #Indice de comienzo
     t = 0 #Contador de minutos despierto
-    f = 0 #
+    f = 0 #Indice de final
     for i in range(len(suenos)):
         if(not a and suenos[i] != 0): #nuevo episodio
             c = i
@@ -53,11 +53,10 @@ def trocear():
             elif(t < 60): #despierto(cuanto tiempo?)
                 t = t + 1
             else: #fin del episodio (1h seguida despierto)
-                indices.append([c, f])
+                if (abs(f-c)>10):
+                    indices.append([c, f])
                 t = 0
                 a = False
-                c = 0
-                f = 0
     return indices
 
 def coloreaSueno():
