@@ -1,19 +1,42 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import datetime
+
 
 csv = np.genfromtxt ('../data.csv', delimiter=",")
+t = csv[:,0] / 1000 #Tiempo
 actSed = csv[:,18] #Sedentario
 actLig = csv[:,19] #Ligera
 actMod = csv[:,20] #Moderada
 sueno = csv[:,25] #Sueño
 
+temperaturas = csv[:,8] #Temperatura
+flujos = csv[:,26] #Flujo
+
+dt = []
+
+for i in t:
+    dt.append(datetime.datetime.fromtimestamp(i))
+
+#Definición de tipos
+tipoSueno = "sueño"
+tipoSedentario = "sedentario"
+tipoLigera = "ligera"
+tipoModerado = "moderado"
+
+#Estructura con la información de un episodio
 class Episodio():
     def __init__(self, ini, fin, tipo):
         self.ini = ini
         self.fin = fin
         self.tipo = tipo
-
+    def filtrar(self):
+        self.tiempo = dt[self.ini:self.fin]
+        self.temp = temperaturas[self.ini:self.fin]
+        self.flujo = flujos[self.ini:self.fin]
+        
+        
 def comprobar(ls1, ls2, ls3, i, c1, c2, c3, f, t, maxin, final):
     if(ls1[i] == 1):
         t = 0
@@ -30,6 +53,8 @@ def comprobar(ls1, ls2, ls3, i, c1, c2, c3, f, t, maxin, final):
         final = True
     return f, c2, c3, t, final
 
+#minep: intervalo mínimo por episodio en minutos
+#maxin: intervalo máximo para considerar interrupción
 def cachitos(minep, maxin):
     indices = []
     a = False #Episodio empezado
@@ -49,7 +74,7 @@ def cachitos(minep, maxin):
             if (final):
                 if (fs > cs and (fs-cs) >= minep):
                     #indices.append([cs,fs])
-                    indices.append(Episodio(cs, fs, "Sedentario"))
+                    indices.append(Episodio(cs, fs, tipoSedentario))
                 t, cs = 0, 0
                 a, final, sed = False, False, False
         if(actLig[i] == 1 and not a):
@@ -63,7 +88,7 @@ def cachitos(minep, maxin):
             if (final):
                 if (fl > cl and (fl-cl) >= minep):
                     #indices.append([cs,fs])
-                    indices.append(Episodio(cl, fl, "Ligera"))
+                    indices.append(Episodio(cl, fl, tipoLigera))
                 t, cl = 0, 0
                 a, final, lig = False, False, False
         if(actMod[i] == 1 and not a):
@@ -77,10 +102,61 @@ def cachitos(minep, maxin):
             if (final):
                 if (fm > cm and (fm-cm) >= minep):
                     #indices.append([cs,fs])
-                    indices.append(Episodio(cm, fm, "Moderada"))
+                    indices.append(Episodio(cm, fm, tipoModerado))
                 t, cm = 0, 0
                 a, final, mod = False, False, False
     return indices
+
+
+class selEpisodio():
+    def __init__(self):
+        self.episodios = cachitos(15,6)
+        self.epAct = 0
+        self.filSueno = True
+        self.filSedentario = True
+        self.filLigero = True
+        self.filModerado = True
+        
+        self.epFiltro = self.creaEpisodios()
+        #self.update()
+        
+    #Crea el array de episodios con los filtros aplicados
+    def creaEpisodios(self):
+        filt = []
+        for i in self.episodios:
+            if((i.tipo == tipoSueno and self.filSueno) 
+                or (i.tipo == tipoSedentario and self.filSedentario)
+                or (i.tipo == tipoLigera and self.filLigero)
+                or (i.tipo == tipoModerado and self.filModerado)):
+                i.filtrar()
+                filt.append(i)
+        return filt        
+                
+    
+    def update(self):
+        print len(self.epFiltro) , "episodios"
+        if(len(self.epFiltro) > 0):
+            i, f = self.epFiltro[self.epAct].ini, self.epFiltro[self.epAct].fin
+            self.lbl1 = self.epFiltro[self.epAct].tipo
+            self.tiempo1 = dt[i:f]
+            self.temp1 = temperaturas[i:f]
+            self.flujo1 = flujos[i:f]
+            if(len(self.epFiltro) > 1):
+                i, f = self.epFiltro[self.epAct+1].ini, self.epFiltro[self.epAct+1].fin
+                self.lbl2 = self.epFiltro[self.epAct+1].tipo
+                self.tiempo2 = dt[i:f]
+                self.temp2 = temperaturas[i:f]
+                self.flujo2 = flujos[i:f]
+                if(len(self.epFiltro) > 2):
+                    i, f = self.epFiltro[self.epAct+2].ini, self.epFiltro[self.epAct+2].fin
+                    self.lbl3 = self.epFiltro[self.epAct+2].tipo
+                    self.tiempo3 = dt[i:f]
+                    self.temp3 = temperaturas[i:f]
+                    self.flujo3 = flujos[i:f]
+        
+
+#pruba = selEpisodio()
+
 
 """
 trocitos =  cachitos(15,6)
@@ -89,13 +165,13 @@ s, l, m = 0, 0, 0
 
 for i in trocitos:
     
-    if (i.tipo == "Sedentario"):
+    if (i.tipo == tipoSedentario):
         s += 1
         print i.ini, i.fin, i.tipo
-    elif(i.tipo == "Ligera"):
+    elif(i.tipo == tipoLigera):
         l += 1
         print i.ini, i.fin, i.tipo
-    elif(i.tipo == "Moderada"):
+    elif(i.tipo == tipoModerado):
         m += 1
         print i.ini, i.fin, i.tipo
 print str(s) + "S " + str(l) + "L " + str(m) + "M "

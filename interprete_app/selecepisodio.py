@@ -171,10 +171,7 @@ class SelecEpisodio(object):
         cls.activiData = actividades[cls.ini:cls.fin]
         
     def __init__(self):
-        self.ini = 0
-        self.fin = 0
-        self.eini = 0
-        self.efin = 0
+        self.ini, self.fin, self.eini, self.efin = 0, 0, 0, 0
         self.barraSuenio = []
         self.horas = []
         self.consumoData = []

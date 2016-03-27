@@ -9,7 +9,10 @@ import numpy as np
 from matplotlib.backends.backend_qt4agg import (
     FigureCanvasQTAgg as FigureCanvas,
     NavigationToolbar2QT as NavigationToolbar)
-import episodios    
+import cachitos
+import datetime
+from matplotlib.dates import MinuteLocator
+import matplotlib.dates as md
     
 Ui_MainWindow, QMainWindow = loadUiType('scatterplots.ui')
 
@@ -19,7 +22,9 @@ class Main(QMainWindow, Ui_MainWindow):
         super(Main, self).__init__()
         self.setupUi(self)
         
-        self.eps = episodios.Episodios() #Obtener el selector de episodios
+        self.epAct = 0
+        
+        self.eps = cachitos.selEpisodio() #Obtener el selector de episodios
         
         self.updateView()
         
@@ -36,10 +41,18 @@ class Main(QMainWindow, Ui_MainWindow):
         #Escala temperaturas
         ax1 = fig0.add_subplot(111)
         ax1.plot(t, a, 'b-')
-        ax1.set_xlabel('tiempo (m)')
+        ax1.set_xlabel('Tiempo (m)')
         ax1.set_ylabel('Temperatura (ºC)', color='b')
         for tl in ax1.get_yticklabels():
             tl.set_color('b')
+        fig0.autofmt_xdate()
+        xfmt = md.DateFormatter('%H:%M')
+        ax1.xaxis.set_major_formatter(xfmt) #Warning
+        
+        start, end = ax1.get_xlim()
+        #ax1.xaxis.set_ticks(np.arange(start, end, 30))
+        #ax1.grid(True)
+        
         #Escala flujo térmico
         ax2 = ax1.twinx()
         ax2.plot(t, b, 'r-')
@@ -66,14 +79,21 @@ class Main(QMainWindow, Ui_MainWindow):
         canvas5 = FigureCanvas(fig30)
         canvas6 = FigureCanvas(fig31)
         
-        lbl1 = QtGui.QLabel(self.eps.lbl1)
+        lbl1 = QtGui.QLabel("Episodio " + self.eps.lbl1)
+        lbl11 = QtGui.QLabel("Comienzo: " + str(self.eps.tiempo1[0]))
+        #lbl12 = QtGui.QLabel("Fin: " + str(sel.eps.tiempo1[
+        lbl12 = QtGui.QLabel("Fin: ")
+        lbl13 = QtGui.QLabel("Duración: " + str(len(self.eps.tiempo1)))
         lbl2 = QtGui.QLabel(self.eps.lbl2)
         lbl3 = QtGui.QLabel(self.eps.lbl3)
         
-        vbox = QtGui.QGridLayout()
-        vbox.addWidget(lbl1)
-        vbox.addWidget(canvas1)
-        vbox.addWidget(canvas2)
+        self.vbox = QtGui.QGridLayout()
+        self.vbox.addWidget(lbl1)
+        self.vbox.addWidget(lbl11)
+        self.vbox.addWidget(lbl12)
+        self.vbox.addWidget(lbl13)
+        self.vbox.addWidget(canvas1)
+        self.vbox.addWidget(canvas2)
         
         vbox2 = QtGui.QVBoxLayout()
         vbox2.addWidget(lbl2)
@@ -85,7 +105,7 @@ class Main(QMainWindow, Ui_MainWindow):
         vbox3.addWidget(canvas5)
         vbox3.addWidget(canvas6)
         
-        self.layoutMatplot1.addLayout(vbox)
+        self.layoutMatplot1.addLayout(self.vbox)
         self.layoutMatplot1.addLayout(vbox2)
         self.layoutMatplot1.addLayout(vbox3)
             
@@ -124,9 +144,12 @@ class Main(QMainWindow, Ui_MainWindow):
     
     def retroceder(self):
         self.eps.epAnterior()
+        #self.layoutMatplot1.clear()
+        self.epAct -= 1
         
     def avanzar(self):
         self.eps.epSiguiente()
+        self.epAct += 1
         
  
 if __name__ == '__main__':
