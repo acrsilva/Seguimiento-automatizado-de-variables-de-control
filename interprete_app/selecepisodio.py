@@ -65,13 +65,13 @@ def coloreaSueno():
 	num = 0
 	for i in suenos:
 		if(i == 2): #Sueño ligero
-			c = pg.mkColor(102, 102, 255)
+			c = pg.mkColor(138, 128, 224)
 		elif(i == 4): #Sueño profundo
-			c = pg.mkColor(0, 0, 204)
+			c = pg.mkColor(78, 63, 201)
 		elif(i == 5): #Sueño muy profundo
-			c = pg.mkColor(0, 0, 102)
+			c = pg.mkColor(33, 18, 160)
 		else: #Despierto
-			c = pg.mkColor(255, 255, 0)
+			c = pg.mkColor(255, 245, 89)
 		colors.append(c)
 		num = num + 1
 	return colors
@@ -82,11 +82,11 @@ def coloreaActividades():
     num = 0
     for i in actividades:
         if(i == 0): #sedentaria
-            c = pg.mkColor(255, 51, 51)
+            c = pg.mkColor(116, 186, 235)
         if(i == 1): #ligera
-            c = pg.mkColor(102, 255, 102)
+            c = pg.mkColor(43, 151, 227)
         elif(i == 2): #moderada
-            c = pg.mkColor(0, 102, 0)
+            c = pg.mkColor(5, 110, 185)
         colors.append(c)
         num = num + 1
     return colors
