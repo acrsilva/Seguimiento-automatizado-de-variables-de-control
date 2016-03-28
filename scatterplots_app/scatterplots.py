@@ -127,11 +127,17 @@ class Main(QMainWindow, Ui_MainWindow):
             widget = self.vbox2.takeAt(cnt).widget()
             if widget is not None: 
                 widget.deleteLater()
+    
+    #Comprueba que los episodios no salgan del rango
+    def setBounds(self):
+        if(self.epActual > len(self.selep.epFiltro)-2):
+            self.epActual = len(self.selep.epFiltro)-2
             
     def filtrarSueno(self):
         print "Filtrar sueño"
         self.selep.filSueno = self.cbSueno.isChecked() #Cambiar el filtro
         self.selep.update() #Actualizar el array de episodios filtrados
+        self.setBounds()
         self.limpiarLayout() 
         self.updateView() 
         
@@ -139,6 +145,7 @@ class Main(QMainWindow, Ui_MainWindow):
         print "Filtrar sedentario"
         self.selep.filSedentario = self.cbSedentario.isChecked()
         self.selep.update()
+        self.setBounds()
         self.limpiarLayout()
         self.updateView()
         
@@ -146,6 +153,7 @@ class Main(QMainWindow, Ui_MainWindow):
         print "Filtrar ligera"
         self.selep.filLigero = self.cbLigera.isChecked()
         self.selep.update()
+        self.setBounds()
         self.limpiarLayout()
         self.updateView()
         
@@ -153,6 +161,7 @@ class Main(QMainWindow, Ui_MainWindow):
         print "Filtrar moderada"
         self.selep.filModerado = self.cbModerada.isChecked()
         self.selep.update()
+        self.setBounds()
         self.limpiarLayout()
         self.updateView()
     
@@ -164,7 +173,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.updateView()
         
     def avanzar(self):
-        if (self.epActual < len(self.selep.epFiltro) - 1):
+        if (self.epActual < len(self.selep.epFiltro) - 2):
             self.epActual += 1
         print "episodio", self.epActual
         self.limpiarLayout()

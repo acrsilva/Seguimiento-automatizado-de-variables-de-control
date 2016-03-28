@@ -54,9 +54,9 @@
      </widget>
     </item>
     <item>
-     <widget class="QCheckBox" name="cbModerada">
+     <widget class="QCheckBox" name="cbLigera">
       <property name="text">
-       <string>Actividad moderada</string>
+       <string>Actividad ligera</string>
       </property>
       <property name="checked">
        <bool>true</bool>
@@ -64,9 +64,9 @@
      </widget>
     </item>
     <item>
-     <widget class="QCheckBox" name="cbLigera">
+     <widget class="QCheckBox" name="cbModerada">
       <property name="text">
-       <string>Actividad ligera</string>
+       <string>Actividad moderada</string>
       </property>
       <property name="checked">
        <bool>true</bool>

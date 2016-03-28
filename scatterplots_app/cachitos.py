@@ -23,7 +23,7 @@ for i in t:
 #Definición de tipos
 tipoSueno = "sueño"
 tipoSedentario = "sedentario"
-tipoLigera = "ligera"
+tipoLigera = "ligero"
 tipoModerado = "moderado"
 
 #Estructura con la información de un episodio
