@@ -51,15 +51,15 @@ class MainWindow(TemplateBaseClass):
         
         self.p12.clear()
         #self.p12.plot(x=self.selep.horas, y=self.selep.acelData, pen=(255,0,0))
-        self.p12.plot(x=self.selep.horas, y=self.selep.activiData, pen=(255,0,0))
+        #self.p12.plot(x=self.selep.horas, y=self.selep.activiData, pen=(255,0,0))
         #self.p12.plot(x=self.selep.horas, y=self.selep.consumoData, pen=(0,255,0))
-        self.p12.plot(x=self.selep.horas, y=self.selep.metsData, pen=(0,0,255))
+        self.p12.plot(x=self.selep.horas, y=self.selep.activiData, pen=(0,224,0))
         
         self.pAcel.clear()
         self.pAcel.plot(x=self.selep.horas, y=self.selep.acelData, pen=(255,0,0))
         
         self.pCons.clear()
-        self.pCons.addItem(pg.PlotCurveItem(x=self.selep.horas, y=self.selep.metsData, pen=(0, 255, 0)))
+        self.pCons.addItem(pg.PlotCurveItem(x=self.selep.horas, y=self.selep.consumoData, pen=(255, 126, 0)))
         
         self.p2.clear()
         self.p2.plot(x=self.selep.horas, y=self.selep.tempData, pen=(255, 255, 255))
@@ -69,6 +69,8 @@ class MainWindow(TemplateBaseClass):
         
         #Configurar rangos iniciales de visualización
         self.p1.autoRange()
+        self.p12.setYRange(0,2)
+        self.pCons.setYRange(0,65)
         self.p2.setYRange(20,45)
         self.p3.setYRange(-20, 220)
     
@@ -101,28 +103,32 @@ class MainWindow(TemplateBaseClass):
         self.p1.hideButtons()
         self.p1.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.p1.setMouseEnabled(x=True, y=False)
-        self.p1.hideAxis('left')
         self.p1.hideAxis('bottom')
+        self.p1.getAxis('left').setLabel('', color='#0000FF')
+        self.p1.showAxis('right')
+        self.p1.getAxis('right').setLabel('', color='#0000FF')
         
-        #Configurar segunda gráfica con acelerómetros
+        #Configurar primera gráfica con acelerómetros
         win.nextRow()
         self.pAcel = win.addPlot()
         self.pAcel.setTitle('Acelerómetros')
         self.pAcel.hideButtons()
         self.pAcel.setMouseEnabled(x=True, y=False)
-        self.pAcel.hideAxis('left')
         self.pAcel.hideAxis('bottom')
+        self.pAcel.getAxis('left').setLabel('', color='#0000FF')
+        self.pAcel.showAxis('right')
+        self.pAcel.getAxis('right').setLabel('', color='#0000FF')
         self.pAcel.setXLink('barClasificacion')
         
-        #Configurar primera gráfica con actividad física y mets
+        #Configurar segunda gráfica con actividad física y mets
         win.nextRow()
         self.p12 = win.addPlot()
-        self.p12.setTitle('Actividad física, consumo energético y MET')
+        self.p12.setTitle('Actividad física y consumo energético')
         self.p12.hideButtons()
         self.p12.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.p12.setMouseEnabled(x=True, y=False)
-        self.p12.hideAxis('left')
         self.p12.hideAxis('bottom')
+        self.p12.getAxis('left').setLabel('Actividad', color='#00E000')
         self.p12.setXLink('barClasificacion')
         
         self.pCons = pg.ViewBox()
@@ -130,8 +136,7 @@ class MainWindow(TemplateBaseClass):
         self.p12.scene().addItem(self.pCons)
         self.p12.getAxis('right').linkToView(self.pCons)
         self.pCons.setXLink(self.p12)
-        #self.p3.disableAutoRange(axis=pg.ViewBox.XAxis)
-        self.p12.getAxis('right').setLabel('Consumo', color='#00FF00')
+        self.p12.getAxis('right').setLabel('Consumo', color='#FF7E00')
         self.p12.vb.sigResized.connect(self.updateViews)
         
         
@@ -144,7 +149,6 @@ class MainWindow(TemplateBaseClass):
         self.p2.setMouseEnabled(x=True, y=False)
         self.p2.showGrid(x=True)
         self.p2.getAxis('left').setLabel('Temperatura (ºC)', color='#FFFFFF')
-        self.p2.setYRange(20, 45)
         
         self.p3 = pg.ViewBox()
         self.p2.showAxis('right')
