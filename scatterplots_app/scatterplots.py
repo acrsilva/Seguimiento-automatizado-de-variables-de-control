@@ -13,6 +13,7 @@ import cachitos
 import datetime
 from matplotlib.dates import MinuteLocator
 import matplotlib.dates as md
+from sklearn import preprocessing
     
 Ui_MainWindow, QMainWindow = loadUiType('scatterplots.ui')
 
@@ -39,8 +40,11 @@ class Main(QMainWindow, Ui_MainWindow):
         #Serie temporal
         fig0 = Figure()
         #Escala temperaturas
+        aa = preprocessing.scale(a)
+        bb = preprocessing.scale(b)
         ax1 = fig0.add_subplot(111)
-        ax1.plot(t, a, 'b-')
+        ax1.plot(t, aa, 'b-')
+        ax1.set_ylim([-5,5])
         ax1.set_xlabel('Tiempo (m)')
         ax1.set_ylabel('Temperatura (ºC)', color='b')
         for tl in ax1.get_yticklabels():
@@ -55,7 +59,8 @@ class Main(QMainWindow, Ui_MainWindow):
         
         #Escala flujo térmico
         ax2 = ax1.twinx()
-        ax2.plot(t, b, 'r-')
+        ax2.plot(t, bb, 'r-')
+        ax2.set_ylim([-5,5])
         ax2.set_ylabel('Flujo térmico', color='r')
         for tl in ax2.get_yticklabels():
             tl.set_color('r')
@@ -84,14 +89,11 @@ class Main(QMainWindow, Ui_MainWindow):
     #Inserta elementos en el layout con los nuevos episodios
     def updateView(self):
         if(len(self.selep.epFiltro) > 0):
-            filtro = self.selep.epFiltro[self.epActual]
-            self.vbox = self.crearWidget(filtro)
+            self.vbox = self.crearWidget(self.selep.epFiltro[self.epActual])
             self.layoutMatplot1.addLayout(self.vbox)
             if(len(self.selep.epFiltro) > 1):
-                filtro = self.selep.epFiltro[self.epActual+1]
-                self.vbox2 = self.crearWidget(filtro)
+                self.vbox2 = self.crearWidget(self.selep.epFiltro[self.epActual+1])
                 self.layoutMatplot1.addLayout(self.vbox2)
-                
                 
     #Elimina el contenido del layout actual        
     def limpiarLayout(self):
