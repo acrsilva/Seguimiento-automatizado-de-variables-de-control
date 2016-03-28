@@ -67,53 +67,29 @@ class Main(QMainWindow, Ui_MainWindow):
         
         return fig0, fig1
     
+    def crearWidget(self, filtro):
+        fig10, fig11 = self.creaFiguras(filtro.tiempo, filtro.temp, filtro.flujo)
+        canvas1 = FigureCanvas(fig10)
+        canvas2 = FigureCanvas(fig11)
+        vbox = QtGui.QGridLayout()
+        vbox.addWidget(QtGui.QLabel("<b>Episodio:</b> " + filtro.tipo))
+        vbox.addWidget(QtGui.QLabel("<b>Inicio:</b> " + str(filtro.tiempo[0])))
+        vbox.addWidget(QtGui.QLabel("<b>Final:</b> " + str(filtro.tiempo[-1])))
+        vbox.addWidget(QtGui.QLabel("<b>Duración:</b> %i min" % (len(filtro.tiempo))))
+        vbox.addWidget(QtGui.QLabel("<b>Coeficiente de correlación:</b> " + str(filtro.correlacion)[:5]))
+        vbox.addWidget(canvas1)
+        vbox.addWidget(canvas2)
+        return vbox
+    
     #Inserta elementos en el layout con los nuevos episodios
     def updateView(self):
-                
         if(len(self.selep.epFiltro) > 0):
             filtro = self.selep.epFiltro[self.epActual]
-            
-            fig10, fig11 = self.creaFiguras(filtro.tiempo, filtro.temp, filtro.flujo)
-            
-            #fig30, fig31 = self.creaFiguras(self.selep.tiempo3, self.selep.temp3, self.selep.flujo3)
-            
-            canvas1 = FigureCanvas(fig10)
-            canvas2 = FigureCanvas(fig11)
-            
-            #canvas5 = FigureCanvas(fig30)
-            #canvas6 = FigureCanvas(fig31)
-            
-            self.vbox = QtGui.QGridLayout()
-            self.vbox.addWidget(QtGui.QLabel("Episodio " + filtro.tipo))
-            self.vbox.addWidget(QtGui.QLabel("Comienzo " + str(filtro.tiempo[0])))
-            self.vbox.addWidget(QtGui.QLabel("Fin " + str(filtro.tiempo[-1])))
-            self.vbox.addWidget(QtGui.QLabel("Duración %i min" % (len(filtro.tiempo))))
-            self.vbox.addWidget(canvas1)
-            self.vbox.addWidget(canvas2)
-        
-            """
-            
-            vbox3 = QtGui.QVBoxLayout()
-            vbox3.addWidget(lbl3)
-            vbox3.addWidget(canvas5)
-            vbox3.addWidget(canvas6)
-            """
-        
+            self.vbox = self.crearWidget(filtro)
             self.layoutMatplot1.addLayout(self.vbox)
-            #self.layoutMatplot1.addLayout(vbox3)
-            
             if(len(self.selep.epFiltro) > 1):
                 filtro = self.selep.epFiltro[self.epActual+1]
-                fig20, fig21 = self.creaFiguras(filtro.tiempo, filtro.temp, filtro.flujo)
-                canvas3 = FigureCanvas(fig20)
-                canvas4 = FigureCanvas(fig21)
-                self.vbox2 = QtGui.QVBoxLayout()
-                self.vbox2.addWidget(QtGui.QLabel("Episodio " + filtro.tipo))
-                self.vbox2.addWidget(QtGui.QLabel("Comienzo " + str(filtro.tiempo[0])))
-                self.vbox2.addWidget(QtGui.QLabel("Fin " + str(filtro.tiempo[-1])))
-                self.vbox2.addWidget(QtGui.QLabel("Duración %i min" % (len(filtro.tiempo))))
-                self.vbox2.addWidget(canvas3)
-                self.vbox2.addWidget(canvas4)
+                self.vbox2 = self.crearWidget(filtro)
                 self.layoutMatplot1.addLayout(self.vbox2)
                 
                 

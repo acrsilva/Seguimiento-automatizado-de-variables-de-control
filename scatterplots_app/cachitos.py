@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 import numpy as np
 import datetime
-
+from scipy.stats import pearsonr
 
 csv = np.genfromtxt ('../data.csv', delimiter=",")
 t = csv[:,0] / 1000 #Tiempo
@@ -36,6 +36,7 @@ class Episodio():
         self.tiempo = dt[self.ini:self.fin]
         self.temp = temperaturas[self.ini:self.fin]
         self.flujo = flujos[self.ini:self.fin]
+        self.correlacion, p = pearsonr(self.temp, self.flujo)
         
         
 def comprobar(ls1, ls2, ls3, i, c1, c2, c3, f, t, maxin, final):
