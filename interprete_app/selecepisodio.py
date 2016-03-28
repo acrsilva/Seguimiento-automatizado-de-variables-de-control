@@ -81,14 +81,12 @@ def coloreaActividades():
     colors = []
     num = 0
     for i in actividades:
-        if(i == 0): #ligera
+        if(i == 0): #sedentaria
             c = pg.mkColor(255, 51, 51)
-        if(i == 1): #moderada
+        if(i == 1): #ligera
             c = pg.mkColor(102, 255, 102)
-        elif(i == 2): #alta
+        elif(i == 2): #moderada
             c = pg.mkColor(0, 102, 0)
-        else: #sin actividad
-            c = pg.mkColor(85, 120, 85)  
         colors.append(c)
         num = num + 1
     return colors
