@@ -50,13 +50,13 @@ class MainWindow(TemplateBaseClass):
         self.pBarra.addItem(self.selep.barraSuenio)
         
         self.pAF.clear()
-        self.pAF.plot(x=self.selep.horas, y=self.selep.activiData, pen=(0,224,0))
+        self.pAF.plot(x=self.selep.horas, y=self.selep.activiData, pen=(255, 126, 0))
         
         self.pAcel.clear()
         self.pAcel.plot(x=self.selep.horas, y=self.selep.acelData, pen=(255,0,0))
         
         self.pCons.clear()
-        self.pCons.addItem(pg.PlotCurveItem(x=self.selep.horas, y=self.selep.consumoData, pen=(255, 126, 0)))
+        self.pCons.addItem(pg.PlotCurveItem(x=self.selep.horas, y=self.selep.consumoData, pen=(0,224,0)))
         
         self.pTemp.clear()
         self.pTemp.plot(x=self.selep.horas, y=self.selep.tempData, pen=(255, 255, 255))
@@ -125,7 +125,7 @@ class MainWindow(TemplateBaseClass):
         self.pAF.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.pAF.setMouseEnabled(x=True, y=False)
         self.pAF.hideAxis('bottom')
-        self.pAF.getAxis('left').setLabel('Actividad', color='#00E000')
+        self.pAF.getAxis('left').setLabel('Actividad', color='#FF7E00')
         self.pAF.setXLink('barClasificacion')
         
         self.pCons = pg.ViewBox()
@@ -133,7 +133,7 @@ class MainWindow(TemplateBaseClass):
         self.pAF.scene().addItem(self.pCons)
         self.pAF.getAxis('right').linkToView(self.pCons)
         self.pCons.setXLink(self.pAF)
-        self.pAF.getAxis('right').setLabel('Consumo', color='#FF7E00')
+        self.pAF.getAxis('right').setLabel('Consumo', color='#00E000')
         self.pAF.vb.sigResized.connect(self.updateViews)
         
         
@@ -146,6 +146,7 @@ class MainWindow(TemplateBaseClass):
         self.pTemp.setMouseEnabled(x=True, y=False)
         self.pTemp.showGrid(x=True)
         self.pTemp.getAxis('left').setLabel('Temperatura (ºC)', color='#FFFFFF')
+        #self.pTemp.hideButtons()
         
         self.pFlujo = pg.ViewBox()
         self.pTemp.showAxis('right')
