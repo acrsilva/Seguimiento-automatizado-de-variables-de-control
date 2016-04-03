@@ -4,20 +4,19 @@ from __future__ import unicode_literals
 
 from PyQt4.uic import loadUiType
 from pyqtgraph.Qt import QtCore, QtGui
-from matplotlib.figure import Figure
+#from matplotlib.figure import Figure
+from matplotlib import pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_qt4agg import (
     FigureCanvasQTAgg as FigureCanvas,
     NavigationToolbar2QT as NavigationToolbar)
 import cachitos
-import datetime
-from matplotlib.dates import MinuteLocator
 import matplotlib.dates as md
 from sklearn import preprocessing
     
 Ui_MainWindow, QMainWindow = loadUiType('scatterplots.ui')
 
-    
+
 class Main(QMainWindow, Ui_MainWindow):
     def __init__(self, ):
         super(Main, self).__init__()
@@ -36,9 +35,27 @@ class Main(QMainWindow, Ui_MainWindow):
         self.btnPrev.clicked.connect(self.retroceder)
         self.btnNext.clicked.connect(self.avanzar)
     
+    def getTime(self, a, b, ep):
+        for i in self.selep.epFiltro[self.epActual + ep].temp:
+            if(a == i):
+                ind = 0
+                for k in self.selep.epFiltro[self.epActual + ep].flujo:
+                    if(b == k):
+                        print "encontrado"
+                        return self.selep.epFiltro[self.epActual + ep].tiempo[ind]
+                    else:
+                        ind += 1
+    
+    def onpick(self, event, ep):
+        thisline = event.artist
+        xdata, ydata = thisline.get_data()
+        ind = event.ind
+        print xdata[ind[0]], ydata[ind[0]]
+        self.label.setText('Instante ' + str(self.getTime(xdata[ind[0]], ydata[ind[0]], ep)))
+            
     def creaFiguras(self, t, a, b):
         #Serie temporal
-        fig0 = Figure()
+        fig0 = plt.figure()
         #Escala temperaturas
         aa = preprocessing.scale(a)
         bb = preprocessing.scale(b)
@@ -66,13 +83,13 @@ class Main(QMainWindow, Ui_MainWindow):
             tl.set_color('r')
         
         #Scatterplot
-        fig1 = Figure()
+        fig1 = plt.figure()
         ax1f1 = fig1.add_subplot(111)
-        ax1f1.scatter(a, b)
+        line, = ax1f1.plot(a, b, 'o', picker=5)
         
         return fig0, fig1
     
-    def crearWidget(self, filtro):
+    def crearWidget(self, filtro, ep):
         fig10, fig11 = self.creaFiguras(filtro.tiempo, filtro.temp, filtro.flujo)
         canvas1 = FigureCanvas(fig10)
         canvas2 = FigureCanvas(fig11)
@@ -84,19 +101,21 @@ class Main(QMainWindow, Ui_MainWindow):
         vbox.addWidget(QtGui.QLabel("<b>Coeficiente de correlación:</b> " + str(filtro.correlacion)[:5]))
         vbox.addWidget(canvas1)
         vbox.addWidget(canvas2)
+        canvas2.mpl_connect('pick_event', lambda event: self.onpick(event, ep))
         return vbox
     
     #Inserta elementos en el layout con los nuevos episodios
     def updateView(self):
         if(len(self.selep.epFiltro) > 0):
-            self.vbox = self.crearWidget(self.selep.epFiltro[self.epActual])
+            self.vbox = self.crearWidget(self.selep.epFiltro[self.epActual], 0)
             self.layoutMatplot1.addLayout(self.vbox)
             if(len(self.selep.epFiltro) > 1):
-                self.vbox2 = self.crearWidget(self.selep.epFiltro[self.epActual+1])
+                self.vbox2 = self.crearWidget(self.selep.epFiltro[self.epActual+1], 1)
                 self.layoutMatplot1.addLayout(self.vbox2)
                 
     #Elimina el contenido del layout actual        
     def limpiarLayout(self):
+        plt.close('all') #Cerrar todos las gráficas dibujadas para vaciar memoria   
         for cnt in reversed(range(self.vbox.count())):
             widget = self.vbox.takeAt(cnt).widget()
             if widget is not None: 
@@ -146,16 +165,16 @@ class Main(QMainWindow, Ui_MainWindow):
     def retroceder(self):
         if (self.epActual > 0):
             self.epActual -= 1
-        print "episodio", self.epActual
-        self.limpiarLayout()
-        self.updateView()
+            print "episodio", self.epActual
+            self.limpiarLayout()
+            self.updateView()
         
     def avanzar(self):
         if (self.epActual < len(self.selep.epFiltro) - 2):
             self.epActual += 1
-        print "episodio", self.epActual
-        self.limpiarLayout()
-        self.updateView()
+            print "episodio", self.epActual
+            self.limpiarLayout()
+            self.updateView()
         
         
  
