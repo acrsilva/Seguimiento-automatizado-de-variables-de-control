@@ -42,6 +42,12 @@ class Episodio():
         
         
 def comprobar(ls1, ls2, ls3, i, c1, c2, c3, f, t, maxin, final):
+    """
+    Comprueba si la interrupcion ha llegado al maximo permitido
+    con lo que activa final para cambiar de episodio o activa los
+    instantes de inicio de los otros tipos de episodio cuando
+    detecta el inicio de una interrupción
+    """
     if(ls1[i] == 1):
         t = 0
         f = i
@@ -58,6 +64,9 @@ def comprobar(ls1, ls2, ls3, i, c1, c2, c3, f, t, maxin, final):
     return f, c2, c3, t, final
     
 def cachitoSueno():
+    """
+    Busca los índices de inicio y final de los episodios de sueño
+    """
     indices = []
     a = False #Episodio empezado
     c = 0 #Indice de comienzo
@@ -84,6 +93,12 @@ def cachitoSueno():
 #minep: intervalo mínimo por episodio en minutos
 #maxin: intervalo máximo para considerar interrupción
 def cachitos(minep, maxin):
+    """
+    Crea los distintos episodios teniendo en cuenta el maximo intervalo
+    de interrupcion y el tamaño minimo de un episodio.
+    Devuelve una lista con los indices de inicio y final de cada episodio
+    además del tipo de episodio
+    """
     indices = []
     a = False #Episodio empezado
     t = 0 #Contador de minutos de otra actividad
@@ -138,6 +153,11 @@ def cachitos(minep, maxin):
 #minep: intervalo mínimo por episodio en minutos
 #maxin: intervalo máximo para considerar interrupción
 def creaEpisodios(minep, maxin):
+    """
+    Con los episodios de sueño y los distintos tipos de actividad física
+    se crean los episodios finales. Para ello se cortan los episodios de
+    actividad que contengan a los de sueño.
+    """
     s = cachitoSueno()
     actividad = cachitos(minep, maxin)
     eps = []
