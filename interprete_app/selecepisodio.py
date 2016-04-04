@@ -14,13 +14,16 @@ from pyqtgraph.Qt import QtCore, QtGui
 import numpy as np
 import time
 import datetime
+import leeFichero
 
+#Cargar datos
+csv = leeFichero.LeeFichero('../data.csv')
 
 def cargarActividad():
     print "Cargando clasificación de actividad física"
-    sedentaria = csv[:,18]
-    ligera = csv[:,19]
-    moderada = csv[:,20]
+    sedentaria = csv.actsd
+    ligera = csv.actli
+    moderada = csv.actmd
     actividad = []
     for i in range(len(tiempos)):
         if(sedentaria[i]):
@@ -60,21 +63,21 @@ def trocear():
     return indices
 
 def coloreaSueno():
-	print "Coloreando sueños"
-	colors = []
-	num = 0
-	for i in suenos:
-		if(i == 2): #Sueño ligero
-			c = pg.mkColor(138, 128, 224)
-		elif(i == 4): #Sueño profundo
-			c = pg.mkColor(78, 63, 201)
-		elif(i == 5): #Sueño muy profundo
-			c = pg.mkColor(33, 18, 160)
-		else: #Despierto
-			c = pg.mkColor(255, 245, 89)
-		colors.append(c)
-		num = num + 1
-	return colors
+    print "Coloreando sueños"
+    colors = []
+    num = 0
+    for i in suenos:
+        if(i == 2): #Sueño ligero
+            c = pg.mkColor(138, 128, 224)
+        elif(i == 4): #Sueño profundo
+            c = pg.mkColor(78, 63, 201)
+        elif(i == 5): #Sueño muy profundo
+            c = pg.mkColor(33, 18, 160)
+        else: #Despierto
+            c = pg.mkColor(255, 245, 89)
+        colors.append(c)
+        num = num + 1
+    return colors
     
 def coloreaActividades():
     print "Coloreando clasificación de actividad física"
@@ -92,12 +95,12 @@ def coloreaActividades():
     return colors
 
 def imprimeIndicesEp(indices):
-	print "Imprimiendo indices de episodios de sueño"
-	k = 0
-	for i in indices:
-		print "indice %i : %i - %i" % (k, i[0], i[1]) 
-		k = k+1
-	
+    print "Imprimiendo indices de episodios de sueño"
+    k = 0
+    for i in indices:
+        print "indice %i : %i - %i" % (k, i[0], i[1]) 
+        k = k+1
+    
 
 """
 Crea una barra de colores con la clasificación del sueño de un episodio de sueño
@@ -138,18 +141,17 @@ def rangoEpisodio(ep, ind, colorsuenos, coloracts):
     return ini, fin, eini, efin
 
 
-#Cargar datos
-csv = np.genfromtxt ('../data.csv', delimiter=",")
-tiempos = csv[:,0] / 1000 #Tiempo en minutos
-suenos = csv[:,25] #Clasificador de sueño
-consumos = csv[:,17] #Consumo energético
-temperaturas = csv[:,8] #Temperatura media (piel-4, 8-cuerpo)
-flujos = csv[:,26] #Flujo térmico
-aceleraciones = csv[:,1] #Acel. transversal
+
+tiempos = csv.tiempo #Tiempo en minutos
+suenos = csv.clasifSueno #Clasificador de sueño
+consumos = csv.consm #Consumo energético
+temperaturas = csv.temp #Temperatura media (piel-4, 8-cuerpo)
+flujos = csv.flujo #Flujo térmico
+aceleraciones = csv.acltrans #Acel. transversal
 actividades = cargarActividad()
 flujosAlisado = mediaMovil(flujos, 5)
 temperaturasAlisado = mediaMovil(temperaturas, 5)
-mets = csv[:,21]
+#mets = csv[:,21]
 
 rango = 6 * 60 #Horas antes y después del episodio de sueño
 
@@ -165,7 +167,7 @@ class SelecEpisodio(object):
         cls.tempData = temperaturasAlisado[cls.ini:cls.fin]
         #cls.tempDataNA = temperaturas[cls.ini:cls.fin]
         cls.acelData = aceleraciones[cls.ini:cls.fin]
-        cls.metsData = mets[cls.ini:cls.fin]
+        #cls.metsData = mets[cls.ini:cls.fin]
         cls.activiData = actividades[cls.ini:cls.fin]
         
     def __init__(self):
@@ -178,7 +180,7 @@ class SelecEpisodio(object):
         self.tempData = []
         #self.tempDataNA = []
         self.acelData = []
-        self.metsData = []
+        #self.metsData = []
         self.activiData = []
         
         #Obtener indices de cada episodio de todo el intervalo de sueño
@@ -209,4 +211,4 @@ class SelecEpisodio(object):
     
     
 
-		
+        

@@ -17,6 +17,7 @@ class LeeFichero(object):
         self.nomCols = self.csv.dtype.names
         self.nparams = len(self.nomCols)
         self.sueno = self.csv['Sueño'.encode('iso8859-15')]
+        self.clasifSueno = self.csv['Clasificaciones_del_sueño'.encode('iso8859-15')]
         self.flujo = self.csv['Flujo_térmico__media'.encode('iso8859-15')]
         self.temp = self.csv['Temp_cerca_del_cuerpo__media']
         self.tiempo = self.csv['Time'] / 1000
@@ -25,6 +26,7 @@ class LeeFichero(object):
         self.actmd = self.csv['Moderada']
         self.consm = self.csv['Gasto_energético'.encode('iso8859-15')]
         self.acltrans = self.csv['Acel_transversal__picos']
+
 """
 lee = LeeFichero('../s2.csv')
 print lee.nomCols[19]
