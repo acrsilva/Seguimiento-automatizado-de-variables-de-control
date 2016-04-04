@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import numpy as np
 import datetime
 from scipy.stats import pearsonr
+import leeFichero
 
 csv = np.genfromtxt ('../data.csv', delimiter=",")
 t = csv[:,0] / 1000 #Tiempo
