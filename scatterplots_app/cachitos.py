@@ -6,15 +6,16 @@ import datetime
 from scipy.stats import pearsonr
 import leeFichero
 
-csv = np.genfromtxt ('../data.csv', delimiter=",")
-t = csv[:,0] / 1000 #Tiempo
-actSed = csv[:,18] #Sedentario
-actLig = csv[:,19] #Ligera
-actMod = csv[:,20] #Moderada
-sueno = csv[:,25] #Sueño
+csv = leeFichero.LeeFichero('../data2.csv')
 
-temperaturas = csv[:,8] #Temperatura
-flujos = csv[:,26] #Flujo
+t = csv.tiempo #Tiempo
+actSed = csv.actsd #Sedentario
+actLig = csv.actli #Ligera
+actMod = csv.actmd #Moderada
+sueno = csv.sueno #Sueño
+
+temperaturas = csv.temp #Temperatura
+flujos = csv.flujo #Flujo
 
 dt = []
 
