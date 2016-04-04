@@ -13,6 +13,7 @@ from matplotlib.backends.backend_qt4agg import (
 import cachitos
 import matplotlib.dates as md
 from sklearn import preprocessing
+
     
 Ui_MainWindow, QMainWindow = loadUiType('scatterplots.ui')
 
@@ -55,37 +56,42 @@ class Main(QMainWindow, Ui_MainWindow):
             
     def creaFiguras(self, t, a, b):
         #Serie temporal
-        fig0 = plt.figure()
-        #Escala temperaturas
-        aa = preprocessing.scale(a)
-        bb = preprocessing.scale(b)
+        fig0 = plt.figure(tight_layout=True)
+        #Normalizar
+        preprocessing.scale(a, copy=True)
+        preprocessing.scale(b, copy=True)
+        #Curva temperatura
         ax1 = fig0.add_subplot(111)
-        ax1.plot(t, aa, 'b-')
-        ax1.set_ylim([-5,5])
-        ax1.set_xlabel('Tiempo (m)')
+        ax1.plot(t, a, 'b-')
+        #ax1.set_ylim([-5,5])
+        #ax1.set_xlabel('Tiempo (m)')
         ax1.set_ylabel('Temperatura (ºC)', color='b')
         for tl in ax1.get_yticklabels():
             tl.set_color('b')
         fig0.autofmt_xdate()
         xfmt = md.DateFormatter('%H:%M')
-        ax1.xaxis.set_major_formatter(xfmt) #Warning
+        ax1.xaxis.set_major_formatter(xfmt)
         
         start, end = ax1.get_xlim()
         #ax1.xaxis.set_ticks(np.arange(start, end, 30))
-        #ax1.grid(True)
+        ax1.grid(True)
         
-        #Escala flujo térmico
+        #Curva flujo térmico
         ax2 = ax1.twinx()
-        ax2.plot(t, bb, 'r-')
-        ax2.set_ylim([-5,5])
+        ax2.plot(t, b, 'r-')
+        #ax2.set_ylim([-5,5])
         ax2.set_ylabel('Flujo térmico', color='r')
         for tl in ax2.get_yticklabels():
             tl.set_color('r')
         
         #Scatterplot
-        fig1 = plt.figure()
+        fig1 = plt.figure(tight_layout=True)
         ax1f1 = fig1.add_subplot(111)
         line, = ax1f1.plot(a, b, 'o', picker=5)
+        #ax1f1.set_xlim([20,45])
+        #ax1f1.set_ylim([-20,220])
+        ax1f1.set_xlabel('Temperatura (ºC)', color='b')
+        ax1f1.set_ylabel('Flujo térmico', color='b')
         
         return fig0, fig1
     

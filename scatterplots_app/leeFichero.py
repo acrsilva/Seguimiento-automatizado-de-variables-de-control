@@ -16,15 +16,17 @@ class LeeFichero(object):
         self.csv = np.genfromtxt(nombre, delimiter="," , names=True)
         self.nomCols = self.csv.dtype.names
         self.nparams = len(self.nomCols)
-        self.sueno = self.csv['Sueño'.encode('utf-8')]
-        self.flujo = self.csv['Flujo_térmico__media'.encode('utf-8')]
+        self.sueno = self.csv['Sueño'.encode('iso8859-15')]
+        self.clasifSueno = self.csv['Clasificaciones_del_sueño'.encode('iso8859-15')]
+        self.flujo = self.csv['Flujo_térmico__media'.encode('iso8859-15')]
         self.temp = self.csv['Temp_cerca_del_cuerpo__media']
-        self.tiempo = self.csv['Time']
+        self.tiempo = self.csv['Time'] / 1000
         self.actli = self.csv['Ligera']
         self.actsd = self.csv['Sedentaria']
         self.actmd = self.csv['Moderada']
-        self.consm = self.csv['Gasto_energético'.encode('utf-8')]
+        self.consm = self.csv['Gasto_energético'.encode('iso8859-15')]
         self.acltrans = self.csv['Acel_transversal__picos']
+
 """
 lee = LeeFichero('../data.csv')
 print lee.nombreFichero
