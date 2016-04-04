@@ -6,7 +6,7 @@ import datetime
 from scipy.stats import pearsonr
 import leeFichero
 
-csv = leeFichero.LeeFichero('../data2.csv')
+csv = leeFichero.LeeFichero('../s2.csv')
 
 t = csv.tiempo #Tiempo
 actSed = csv.actsd #Sedentario
