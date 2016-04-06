@@ -168,9 +168,13 @@ class MainWindow(TemplateBaseClass):
         #Configurar los botones
         self.ui.next_e_btn.clicked.connect(self.nextEp)
         self.ui.prev_e_btn.clicked.connect(self.prevEp)
+        self.ui.btnLoadFile.clicked.connect(self.loadData)
         
         self.show()
-    
+        
+    def loadData(self):
+        print "Abriendo fichero "  
+        
     def nextEp(self):
         #Actualizar y mostrar el nuevo episodio
         self.selep.episodioSiguiente()

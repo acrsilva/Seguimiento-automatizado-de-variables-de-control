@@ -24,9 +24,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         
         self.epActual = 0
-        
-        self.selep = cachitos.selEpisodio() #Obtener el selector de episodios
-        
+        self.selep = self.loadData()
         self.updateView()
         
         self.cbSueno.clicked.connect(self.filtrarSueno)
@@ -35,6 +33,18 @@ class Main(QMainWindow, Ui_MainWindow):
         self.cbModerada.clicked.connect(self.filtrarModerada)
         self.btnPrev.clicked.connect(self.retroceder)
         self.btnNext.clicked.connect(self.avanzar)
+        self.btnSelFile.clicked.connect(self.openFile)
+    
+    def openFile(self):
+        self.selep = self.loadData()
+        self.limpiarLayout() 
+        self.updateView() 
+    
+    def loadData(self):
+        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
+        print "Abriendo fichero ", fname
+        selep = cachitos.selEpisodio(fname)
+        return selep
     
     def getTime(self, a, b, ep):
         for i in self.selep.epFiltro[self.epActual + ep].temp:
