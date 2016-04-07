@@ -7,9 +7,9 @@ from scipy.cluster.hierarchy import cophenet
 from scipy.spatial.distance import pdist
 
 
-csv = np.genfromtxt ('data.csv', delimiter=",")
-a = csv[:,8]
-b = csv[:,26]
+csv = np.genfromtxt ('../data.csv', delimiter=",")
+a = csv[:300,8]
+b = csv[:300,26]
 X = np.c_[a,b]
 
 print X.shape 
