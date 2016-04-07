@@ -53,7 +53,7 @@ class selEpisodio():
                 or (i.tipo == tipoModerado and self.filModerado)):
                 self.epFiltro.append(i)
                 self.epFiltro[-1].filtrar(self.dt, self.csv.temp, self.csv.flujo)
-        
+        print len(self.epFiltro), " episodios"
 
     def comprobar(self, ls1, ls2, ls3, i, c1, c2, c3, f, t, maxin, final):
         """
