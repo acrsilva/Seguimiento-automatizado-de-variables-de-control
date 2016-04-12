@@ -1,0 +1,33 @@
+
+Interprete
+- Poder cargar ficheros de datos
+- No dibujar en los saltos temporales 
+- Mostrar cuadrícula en todas las gráficas
+- Marcar hora y valor en el punto seleccionado con el raton
+
+
+Scatterplot
+* Marcar hora en los puntos de dispersion
+* Normalizar por cada intervalo. scale estandarizacion
+* Poder cargar ficheros de datos con un boton
+- No dibujar en los saltos temporales
+* Etiquetar correctamente la grafica superior tras normalizar
+* Mostrar consumo energético en kcal por episodio  y % total consumido
+
+Clustering
+(Individuo: episodio definido por flujo térmico y temperatura)
+- Repasar clustering
+- Repasar ACA y DTW
+- Normalizar por trozos o entero
+- Obtener matriz de distancias por DTW y hacer clustering jerarquico y obtener el dendograma
+- Clasificar los episodios de sueño de un mismo individuo para detectar anomalías
+
+Mejorar rendimiento: en vez vaciar los widgets y volver a crear todas las figuras, crear una clase widget con métodos
+para vaciar cada figura (plt.clf()) y volver a repintar
+    - Crear clase widget donde se crean y repintan los widget
+    - En cachitos inicializar el array de episodios completamente y en vez de crear el array filtro de nuevo cada vez que se
+        pulsa un checkbox, buscar el episodio que cumpla los requisitos
+
+
+Exportar el proyecto:
+http://www.py2exe.org/

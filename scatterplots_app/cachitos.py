@@ -19,11 +19,17 @@ class Episodio():
         self.ini = ini
         self.fin = fin
         self.tipo = tipo
-    def filtrar(self, tiempo, temperaturas, flujo):
+    def filtrar(self, tiempo, temperaturas, flujo, consumo):
         self.tiempo = tiempo[self.ini:self.fin]
         self.temp = temperaturas[self.ini:self.fin]
         self.flujo = flujo[self.ini:self.fin]
         self.correlacion, p = pearsonr(self.temp, self.flujo)
+        self.cal = sum(consumo[self.ini:self.fin])
+    def calcularCal(self, consumo):
+        k = 0
+        for i in consumo:
+             k += i
+        return k            
 
 
 class selEpisodio():
@@ -41,6 +47,7 @@ class selEpisodio():
         self.filModerado = True
         self.epFiltro = []
         self.update()
+        self.totalCal = sum(self.csv.consm)
         
     #Crea el array de episodios con los filtros aplicados
     def update(self):
@@ -52,7 +59,7 @@ class selEpisodio():
                 or (i.tipo == tipoLigera and self.filLigero)
                 or (i.tipo == tipoModerado and self.filModerado)):
                 self.epFiltro.append(i)
-                self.epFiltro[-1].filtrar(self.dt, self.csv.temp, self.csv.flujo)
+                self.epFiltro[-1].filtrar(self.dt, self.csv.temp, self.csv.flujo, self.csv.consm)
         print len(self.epFiltro), " episodios"
 
     def comprobar(self, ls1, ls2, ls3, i, c1, c2, c3, f, t, maxin, final):
