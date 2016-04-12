@@ -6,33 +6,57 @@ from scipy.cluster.hierarchy import dendrogram, linkage
 import numpy as np
 from scipy.cluster.hierarchy import cophenet
 from scipy.spatial.distance import pdist
+from sklearn import preprocessing
+from scipy.spatial.distance import euclidean
+from fastdtw import fastdtw
 
-# some setting for this notebook to actually show the graphs inline, you probably won't need this
-np.set_printoptions(precision=5, suppress=True)  # suppress scientific float notation
 
-episodio = 0
+class Individuo:
+    def __init__(self, tiempo, temperatura, flujo):
+        self.tiempo = tiempo
+        self.stt = temperatura
+        self.stf = flujo
+
+
+#np.set_printoptions(precision=5, suppress=True)
+
 sel = cachitos.selEpisodio("../data.csv")
-csv = sel.epFiltro
-print "total episodios: ", len(csv)
 
 sel.filSueno = True
 sel.filSedentario = False
 sel.filLigero = False
 sel.filModerado = False
 sel.update()
-csv = sel.epFiltro
-print "episodios de sueño: ", len(csv)
+# Obtener los episodios de sueño del fichero
+csv_sueno = sel.epFiltro
+print "episodios de sueño: ", len(csv_sueno)
+
+# Normalizar los episodios de sueño
+eps_sueno = []
+for i in csv_sueno:
+    #Normalizar temperatura y flujo
+    a = preprocessing.scale(i.temp, copy=False)
+    b = preprocessing.scale(i.flujo, copy=False)
+    eps_sueno.append(Individuo(i.tiempo, a, b))
 
 
-X = np.zeros(shape=(0,2))
-for i in csv:
-    x = np.c_[i.temp, i.flujo]
-    X = np.concatenate((X,x),)
-    
-print X.shape
+#Calcular distancias
+distancias = [] #Matriz de distancias entre individuos
+x, y = 0, 0
+for i in eps_sueno:
+    for j in eps_sueno:
+        distanceTemp = fastdtw(i.stt, j.stt, dist=euclidean) #Distancia en temperatura
+        distanceFlujo = fastdtw(i.stf, j.stf, dist=euclidean) #Distancia en flujo
+        distancias.append(distanceTemp + distanceFlujo) #Distancia euclídea total
+        x += 1
+    y += 1
+
 
 #plt.scatter(X[:,0], X[:,1])
 #plt.show()
+
+#Vector con las distancias requeridas para hacer clustering
+print len(distancias), "distancias"
 
 """
 Resultados:
@@ -44,7 +68,7 @@ weighted: 0.816403408353
 median: 0.772500661416
 ward: 0.823703775985
 """
-Z = linkage(X, 'centroid')
+Z = linkage(distancias, 'centroid')
 
 
 c, coph_dists = cophenet(Z, pdist(X))
