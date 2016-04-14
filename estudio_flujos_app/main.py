@@ -42,17 +42,28 @@ for i in csv_sueno:
     b = preprocessing.scale(i.flujo, copy=False)
     eps_sueno.append(Individuo(i.tiempo, a, b))
 
+
 #Calcular distancias
 s = len(eps_sueno)
-print s
 distancias = np.zeros((s, s)) #Matriz de distancias entre individuos
-x, y = 0, 0
-r = range(len(eps_sueno))
-for i in r:
-    for j in r:
-        distanceTemp , path = fastdtw(eps_sueno[i].stt, eps_sueno[j].stt, dist=euclidean) #Distancia en temperatura
-        distanceFlujo , path = fastdtw(eps_sueno[i].stf, eps_sueno[j].stf, dist=euclidean) #Distancia en flujo
-        distancias[j][i] = math.sqrt(math.pow(distanceTemp + distanceFlujo, 2)) #Distancia euclídea total
+
+"""
+#La diagonal de distancias no da 0, mismas ST dan distancias >0 !!!
+for i in range(s):
+    print eps_sueno[i].stt[-1], eps_sueno[i].stt[-1]
+
+for i in range(s):
+    d, p = fastdtw(eps_sueno[i].stt, eps_sueno[i].stt, dist=euclidean)
+    dd, p = fastdtw(eps_sueno[i].stf, eps_sueno[i].stf, dist=euclidean)
+    print d, dd
+"""
+
+for i in range(s):
+    for j in range(s):
+        if(i != j):
+            distanceTemp , path = fastdtw(eps_sueno[i].stt, eps_sueno[j].stt, dist=euclidean) #Distancia en temperatura
+            distanceFlujo , path = fastdtw(eps_sueno[i].stf, eps_sueno[j].stf, dist=euclidean) #Distancia en flujo
+            distancias[j][i] = math.sqrt(math.pow(distanceTemp + distanceFlujo, 2)) #Distancia euclídea total
 
 print "pruebas"
 
@@ -72,7 +83,7 @@ median: 0.772500661416
 ward: 0.823703775985
 """
 dists = ssd.squareform(distancias)
-Z = linkage(dists, 'centroid')
+Z = linkage(dists, 'average')
 
 
 #c, coph_dists = cophenet(Z, pdist(X))
