@@ -11,6 +11,7 @@ from sklearn import preprocessing
 from scipy.spatial.distance import euclidean
 from fastdtw import fastdtw
 import scipy.spatial.distance as ssd
+import math
 
 
 class Individuo:
@@ -41,26 +42,23 @@ for i in csv_sueno:
     b = preprocessing.scale(i.flujo, copy=False)
     eps_sueno.append(Individuo(i.tiempo, a, b))
 
-
 #Calcular distancias
 s = len(eps_sueno)
 print s
 distancias = np.zeros((s, s)) #Matriz de distancias entre individuos
 x, y = 0, 0
-for i in eps_sueno:
-    for j in eps_sueno:
-        distanceTemp , path = fastdtw(i.stt, j.stt, dist=euclidean) #Distancia en temperatura
-        distanceFlujo , path = fastdtw(i.stf, j.stf, dist=euclidean) #Distancia en flujo
-        distancias[y][x] = distanceTemp + distanceFlujo #Distancia euclídea total
-        distancias[x][y] = distancias[y][x]
-        x += 1
-    x = 0
-    y += 1
+r = range(len(eps_sueno))
+for i in r:
+    for j in r:
+        distanceTemp , path = fastdtw(eps_sueno[i].stt, eps_sueno[j].stt, dist=euclidean) #Distancia en temperatura
+        distanceFlujo , path = fastdtw(eps_sueno[i].stf, eps_sueno[j].stf, dist=euclidean) #Distancia en flujo
+        distancias[j][i] = math.sqrt(math.pow(distanceTemp + distanceFlujo, 2)) #Distancia euclídea total
 
-
+print "pruebas"
 
 #Vector con las distancias requeridas para hacer clustering
 print len(distancias), "distancias"
+print distancias
 print distancias.shape
 
 """
