@@ -182,14 +182,14 @@ class Main(QMainWindow, Ui_MainWindow):
     def retroceder(self):
         if (self.epActual > 0):
             self.epActual -= 1
-            print "episodio", self.epActual
+            print "episodios", self.epActual, "y", self.epActual+1
             self.limpiarLayout()
             self.updateView()
         
     def avanzar(self):
         if (self.epActual < len(self.selep.epFiltro) - 2):
             self.epActual += 1
-            print "episodio", self.epActual
+            print "episodios", self.epActual, "y", self.epActual+1
             self.limpiarLayout()
             self.updateView()
         

@@ -20,9 +20,7 @@ class Individuo:
         self.stt = temperatura
         self.stf = flujo
 
-
-#np.set_printoptions(precision=5, suppress=True)
-
+#Cargar datos y filtrar por episodios de sueño
 sel = cachitos.selEpisodio("../data.csv")
 
 sel.filSueno = True
@@ -30,18 +28,15 @@ sel.filSedentario = False
 sel.filLigero = False
 sel.filModerado = False
 sel.update()
-# Obtener los episodios de sueño del fichero
-csv_sueno = sel.epFiltro
-print "episodios de sueño: ", len(csv_sueno)
+print len(sel.epFiltro), "episodios de sueño"
 
 # Normalizar los episodios de sueño
 eps_sueno = []
-for i in csv_sueno:
+for i in sel.epFiltro:
     #Normalizar temperatura y flujo
     a = preprocessing.scale(i.temp, copy=False)
     b = preprocessing.scale(i.flujo, copy=False)
     eps_sueno.append(Individuo(i.tiempo, a, b))
-
 
 #Calcular distancias
 s = len(eps_sueno)
@@ -64,6 +59,7 @@ for i in range(s):
             distanceTemp , path = fastdtw(eps_sueno[i].stt, eps_sueno[j].stt, dist=euclidean) #Distancia en temperatura
             distanceFlujo , path = fastdtw(eps_sueno[i].stf, eps_sueno[j].stf, dist=euclidean) #Distancia en flujo
             distancias[j][i] = math.sqrt(math.pow(distanceTemp + distanceFlujo, 2)) #Distancia euclídea total
+    print '.'
 
 print "pruebas"
 
