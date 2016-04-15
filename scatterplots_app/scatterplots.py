@@ -2,6 +2,8 @@
 
 from __future__ import unicode_literals
 
+import sys
+sys.path.insert(0, '../lib')
 from PyQt4.uic import loadUiType
 from pyqtgraph.Qt import QtCore, QtGui
 #from matplotlib.figure import Figure

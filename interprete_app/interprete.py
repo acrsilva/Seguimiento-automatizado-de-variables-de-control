@@ -11,6 +11,8 @@ sudo python setup.py install
 """
 from __future__ import unicode_literals
 
+import sys
+sys.path.insert(0, '../lib')
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtGui
 import numpy as np
