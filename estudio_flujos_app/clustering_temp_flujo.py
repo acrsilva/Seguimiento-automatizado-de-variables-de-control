@@ -88,7 +88,7 @@ Z = linkage(dists, 'average')
 #print c
 
 
-plt.figure(figsize=(25, 10))
+plt.figure()
 plt.title('Hierarchical Clustering Dendrogram')
 plt.xlabel('sample index')
 plt.ylabel('distance')

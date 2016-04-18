@@ -4,7 +4,8 @@ Interprete
 - No dibujar en los saltos temporales 
 - Mostrar cuadrícula en todas las gráficas
 - Marcar hora y valor en el punto seleccionado con el raton
-
+- Cambiar colores de la barra
+- Unificar los colores de barra y graficos con el resto de programas
 
 Scatterplot
 * Marcar hora en los puntos de dispersion
@@ -13,8 +14,10 @@ Scatterplot
 - No dibujar en los saltos temporales
 * Etiquetar correctamente la grafica superior tras normalizar
 * Mostrar consumo energético en kcal por episodio  y % total consumido
+- Unificar los colores de barra y graficos con el resto de programas
+- Mejorar rendimiento (*)
 
-Clustering
+Estudio flujos: (clustering)
 (Individuo: episodio definido por flujo térmico y temperatura)
 - Repasar clustering
 - Repasar ACA y DTW
@@ -22,12 +25,18 @@ Clustering
 - Obtener matriz de distancias por DTW y hacer clustering jerarquico y obtener el dendograma
 - Clasificar los episodios de sueño de un mismo individuo para detectar anomalías
 
-Mejorar rendimiento: en vez vaciar los widgets y volver a crear todas las figuras, crear una clase widget con métodos
+Estudio consumo:
+- 
+
+
+(*)Mejorar rendimiento: en vez vaciar los widgets y volver a crear todas las figuras, crear una clase widget con métodos
 para vaciar cada figura (plt.clf()) y volver a repintar
     - Crear clase widget donde se crean y repintan los widget
     - En cachitos inicializar el array de episodios completamente y en vez de crear el array filtro de nuevo cada vez que se
         pulsa un checkbox, buscar el episodio que cumpla los requisitos
-
-
-Exportar el proyecto:
-http://www.py2exe.org/
+    - En cachitos crear un metodo filtrar con un parámetro por cada tipo de actividad y dejar el init únicamente con
+        todos los episodios calculados ya que no siempre interesa aplicar filtros.
+        
+        
+Exportar el proyecto a exe o py
+- http://www.py2exe.org/
