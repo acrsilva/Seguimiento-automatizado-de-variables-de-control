@@ -26,7 +26,7 @@ Estudio flujos: (clustering)
 - Clasificar los episodios de sueño de un mismo individuo para detectar anomalías
 
 Estudio consumo:
-- 
+- Unificar colores
 
 
 (*)Mejorar rendimiento: en vez vaciar los widgets y volver a crear todas las figuras, crear una clase widget con métodos

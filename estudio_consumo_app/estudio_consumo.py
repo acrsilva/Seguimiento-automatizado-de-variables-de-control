@@ -19,37 +19,43 @@ class Main(QMainWindow, Ui_MainWindow):
         super(Main, self).__init__()
         self.setupUi(self)
         self.selep = cachitos.selEpisodio("../data.csv")
-        #self.totalEpisodios = len(self.selep.episodios)
         
         self.drawActividadesPie()
+        #self.drawConsumosPie()
+    
+    def __crearWidget__(self, sizes):
+        labels = ['Dormido', 'Sedentario', 'Act. Ligera', 'Act. Moderada', 'Act. Intensa', 'Act. Muy intensa']
+        colors = ['gold', 'yellowgreen', 'lightcoral', 'lightskyblue', 'red', 'red'] #CAMBIAR COLORES!!!
+        fig = plt.figure()
+        #fig.suptitle("Tiempo por actividad", fontsize = 22)
+        ax = fig.add_subplot(111) 
+        pie = ax.pie(sizes, colors=colors, autopct='%1.1f%%', shadow=False, startangle=0)
+        ax.legend(pie[0], labels, loc="best")
+        ax.axis('equal')
+        fig.tight_layout()
+        
+        return FigureCanvas(fig)
         
     def drawActividadesPie(self):
         print "Dibujar gráfica actividades"
-        labels = ['Sedentario', 'Act. Ligera', 'Act. Moderada', 'Sueno']
-        colors = ['gold', 'yellowgreen', 'lightcoral', 'lightskyblue']
-        sizes = [0, 0, 0, 0]
-        #Falta calcular tiempos!!!!
+        sizes = [0, 0, 0, 0, 0, 0]
+        # Calcular tiempo de cada actividad
         for i in self.selep.episodios:
             if(i.tipo == cachitos.tipoSueno):
-                sizes[0] += 1
+                sizes[0] += len(i.tiempo)
             elif(i.tipo == cachitos.tipoSedentario):
-                sizes[1] += 1
+                sizes[1] += len(i.tiempo)
             elif(i.tipo == cachitos.tipoLigera):
-                sizes[2] += 1
+                sizes[2] += len(i.tiempo)
             elif(i.tipo == cachitos.tipoModerado):
-                sizes[3] += 1
-        
+                sizes[3] += len(i.tiempo)
         print sizes
-         
-        fig = plt.figure()
-        ax = fig.add_subplot(111) 
-        ax.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True, startangle=140)
         
-        self.pie_tiempo.canvas = FigureCanvas(fig)
-        self.pie_tiempo.canvas.draw()
+        self.layout_pie_tiempos.addWidget(self.__crearWidget__(sizes))
 
     def drawConsumosPie(self):
         print "Dibujar gráfica consumos"
+        
         
 
 if __name__ == '__main__':

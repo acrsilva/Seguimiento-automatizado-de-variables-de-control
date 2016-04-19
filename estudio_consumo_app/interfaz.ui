@@ -14,35 +14,27 @@
    <string>Estudio de calorías y actividades</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="pie_tiempo" native="true">
+   <widget class="QWidget" name="widget" native="true">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>150</y>
-      <width>120</width>
-      <height>80</height>
+      <x>20</x>
+      <y>20</y>
+      <width>461</width>
+      <height>451</height>
      </rect>
     </property>
+    <layout class="QVBoxLayout" name="layout_pie_tiempos"/>
    </widget>
-   <widget class="QWidget" name="pie_consumo" native="true">
+   <widget class="QWidget" name="widget_2" native="true">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>150</y>
-      <width>120</width>
-      <height>80</height>
+      <x>510</x>
+      <y>20</y>
+      <width>481</width>
+      <height>451</height>
      </rect>
     </property>
-   </widget>
-   <widget class="QWidget" name="bar_ratio" native="true">
-    <property name="geometry">
-     <rect>
-      <x>820</x>
-      <y>160</y>
-      <width>120</width>
-      <height>80</height>
-     </rect>
-    </property>
+    <layout class="QVBoxLayout" name="layout_pie_consumos"/>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
