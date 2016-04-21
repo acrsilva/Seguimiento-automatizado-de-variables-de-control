@@ -24,13 +24,14 @@ class Episodio():
         self.temp = temperaturas[self.ini:self.fin]
         self.flujo = flujo[self.ini:self.fin]
         self.correlacion, p = pearsonr(self.temp, self.flujo)
-        self.cal = sum(consumo[self.ini:self.fin])
+        self.numCalorias = sum(consumo[self.ini:self.fin])
+    """
     def calcularCal(self, consumo):
         k = 0
         for i in consumo:
              k += i
         return k            
-
+    """
 
 class selEpisodio():
     def __init__(self, filename):
