@@ -36,7 +36,7 @@ para vaciar cada figura (plt.clf()) y volver a repintar
         pulsa un checkbox, buscar el episodio que cumpla los requisitos
     - En cachitos crear un metodo filtrar con un parámetro por cada tipo de actividad y dejar el init únicamente con
         todos los episodios calculados ya que no siempre interesa aplicar filtros.
-        
+    - En cachitos hacer una clase EpisodioSimple con inicio, fin y tipo y otra EpisodioCompleto que herede con el resto de atributos necesarios    
         
 Exportar el proyecto a exe o py
 - http://www.py2exe.org/

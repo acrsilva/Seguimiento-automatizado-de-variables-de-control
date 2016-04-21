@@ -83,7 +83,7 @@ plt.show()
         
 """
 
-
+"""
 # Data to plot
 labels = ['Python', 'C++', 'Ruby', 'Java']
 sizes = [215, 130, 245, 210]
@@ -96,7 +96,6 @@ plt.pie(sizes, explode=explode, labels=labels, colors=colors,
  
 plt.axis('equal')
 plt.show()
-
 """
 labels = ['Cookies', 'Jellybean', 'Milkshake', 'Cheesecake']
 sizes = [38.4, 40.6, 20.7, 10.3]
@@ -106,4 +105,3 @@ plt.legend(patches, labels, loc="best")
 plt.axis('equal')
 plt.tight_layout()
 plt.show()
-"""
