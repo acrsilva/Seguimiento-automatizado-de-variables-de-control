@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 import numpy as np
-import datetime
+from datetime import datetime
 from scipy.stats import pearsonr
 import leeFichero
 
@@ -39,7 +39,7 @@ class selEpisodio():
 
         self.dt = []
         for i in self.csv.tiempo:
-            self.dt.append(datetime.datetime.fromtimestamp(i))
+            self.dt.append(datetime.fromtimestamp(i))
         
         self.episodios = self.creaEpisodios(15,9)
         self.filSueno = True
@@ -197,7 +197,63 @@ class selEpisodio():
                 eps.append(a)
         return eps
 
-
+    def cachitos2(self, minep, maxin):
+        indices = []
+        a = False #Episodio empezado
+        t = 0 #Contador de minutos de otra actividad
+        sed, lig, mod, sno, final = False, False, False, False, False
+        cs, cl, cm, cn = 0, 0, 0, 0
+        fs, fl, fm, fn = 0, 0, 0, 0
+        for i in range(len(self.csv.actsd)):
+            if(self.csv.sueno[i] == 1 and not a):
+                a, sno = True, True
+                fn = i
+                t = 0
+                if (cn == 0):
+                    cn = i
+            if(self.csv.actsd[i] == 1 and not a):
+                a, sed = True, True            
+                fs = i
+                t = 0
+                if (cs == 0):
+                    cs = i
+            elif(sed and a):
+                fs, cl, cm, t, final = self.comprobar(self.csv.actsd, self.csv.actli, self.csv.actmd, i, cs, cl, cm, fs, t, maxin, final)
+                if (final):
+                    if (fs > cs and (fs-cs) >= minep):
+                        #indices.append([cs,fs])
+                        indices.append(Episodio(cs, fs, tipoSedentario))
+                    t, cs = 0, 0
+                    a, final, sed = False, False, False
+            if(self.csv.actli[i] == 1 and not a):
+                a, lig = True, True
+                t = 0
+                fl = i
+                if(cl == 0):
+                    cl = i
+            elif(lig and a):
+                fl, cs, cm, t, final = self.comprobar(self.csv.actli, self.csv.actsd, self.csv.actmd, i, cl, cs, cm, fl, t, maxin, final)
+                if (final):
+                    if (fl > cl and (fl-cl) >= minep):
+                        #indices.append([cs,fs])
+                        indices.append(Episodio(cl, fl, tipoLigera))
+                    t, cl = 0, 0
+                    a, final, lig = False, False, False
+            if(self.csv.actmd[i] == 1 and not a):
+                a, mod = True, True
+                t = 0
+                fm = i
+                if(cm == 0):
+                    cm = i
+            elif(mod and a):
+                fm, cs, cl, t, final = self.comprobar(self.csv.actmd, self.csv.actsd, self.csv.actli, i, cm, cs, cl, fm, t, maxin, final)
+                if (final):
+                    if (fm > cm and (fm-cm) >= minep):
+                        #indices.append([cs,fs])
+                        indices.append(Episodio(cm, fm, tipoModerado))
+                    t, cm = 0, 0
+                    a, final, mod = False, False, False
+        return indices
 
 
 
