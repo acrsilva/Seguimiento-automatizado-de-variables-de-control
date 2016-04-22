@@ -4,7 +4,7 @@ Interprete
 - No dibujar en los saltos temporales 
 - Mostrar cuadrícula en todas las gráficas
 - Marcar hora y valor en el punto seleccionado con el raton
-- Cambiar colores de la barra
+* Cambiar colores de la barra
 - Unificar los colores de barra y graficos con el resto de programas
 
 Scatterplot
@@ -16,6 +16,7 @@ Scatterplot
 * Mostrar consumo energético en kcal por episodio  y % total consumido
 - Unificar los colores de barra y graficos con el resto de programas
 - Mejorar rendimiento (*)
+- Fallo: no muestra calorias y % en todos los ficheros (nan)
 
 Estudio flujos: (clustering)
 (Individuo: episodio definido por flujo térmico y temperatura)
@@ -27,6 +28,8 @@ Estudio flujos: (clustering)
 
 Estudio consumo:
 - Unificar colores
+- Mostrar duración, inicio, fin y tipos de episodios internos en cada actividad de la gráfica de barras
+- Cargar ficheros
 
 
 (*)Mejorar rendimiento: en vez vaciar los widgets y volver a crear todas las figuras, crear una clase widget con métodos

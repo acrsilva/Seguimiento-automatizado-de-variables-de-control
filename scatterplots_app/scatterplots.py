@@ -117,7 +117,7 @@ class Main(QMainWindow, Ui_MainWindow):
         vbox.addWidget(QtGui.QLabel("<b>Final:</b> " + str(filtro.tiempo[-1])))
         vbox.addWidget(QtGui.QLabel("<b>Duración:</b> %i min" % (len(filtro.tiempo))))
         vbox.addWidget(QtGui.QLabel("<b>Coeficiente de correlación:</b> " + str(filtro.correlacion)[:5]))
-        vbox.addWidget(QtGui.QLabel("<b>Calorías consumidas:</b> " + str(filtro.cal)[:6] + " (" + str(filtro.cal/self.selep.totalCal*100)[:4] + "%)"))
+        vbox.addWidget(QtGui.QLabel("<b>Calorías consumidas:</b> " + str(filtro.numCalorias)[:6] + " (" + str(filtro.numCalorias/self.selep.totalCal*100)[:4] + "%)"))
         vbox.addWidget(canvas1)
         vbox.addWidget(canvas2)
         canvas2.mpl_connect('pick_event', lambda event: self.onpick(event, ep))
