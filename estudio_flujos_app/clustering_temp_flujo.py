@@ -13,7 +13,7 @@ from scipy.spatial.distance import euclidean
 from fastdtw import fastdtw
 import scipy.spatial.distance as ssd
 import math
-
+import mlpy
 
 class Individuo:
     def __init__(self, tiempo, temperatura, flujo):
@@ -43,22 +43,25 @@ for i in sel.epFiltro:
 s = len(eps_sueno)
 distancias = np.zeros((s, s)) #Matriz de distancias entre individuos
 
+
 """
-#La diagonal de distancias no da 0, mismas ST dan distancias >0 !!!
+#La diagonal de distancias no da 0 con fastdtw, mismas ST dan distancias >0 !!!
 for i in range(s):
     print eps_sueno[i].stt[-1], eps_sueno[i].stt[-1]
-
 for i in range(s):
     d, p = fastdtw(eps_sueno[i].stt, eps_sueno[i].stt, dist=euclidean)
     dd, p = fastdtw(eps_sueno[i].stf, eps_sueno[i].stf, dist=euclidean)
-    print d, dd
+    dt = mlpy.dtw_std(eps_sueno[i].stt, eps_sueno[i].stt, dist_only=True)
+    df = mlpy.dtw_std(eps_sueno[i].stf, eps_sueno[i].stf, dist_only=True)
+    print d, dd, dt, df
 """
 
 for i in range(s):
     for j in range(s):
-        if(i != j):
-            distanceTemp , path = fastdtw(eps_sueno[i].stt, eps_sueno[j].stt, dist=euclidean) #Distancia en temperatura
-            distanceFlujo , path = fastdtw(eps_sueno[i].stf, eps_sueno[j].stf, dist=euclidean) #Distancia en flujo
+            #distanceTemp , path = fastdtw(eps_sueno[i].stt, eps_sueno[j].stt, dist=euclidean) #Distancia en temperatura
+            #distanceFlujo , path = fastdtw(eps_sueno[i].stf, eps_sueno[j].stf, dist=euclidean) #Distancia en flujo
+            distanceTemp = mlpy.dtw_std(eps_sueno[i].stt, eps_sueno[j].stt, dist_only=True)
+            distanceFlujo = mlpy.dtw_std(eps_sueno[i].stf, eps_sueno[j].stf, dist_only=True)
             distancias[j][i] = math.sqrt(math.pow(distanceTemp + distanceFlujo, 2)) #Distancia euclídea total
     print '.'
 
@@ -87,6 +90,7 @@ Z = linkage(dists, 'average')
 #c, coph_dists = cophenet(Z, distancias)
 #print c
 
+print Z
 
 plt.figure()
 plt.title('Hierarchical Clustering Dendrogram')
