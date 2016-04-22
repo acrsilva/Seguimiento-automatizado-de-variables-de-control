@@ -77,23 +77,4 @@ for i in datos.dias:
     print dt.utcfromtimestamp(dia[len(dia)-1])
            
 """
-"""        
-class Example(QtGui.QMainWindow):
-    def __init__(self):
-        super(Example, self).__init__() 
-    
-        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
-        lee = LeeFichero(open(fname, 'r'))
-        print lee.nomCols[19]
-        print lee.actli
-        print lee.nomCols[15]
-        print lee.sueno
-        print lee.nomCols[17]
-        print lee.consm
-    
-    
-app = QtGui.QApplication(sys.argv)
-ex = Example()
-sys.exit(app.exec_())        
 
-"""
