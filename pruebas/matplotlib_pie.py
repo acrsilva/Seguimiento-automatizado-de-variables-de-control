@@ -97,6 +97,8 @@ plt.pie(sizes, explode=explode, labels=labels, colors=colors,
 plt.axis('equal')
 plt.show()
 """
+
+"""
 labels = ['Cookies', 'Jellybean', 'Milkshake', 'Cheesecake']
 sizes = [38.4, 40.6, 20.7, 10.3]
 colors = ['yellowgreen', 'gold', 'lightskyblue', 'lightcoral']
@@ -105,3 +107,36 @@ plt.legend(patches, labels, loc="best")
 plt.axis('equal')
 plt.tight_layout()
 plt.show()
+"""
+
+import matplotlib.pyplot as plt
+
+def main():
+    # Make an example pie plot
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    labels = ['Apple', 'Mango', 'Orange']
+    wedges, plt_labels = ax.pie([20, 40, 60], labels=labels)
+    ax.axis('equal')
+
+    make_picker(fig, wedges)
+    plt.show()
+
+def make_picker(fig, wedges):
+
+    def onclick(event):
+        wedge = event.artist
+        label = wedge.get_label()
+        print label
+
+# Make wedges selectable
+    for wedge in wedges:
+        wedge.set_picker(True)
+
+    fig.canvas.mpl_connect('pick_event', onclick)
+
+if __name__ == '__main__':
+    main()
+    
+    
