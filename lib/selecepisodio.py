@@ -15,6 +15,7 @@ import numpy as np
 import time
 import datetime
 import leeFichero
+import colores
 
 #Cargar datos
 csv = leeFichero.LeeFichero('../data.csv')
@@ -68,13 +69,13 @@ def coloreaSueno():
     num = 0
     for i in suenos:
         if(i == 2): #Sueño ligero
-            c = pg.mkColor(138, 128, 224)
+            c = colores.suenoLigero
         elif(i == 4): #Sueño profundo
-            c = pg.mkColor(78, 63, 201)
+            c = colores.suenoProfundo
         elif(i == 5): #Sueño muy profundo
-            c = pg.mkColor(33, 18, 160)
+            c = colores.suenoMuyProfundo
         else: #Despierto
-            c = pg.mkColor(255, 245, 89)
+            c = colores.despierto
         colors.append(c)
         num = num + 1
     return colors
@@ -85,11 +86,11 @@ def coloreaActividades():
     num = 0
     for i in actividades:
         if(i == 0): #sedentaria
-            c = pg.mkColor(255, 245, 89)
+            c = colores.sedentario
         if(i == 1): #ligera 
-            c = pg.mkColor(255, 180, 0)
+            c = colores.ligero
         elif(i == 2): #moderada 255, 129, 16
-            c = pg.mkColor(243, 16, 92)
+            c = colores.moderado
         colors.append(c)
         num = num + 1
     return colors
@@ -170,7 +171,8 @@ class SelecEpisodio(object):
         #cls.metsData = mets[cls.ini:cls.fin]
         cls.activiData = actividades[cls.ini:cls.fin]
         
-    def __init__(self):
+    def __init__(self, filename=''):
+        #csv = leeFichero.LeeFichero(open(filename, 'r'))
         self.ini, self.fin, self.eini, self.efin = 0, 0, 0, 0
         self.barraSuenio = []
         self.horas = []
