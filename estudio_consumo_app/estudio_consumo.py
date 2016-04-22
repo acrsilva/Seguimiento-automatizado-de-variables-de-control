@@ -13,6 +13,10 @@ import cachitos
 
 Ui_MainWindow, QMainWindow = loadUiType('interfaz.ui')
 
+class prueba:
+    def __init__(self, num):
+        self.num = num
+        self.p = "clase prueba"
 
 class Main(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -38,16 +42,37 @@ class Main(QMainWindow, Ui_MainWindow):
     
     def __crearBarWidget__(self, means):
         def onpick(event):
-            print "picado"
-            print events
+            rect = event.artist
+            for i in range(len(self.bar)):
+                if (self.bar[i] == rect):
+                    print "encontrado", i, self.selep.epFiltro[i].numCalorias, len(self.selep.epFiltro[i].tiempo)
+                    
         fig = plt.figure(facecolor='white')
         ax = fig.add_subplot(111)
+        colors = []
+        for i in self.selep.epFiltro:
+            if(i.tipo == cachitos.tipoSueno):
+                c = '#8A80E0'
+            elif(i.tipo == cachitos.tipoSedentario):
+                c = '#74BAEB'
+            elif(i.tipo == cachitos.tipoLigera):
+                c = '#2B97E3'
+            elif(i.tipo == cachitos.tipoModerado):
+                c = '#056EB9'
+            colors.append(c)
+            
         ind = np.linspace(10, len(means), num=len(means))
-        bar = ax.bar(ind, means, color='r', picker=1)
+        self.bar = ax.bar(ind, means, color=colors, picker=1, align='center')
+        ax.set_xticklabels(np.arange(len(means)))
         fig.tight_layout()
-        fig.canvas.mpl_connect('pick_event', onpick)
         
-        return FigureCanvas(fig)
+        canvas = FigureCanvas(fig)
+        vbox = QtGui.QGridLayout()
+        vbox.addWidget(canvas)
+        canvas.mpl_connect('pick_event', onpick)
+        
+        #return FigureCanvas(fig)
+        return vbox
     
     def drawActividadesPie(self):
         print "Dibujar gráfica actividades"
@@ -90,7 +115,7 @@ class Main(QMainWindow, Ui_MainWindow):
         for i in self.selep.epFiltro:
             ratios.append(i.numCalorias / (i.fin - i.ini))
         
-        self.layout_bar_ratio.addWidget(self.__crearBarWidget__(ratios))
+        self.layout_bar_ratio.addLayout(self.__crearBarWidget__(ratios))
         
 if __name__ == '__main__':
     import sys
