@@ -15,6 +15,7 @@ import scipy.spatial.distance as ssd
 import math
 import mlpy
 
+#Representa un episodio de sueño mediante las series temporales de flujo y temperatura
 class Individuo:
     def __init__(self, tiempo, temperatura, flujo):
         self.tiempo = tiempo
@@ -22,26 +23,21 @@ class Individuo:
         self.stf = flujo
 
 #Cargar datos y filtrar por episodios de sueño
-sel = cachitos.selEpisodio("../data.csv")
+sel = cachitos.selEpisodio("../ejemplos/csv2.csv")
 
 sel.filSueno = True
 sel.filSedentario = False
 sel.filLigero = False
 sel.filModerado = False
 sel.update()
-print len(sel.epFiltro), "episodios de sueño"
 
-# Normalizar los episodios de sueño
+print "Normalizar", len(sel.epFiltro), "episodios de sueño"
+# Normalizar por estandarización cada episodio de sueño (temperatura y flujo)
 eps_sueno = []
 for i in sel.epFiltro:
-    #Normalizar temperatura y flujo
     a = preprocessing.scale(i.temp, copy=False)
     b = preprocessing.scale(i.flujo, copy=False)
     eps_sueno.append(Individuo(i.tiempo, a, b))
-
-#Calcular distancias
-s = len(eps_sueno)
-distancias = np.zeros((s, s)) #Matriz de distancias entre individuos
 
 
 """
@@ -56,19 +52,19 @@ for i in range(s):
     print d, dd, dt, df
 """
 
+#Calcular matriz de distancias entre cada individuo por DTW
+s = len(eps_sueno)
+distancias = np.zeros((s, s))
 for i in range(s):
     for j in range(s):
-            #distanceTemp , path = fastdtw(eps_sueno[i].stt, eps_sueno[j].stt, dist=euclidean) #Distancia en temperatura
-            #distanceFlujo , path = fastdtw(eps_sueno[i].stf, eps_sueno[j].stf, dist=euclidean) #Distancia en flujo
-            distanceTemp = mlpy.dtw_std(eps_sueno[i].stt, eps_sueno[j].stt, dist_only=True)
-            distanceFlujo = mlpy.dtw_std(eps_sueno[i].stf, eps_sueno[j].stf, dist_only=True)
-            distancias[j][i] = math.sqrt(math.pow(distanceTemp + distanceFlujo, 2)) #Distancia euclídea total
+        #distanceTemp , path = fastdtw(eps_sueno[i].stt, eps_sueno[j].stt, dist=euclidean) #Distancia en temperatura
+        #distanceFlujo , path = fastdtw(eps_sueno[i].stf, eps_sueno[j].stf, dist=euclidean) #Distancia en flujo
+        distanceTemp = mlpy.dtw_std(eps_sueno[i].stt, eps_sueno[j].stt, dist_only=True) #Dist. euclidea
+        distanceFlujo = mlpy.dtw_std(eps_sueno[i].stf, eps_sueno[j].stf, dist_only=True)
+        distancias[j][i] = math.sqrt(math.pow(distanceTemp, 2) + math.pow(distanceFlujo, 2)) #Distancia euclídea total
     print '.'
 
-print "pruebas"
-
 #Vector con las distancias requeridas para hacer clustering
-print len(distancias), "distancias"
 print distancias
 print distancias.shape
 
@@ -82,23 +78,19 @@ weighted: 0.816403408353
 median: 0.772500661416
 ward: 0.823703775985
 """
+#Obtener la diagonal de la matriz de distancias
 dists = ssd.squareform(distancias)
+#Calcular clustering jerárquico
 Z = linkage(dists, 'average')
-
 
 #c, coph_dists = cophenet(Z, pdist(X))
 #c, coph_dists = cophenet(Z, distancias)
 #print c
 
-print Z
-
-plt.figure()
-plt.title('Hierarchical Clustering Dendrogram')
-plt.xlabel('sample index')
-plt.ylabel('distance')
-dendrogram(
-    Z,
-    leaf_rotation=90.,
-    leaf_font_size=8.,
-)
+#Dibujar dendograma
+plt.figure('Clustering')
+plt.title('Dendograma de clustering jerarquico')
+plt.xlabel('Indice de episodio')
+plt.ylabel('Distancia')
+dendrogram(Z, leaf_rotation=90., leaf_font_size=8.)
 plt.show()
