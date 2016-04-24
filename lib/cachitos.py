@@ -34,7 +34,7 @@ class Episodio():
     """
 
 class selEpisodio():
-    def __init__(self, filename):
+    def __init__(self, filename, sueno=True, sedentario=True, ligero=True, moderado=True):
         self.csv = leeFichero.LeeFichero(open(filename, 'r'))
 
         self.dt = []
@@ -42,10 +42,10 @@ class selEpisodio():
             self.dt.append(datetime.fromtimestamp(i))
         
         self.episodios = self.creaEpisodios(15,9)
-        self.filSueno = True
-        self.filSedentario = True
-        self.filLigero = True
-        self.filModerado = True
+        self.filSueno = sueno
+        self.filSedentario = sedentario
+        self.filLigero = ligero
+        self.filModerado = moderado
         self.epFiltro = []
         self.update()
         self.totalCal = sum(self.csv.consm)
