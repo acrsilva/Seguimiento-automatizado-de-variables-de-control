@@ -15,6 +15,8 @@ tipoSueno = "sueño"
 tipoSedentario = "sedentario"
 tipoLigera = "ligero"
 tipoModerado = "moderado"
+#interrupciones: sueño, sedentario, ligero, moderado
+interrupcion = (35, 7, 4, 3)
 
 #Estructura con la información de un episodio
 class Episodio():
@@ -40,8 +42,8 @@ class selEpisodio():
         for i in self.csv.tiempo:
             self.dt.append(datetime.fromtimestamp(i))
         
-        ind = self.cachitos2(15, 4, self.csv.sueno, self.csv.actsd, self.csv.actli, self.csv.actmd)
-        self.episodios = self.creaEpisodios2(5, 35, 7, 4, 3, ind)
+        self.episodios = self.cachitos2(self.csv.sueno, self.csv.actsd, self.csv.actli, self.csv.actmd)
+        self.creaEpisodios2(5, interrupcion, self.episodios)
         
         self.epFiltro = []
         self.update(sueno, sedentario, ligero, moderado)
@@ -194,17 +196,8 @@ class selEpisodio():
                     j += 1
             else:
                 eps.append(a)
-        return eps
-        
-    def cumpleMin(self, minep, lista):
-        cumple = False
-        i = 0
-        while i < len(lista) and not cumple:
-            if(lista[i].fin - lista[i].ini > minep):
-                cumple = True
-            i += 1
-        return cumple
-        
+        return eps      
+     
     def actualizaEp(self, i, op, lista):
         """
         Elimina episodios de la lista que interrumpen a otro episodio
@@ -221,7 +214,6 @@ class selEpisodio():
             lista.remove(lista[i+2])
             lista.remove(lista[i+1])
             lista[i] = nuevoEp
-        return lista
     
     def cortaMinep(self, minep, lista):
         """
@@ -244,7 +236,6 @@ class selEpisodio():
             self.ponerNombres(lista[i], nums)
             i += 1
         self.ponerNombres(lista[i], nums)
-        return lista
         
     def ponerNombres(self, episodio, nums):
         """
@@ -263,40 +254,41 @@ class selEpisodio():
             nums[3] += 1
             episodio.nombre = str(nums[3]) + ". Moderada"
         
-    def creaEpisodios2(self, minep, mxsni, mxsdi, mxlgi, mxmdi, lista):
+    def creaEpisodios2(self, minep, intr, lista):
         """
         Crea episodios de las distintas actividades con interrupciones variables
         para cada uno dependiendo de su importancia
-        mxsni: maxima interrupcion en un episodio de sueño
-        mxsdi: maxima interrupcion en un episodio de actv sedentaria
-        mslgi: maxima interrupcion en un episodio de actv ligera
-        mxmdi: maxima interrupcion en un episodio de actv moderada
+        intr son las interrupciones maximas de cada tipo de actividad
+            0: maxima interrupcion en un episodio de sueño
+            1: maxima interrupcion en un episodio de actv sedentaria
+            2: maxima interrupcion en un episodio de actv ligera
+            3: maxima interrupcion en un episodio de actv moderada
         """
         i = 0
-        while self.cumpleMin(minep, lista) and i < len(lista)-3:
+        while i < len(lista)-3:
             if lista[i].fin - lista[i].ini + 1:
                 if lista[i].tipo == lista[i+2].tipo :
-                    if(lista[i].tipo == tipoModerado and lista[i+1].fin - lista[i+1].ini < mxmdi):
-                        lista = self.actualizaEp(i, 2, lista)
-                    elif(lista[i].tipo == tipoSueno and lista[i+1].fin - lista[i+1].ini < mxsni):
-                        lista = self.actualizaEp(i, 2, lista)
-                    elif(lista[i].tipo == tipoLigera and lista[i+1].fin - lista[i+1].ini < mxlgi):
-                        lista = self.actualizaEp(i, 2, lista)
-                    elif(lista[i].tipo == tipoSedentario and lista[i+1].fin - lista[i+1].ini < mxsdi):
-                        lista = self.actualizaEp(i, 2, lista)
+                    if(lista[i].tipo == tipoModerado and lista[i+1].fin - lista[i+1].ini < intr[3]):
+                        self.actualizaEp(i, 2, lista)
+                    elif(lista[i].tipo == tipoSueno and lista[i+1].fin - lista[i+1].ini < intr[0]):
+                        self.actualizaEp(i, 2, lista)
+                    elif(lista[i].tipo == tipoLigera and lista[i+1].fin - lista[i+1].ini < intr[2]):
+                        self.actualizaEp(i, 2, lista)
+                    elif(lista[i].tipo == tipoSedentario and lista[i+1].fin - lista[i+1].ini < intr[1]):
+                        self.actualizaEp(i, 2, lista)
                     else:
                         i += 1
                 elif lista[i].tipo == lista[i+3].tipo :
                     uno = lista[i+1].fin - lista[i+1].ini + 1
                     dos = lista[i+2].fin - lista[i+2].ini + 1
-                    if(lista[i].tipo == tipoSueno and uno + dos < mxsni):
-                        lista = self.actualizaEp(i, 3, lista)
-                    elif(lista[i].tipo == tipoSedentario and uno + dos < mxsdi):
-                        lista = self.actualizaEp(i, 3, lista)
-                    elif(lista[i].tipo == tipoLigera and uno + dos < mxlgi):
-                        lista = self.actualizaEp(i, 3, lista)
-                    elif(lista[i].tipo == tipoModerado and uno + dos < mxmdi):
-                        lista = self.actualizaEp(i, 3, lista)
+                    if(lista[i].tipo == tipoSueno and uno + dos < intr[0]):
+                        self.actualizaEp(i, 3, lista)
+                    elif(lista[i].tipo == tipoSedentario and uno + dos < intr[1]):
+                        self.actualizaEp(i, 3, lista)
+                    elif(lista[i].tipo == tipoLigera and uno + dos < intr[2]):
+                        self.actualizaEp(i, 3, lista)
+                    elif(lista[i].tipo == tipoModerado and uno + dos < intr[3]):
+                        self.actualizaEp(i, 3, lista)
                     else:
                         i += 1
                 else:
@@ -304,7 +296,6 @@ class selEpisodio():
             else:
                 i += 1
         self.cortaMinep(minep, lista)
-        return lista
         
     
     def encuentraTipo(self, indice, sueno, sed, lig, mod):
@@ -322,7 +313,7 @@ class selEpisodio():
             elif(mod[indice] == 1):
                 return tipoModerado, False, False, False, True
 
-    def cachitos2(self, minep, maxin, sueno, sed, lig, mod):
+    def cachitos2(self, sueno, sed, lig, mod):
         """
         Crea los distintos episodios teniendo en cuenta el maximo intervalo
         de interrupcion.
@@ -357,19 +348,19 @@ class selEpisodio():
         indices.append(Episodio(cini, len(sueno)-1, tipo, ""))
         return indices
         
-"""
-eps = selEpisodio('../data.csv')
-ind = eps.cachitos2(15, 4, eps.csv.sueno, eps.csv.actsd, eps.csv.actli, eps.csv.actmd)
+
+eps = selEpisodio('../data7.csv')
+ind = eps.cachitos2(eps.csv.sueno, eps.csv.actsd, eps.csv.actli, eps.csv.actmd)
 print len(ind)
 for i in range(1):
     print ind[i].ini, ind[i].fin, ind[i].tipo
 
 print len(ind)
 print "Agrupados"
-nind = eps.creaEpisodios2(5, 35, 7, 4, 3, ind)
-for i in range(len(nind)):
-    print nind[i].nombre, "duracion:", nind[i].fin - nind[i].ini + 1
-print len(nind)
+eps.creaEpisodios2(5, interrupcion, ind)
+for i in range(len(ind)):
+    print ind[i].nombre, "duracion:", ind[i].fin - ind[i].ini + 1
+print len(ind)
 
 
 vs = 0
@@ -377,5 +368,4 @@ for i in range(len(ind)):
     if (ind[i].tipo == tipoSueno):
         vs += 1
         print ind[i].nombre, ind[i].ini, ind[i].fin, "duracion:", ind[i].fin - ind[i].ini+1
-print vs
-"""
+
