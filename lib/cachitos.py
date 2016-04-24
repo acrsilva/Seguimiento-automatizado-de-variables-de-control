@@ -5,7 +5,10 @@ import numpy as np
 from datetime import datetime
 from scipy.stats import pearsonr
 import leeFichero
+import sys
 
+reload(sys)  
+sys.setdefaultencoding('utf8')
 
 #Definición de tipos
 tipoSueno = "sueño"
@@ -26,43 +29,38 @@ class Episodio():
         self.flujo = flujo[self.ini:self.fin]
         self.correlacion, p = pearsonr(self.temp, self.flujo)
         self.numCalorias = sum(consumo[self.ini:self.fin])
-    """
-    def calcularCal(self, consumo):
-        k = 0
-        for i in consumo:
-             k += i
-        return k            
-    """
+    
 
 class selEpisodio():
     def __init__(self, filename, sueno=True, sedentario=True, ligero=True, moderado=True):
         self.csv = leeFichero.LeeFichero(open(filename, 'r'))
-
-        self.dt = []
+        
+        #Pasar minutos a Datetime
+        self.dt = [] 
         for i in self.csv.tiempo:
             self.dt.append(datetime.fromtimestamp(i))
         
-        self.episodios = self.creaEpisodios(15,9)
-        self.filSueno = sueno
-        self.filSedentario = sedentario
-        self.filLigero = ligero
-        self.filModerado = moderado
+        ind = self.cachitos2(15, 4, self.csv.sueno, self.csv.actsd, self.csv.actli, self.csv.actmd)
+        self.episodios = self.creaEpisodios2(5, 35, 7, 4, 3, ind)
+        
         self.epFiltro = []
-        self.update()
+        self.update(sueno, sedentario, ligero, moderado)
         self.totalCal = sum(self.csv.consm)
         
     #Crea el array de episodios con los filtros aplicados
-    def update(self):
-        print self.filSueno, self.filSedentario, self.filLigero, self.filModerado, len(self.epFiltro)
+    def update(self, sueno=True, sedentario=True, ligero=True, moderado=True):
+        #print self.filSueno, self.filSedentario, self.filLigero, self.filModerado, len(self.epFiltro)
+        print sueno, sedentario, ligero, moderado, len(self.epFiltro)
         self.epFiltro = []
         for i in self.episodios:
-            if((i.tipo == tipoSueno and self.filSueno) 
-                or (i.tipo == tipoSedentario and self.filSedentario)
-                or (i.tipo == tipoLigera and self.filLigero)
-                or (i.tipo == tipoModerado and self.filModerado)):
+            if((i.tipo == tipoSueno and sueno) 
+                or (i.tipo == tipoSedentario and sedentario)
+                or (i.tipo == tipoLigera and ligero)
+                or (i.tipo == tipoModerado and moderado)):
                 self.epFiltro.append(i)
                 self.epFiltro[-1].filtrar(self.dt, self.csv.temp, self.csv.flujo, self.csv.consm)
-        print len(self.epFiltro), " episodios"
+        print "Total episodios:", len(self.episodios) 
+        print "Total eps con filtros:", len(self.epFiltro)
 
     def comprobar(self, ls1, ls2, ls3, i, c1, c2, c3, f, t, maxin, final):
         """
@@ -271,7 +269,7 @@ class selEpisodio():
         mxmdi: maxima interrupcion en un episodio de actv moderada
         """
         i = 0
-        while self.cumpleMin(minep, lista) and i < len(lista)-2:
+        while self.cumpleMin(minep, lista) and i < len(lista)-3:
             if lista[i].fin - lista[i].ini + 1:
                 if lista[i].tipo == lista[i+2].tipo :
                     if(lista[i].tipo == tipoModerado and lista[i+1].fin - lista[i+1].ini < mxmdi):
@@ -378,3 +376,6 @@ for i in range(len(ind)):
         print ind[i].nombre, ind[i].ini, ind[i].fin, ind[i].tipo, "duracion:", ind[i].fin - ind[i].ini+1
 print vs
 """
+
+#eps = selEpisodio('../data.csv', sueno=True, sedentario=False, ligero=False, moderado=False)
+

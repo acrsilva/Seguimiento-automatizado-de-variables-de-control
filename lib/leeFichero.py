@@ -15,7 +15,7 @@ class LeeFichero(object):
     - nombre: nombre del fichero csv que contiene los datos
     """
     def __init__(self, nombre):
-        self.nombreFichero = nombre
+        #self.nombreFichero = nombre
         self.csv = np.genfromtxt(nombre, delimiter="," , names=True)
         self.nomCols = self.csv.dtype.names
         self.nparams = len(self.nomCols)
