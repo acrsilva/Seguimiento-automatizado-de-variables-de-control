@@ -357,7 +357,7 @@ class selEpisodio():
         indices.append(Episodio(cini, len(sueno)-1, tipo, ""))
         return indices
         
-
+"""
 eps = selEpisodio('../data.csv')
 ind = eps.cachitos2(15, 4, eps.csv.sueno, eps.csv.actsd, eps.csv.actli, eps.csv.actmd)
 print len(ind)
@@ -378,3 +378,4 @@ for i in range(len(ind)):
         vs += 1
         print ind[i].nombre, ind[i].ini, ind[i].fin, "duracion:", ind[i].fin - ind[i].ini+1
 print vs
+"""
