@@ -210,6 +210,7 @@ class selEpisodio():
     def actualizaEp(self, i, op, lista):
         """
         Elimina episodios de la lista que interrumpen a otro episodio
+        incluyéndolos dentro del que interrumpen
         """
         if(op == 2):
             nuevoEp = Episodio(lista[i].ini, lista[i+2].fin, lista[i].tipo, "")
@@ -229,6 +230,7 @@ class selEpisodio():
         Borra los episodios que no cumplan con el minimo de tamaño
         """
         i = 0
+        nums = [0, 0, 0, 0]
         while i < len(lista):
             if lista[i].fin - lista[i].ini + 1 < minep:
                 lista.remove(lista[i])
@@ -241,25 +243,27 @@ class selEpisodio():
             if lista[i].tipo == lista[i+1].tipo:
                 lista[i] = Episodio(lista[i].ini, lista[i+1].fin, lista[i].tipo, "")
                 lista.remove(lista[i+1])
+            self.ponerNombres(lista[i], nums)
             i += 1
+        self.ponerNombres(lista[i], nums)
         return lista
         
-    def ponerNombres(self, lista):
-        su, sd, li, md = 0, 0, 0, 0
-        for i in range(len(lista)):
-            if lista[i].tipo == tipoSueno:
-                su += 1
-                lista[i].nombre = str(su) + ". Sueño"
-            elif lista[i].tipo == tipoSedentario:
-                sd  += 1
-                lista[i].nombre = str(sd) + ". Sedentario"
-            elif lista[i].tipo == tipoLigera:
-                li += 1
-                lista[i].nombre = str(li) + ". Ligera"
-            elif lista[i].tipo == tipoModerado:
-                md += 1
-                lista[i].nombre = str(md) + ". Moderada"
-        return lista
+    def ponerNombres(self, episodio, nums):
+        """
+        Pone nombres a los episodios según su tipo y además los enumera
+        """
+        if episodio.tipo == tipoSueno:
+            nums[0] += 1
+            episodio.nombre = str(nums[0]) + ". Sueño"
+        elif episodio.tipo == tipoSedentario:
+            nums[1]  += 1
+            episodio.nombre = str(nums[1]) + ". Sedentario"
+        elif episodio.tipo == tipoLigera:
+            nums[2] += 1
+            episodio.nombre = str(nums[2]) + ". Ligera"
+        elif episodio.tipo == tipoModerado:
+            nums[3] += 1
+            episodio.nombre = str(nums[3]) + ". Moderada"
         
     def creaEpisodios2(self, minep, mxsni, mxsdi, mxlgi, mxmdi, lista):
         """
@@ -301,8 +305,7 @@ class selEpisodio():
                     i += 1
             else:
                 i += 1
-        lista = self.cortaMinep(minep, lista)
-        lista = self.ponerNombres(lista)
+        self.cortaMinep(minep, lista)
         return lista
         
     
@@ -356,18 +359,18 @@ class selEpisodio():
         indices.append(Episodio(cini, len(sueno)-1, tipo, ""))
         return indices
         
-"""
+
 eps = selEpisodio('../data.csv')
 ind = eps.cachitos2(15, 4, eps.csv.sueno, eps.csv.actsd, eps.csv.actli, eps.csv.actmd)
 print len(ind)
-for i in range(len(ind)):
+for i in range(1):
     print ind[i].ini, ind[i].fin, ind[i].tipo
 
 print len(ind)
 print "Agrupados"
 nind = eps.creaEpisodios2(5, 35, 7, 4, 3, ind)
 for i in range(len(nind)):
-    print nind[i].nombre, nind[i].ini, nind[i].fin, nind[i].tipo, nind[i].fin - nind[i].ini + 1
+    print nind[i].nombre, "duracion:", nind[i].fin - nind[i].ini + 1
 print len(nind)
 
 
@@ -375,6 +378,6 @@ vs = 0
 for i in range(len(ind)):
     if (ind[i].tipo == tipoSueno):
         vs += 1
-        print ind[i].nombre, ind[i].ini, ind[i].fin, ind[i].tipo, "duracion:", ind[i].fin - ind[i].ini+1
+        print ind[i].nombre, ind[i].ini, ind[i].fin, "duracion:", ind[i].fin - ind[i].ini+1
 print vs
-"""
+
