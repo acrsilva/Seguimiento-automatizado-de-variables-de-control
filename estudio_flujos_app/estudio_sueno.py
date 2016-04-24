@@ -14,7 +14,7 @@ import cachitos
 import colores
 import clustering
 
-DEBUG = 1
+DEBUG = 0
 
 
 
@@ -28,6 +28,8 @@ class Main(QMainWindow, Ui_MainWindow):
     def __init__(self, ):
         super(Main, self).__init__()
         self.setupUi(self)
+        
+        
         self.__initGraphs__()
         self.loadData()
         
@@ -35,7 +37,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.cbx1.activated[str].connect(self.cbx1Listener)
         self.cbx2.activated[str].connect(self.cbx2Listener)
         self.btnAbrir.clicked.connect(self.loadData)
-        self.btnCluster.clicked.connect(self.btnClusterListener)
+        self.checkClustering.clicked.connect(self.checkClusteringListener)
         self.checkTemp.clicked.connect(self.checkTempListener)
         self.checkFlujo.clicked.connect(self.checkFlujoListener)
         
@@ -65,6 +67,8 @@ class Main(QMainWindow, Ui_MainWindow):
         
         self.plotLayout.addLayout(vbox1)
         self.plotLayout.addLayout(vbox2)
+        
+        self.f = plt.figure("Dendogram")
     
     def plotGraph(self, fig, tiempo, data, limMin, limMax, clear=False):
         ax = fig.axes[0]
@@ -99,7 +103,7 @@ class Main(QMainWindow, Ui_MainWindow):
             fname = '../data.csv'
         else:    
             fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
-        print "Abriendo fichero ", fname
+        #print "Abriendo fichero ", fname
         self.selep = cachitos.selEpisodio(fname, sedentario=False, ligero=False, moderado=False)
         self.configureComboBox()
         self.updateUI()
@@ -120,12 +124,24 @@ class Main(QMainWindow, Ui_MainWindow):
         print "Filtrar Flujo"
         self.updateGraphs()
             
-    def btnClusterListener(self):
-        print "Clustering"
-        #Probar a pasar por valor
-        self.clusters = clustering.HierarchicalClustering(self.selep)
+    def checkClusteringListener(self):
+        if(self.checkClustering.isChecked()):
+            print "Mostrar dendograma"
+            #self.clusters = clustering.HierarchicalClustering(self.selep)
+            self.f = clustering.HierarchicalClustering(self.selep).getDendogram()
+            self.f.show()
+            """
+            f = plt.figure('Clustering')
+            plt.title('Dendograma de clustering jerarquico')
+            plt.xlabel('Indice de episodio')
+            plt.ylabel('Distancia')
+            plt.plot(self.selep.epFiltro[0].tiempo, self.selep.epFiltro[0].flujo)
+            f.show()
+            """
+        else:
+            print "Cerrar dendograma"
+            plt.close(self.f)
         
-    
     def updateGraphs(self, ep1=True, ep2=True):
         if(ep1):
             print "Actualizar episodio 1"
@@ -165,7 +181,6 @@ if __name__ == '__main__':
     
     app = QtGui.QApplication(sys.argv)
     main = Main()
-    
     
     main.show()
     sys.exit(app.exec_())

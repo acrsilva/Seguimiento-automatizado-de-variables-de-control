@@ -27,6 +27,9 @@ Estudio flujos: (clustering)
 - Clasificar los episodios de sueño de un mismo individuo para detectar anomalías
 - Probar clustering con otras actividades
 
+Estudio sueños:
+- Normalizar y etiquetar
+
 Estudio consumo:
 * Unificar colores
 - Mostrar duración, inicio, fin y tipos de episodios internos en cada actividad de la gráfica de barras. Mostrar un identificador por cada episodio (sue1, actlig1, actlig2...)
