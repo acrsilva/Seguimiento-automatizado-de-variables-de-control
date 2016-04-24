@@ -196,95 +196,152 @@ class selEpisodio():
             else:
                 eps.append(a)
         return eps
+        
+    def cumpleMin(self, minep, lista):
+        cumple = False
+        i = 0
+        while i < len(lista)-1 and not cumple:
+            if(lista[i].fin - lista[i].ini > minep):
+                cumple = True
+            i += 1
+        return cumple
+        
+    def actualizaEp(self, i, op, lista):
+        if(op == 2):
+            nuevoEp = Episodio(lista[i].ini, lista[i+2].fin, lista[i].tipo)
+            lista.remove(lista[i+2])
+            lista.remove(lista[i+1])
+            lista[i] = nuevoEp
+        elif(op == 3):
+            nuevoEp = Episodio(lista[i].ini, lista[i+3].fin, lista[i].tipo)
+            lista.remove(lista[i+3])
+            lista.remove(lista[i+2])
+            lista.remove(lista[i+1])
+            lista[i] = nuevoEp
+        return lista
+    
+    def cortaMinep(self, minep, lista):
+        """
+        Corta los episodios que no cumplan con el minimo de tamaño
+        """
+        i = 0
+        while i < len(lista):
+            if lista[i].fin - lista[i].ini + 1 < minep:
+                lista.remove(lista[i])
+            elif lista[i].tipo == tipoSedentario and lista[i].fin - lista[i].ini + 1 < 7:
+                lista.remove(lista[i])
+            else:
+                i += 1
+        i = 0
+        while i < len(lista)-1:
+            if lista[i].tipo == lista[i+1].tipo:
+                lista[i] = Episodio(lista[i].ini, lista[i+1].fin, lista[i].tipo)
+                lista.remove(lista[i+1])
+            i += 1
+        return lista
+        
+        
+    def creaEpisodios2(self, minep, mxsni, mxsdi, mxlgi, mxmdi, lista):
+        """
+        mxsni: maxima interrupcion en un episodio de sueño
+        mxsdi: maxima interrupcion en un episodio de actv sedentaria
+        mslgi: maxima interrupcion en un episodio de actv ligera
+        mxmdi: maxima interrupcion en un episodio de actv moderada
+        """
+        i = 0
+        while self.cumpleMin(minep, lista) and i < len(lista)-3:
+            if lista[i].fin - lista[i].ini + 1:
+                if lista[i].tipo == lista[i+2].tipo :
+                    if(lista[i].tipo == tipoModerado and lista[i+1].fin - lista[i+1].ini < mxmdi):
+                        lista = self.actualizaEp(i, 2, lista)
+                    elif(lista[i].tipo == tipoSueno and lista[i+1].fin - lista[i+1].ini < mxsni):
+                        lista = self.actualizaEp(i, 2, lista)
+                    elif(lista[i].tipo == tipoLigera and lista[i+1].fin - lista[i+1].ini < mxlgi):
+                        lista = self.actualizaEp(i, 2, lista)
+                    elif(lista[i].tipo == tipoSedentario and lista[i+1].fin - lista[i+1].ini < mxsdi):
+                        lista = self.actualizaEp(i, 2, lista)
+                    else:
+                        i += 1
+                elif lista[i].tipo == lista[i+3].tipo :
+                    uno = lista[i+1].fin - lista[i+1].ini + 1
+                    dos = lista[i+2].fin - lista[i+2].ini + 1
+                    if(lista[i].tipo == tipoSueno and uno + dos < mxsni):
+                        lista = self.actualizaEp(i, 3, lista)
+                    elif(lista[i].tipo == tipoSedentario and uno + dos < mxsdi):
+                        lista = self.actualizaEp(i, 3, lista)
+                    elif(lista[i].tipo == tipoLigera and uno + dos < mxlgi):
+                        lista = self.actualizaEp(i, 3, lista)
+                    elif(lista[i].tipo == tipoModerado and uno + dos < mxmdi):
+                        lista = self.actualizaEp(i, 3, lista)
+                    else:
+                        i += 1
+                else:
+                    i += 1
+            else:
+                i += 1
+        lista = self.cortaMinep(minep, lista)
+        return lista
+        
+    
+    def encuentraTipo(self, indice, sueno, sed, lig, mod):
+        if(sueno[indice] == 1):
+            return tipoSueno, True, False, False, False
+        elif(sueno[indice] == 0):
+            if(sed[indice] == 1):
+                return tipoSedentario, False, True, False, False
+            elif(lig[indice] == 1):
+                return tipoLigera, False, False, True, False
+            elif(mod[indice] == 1):
+                return tipoModerado, False, False, False, True
 
-    def cachitos2(self, minep, maxin):
+    def cachitos2(self, minep, maxin, sueno, sed, lig, mod):
         indices = []
-        a = False #Episodio empezado
-        t = 0 #Contador de minutos de otra actividad
-        sed, lig, mod, sno, final = False, False, False, False, False
-        cs, cl, cm, cn = 0, 0, 0, 0
-        fs, fl, fm, fn = 0, 0, 0, 0
-        for i in range(len(self.csv.actsd)):
-            if(self.csv.sueno[i] == 1 and not a):
-                a, sno = True, True
-                fn = i
-                t = 0
-                if (cn == 0):
-                    cn = i
-            if(self.csv.actsd[i] == 1 and not a):
-                a, sed = True, True            
-                fs = i
-                t = 0
-                if (cs == 0):
-                    cs = i
-            elif(sed and a):
-                fs, cl, cm, t, final = self.comprobar(self.csv.actsd, self.csv.actli, self.csv.actmd, i, cs, cl, cm, fs, t, maxin, final)
-                if (final):
-                    if (fs > cs and (fs-cs) >= minep):
-                        #indices.append([cs,fs])
-                        indices.append(Episodio(cs, fs, tipoSedentario))
-                    t, cs = 0, 0
-                    a, final, sed = False, False, False
-            if(self.csv.actli[i] == 1 and not a):
-                a, lig = True, True
-                t = 0
-                fl = i
-                if(cl == 0):
-                    cl = i
-            elif(lig and a):
-                fl, cs, cm, t, final = self.comprobar(self.csv.actli, self.csv.actsd, self.csv.actmd, i, cl, cs, cm, fl, t, maxin, final)
-                if (final):
-                    if (fl > cl and (fl-cl) >= minep):
-                        #indices.append([cs,fs])
-                        indices.append(Episodio(cl, fl, tipoLigera))
-                    t, cl = 0, 0
-                    a, final, lig = False, False, False
-            if(self.csv.actmd[i] == 1 and not a):
-                a, mod = True, True
-                t = 0
-                fm = i
-                if(cm == 0):
-                    cm = i
-            elif(mod and a):
-                fm, cs, cl, t, final = self.comprobar(self.csv.actmd, self.csv.actsd, self.csv.actli, i, cm, cs, cl, fm, t, maxin, final)
-                if (final):
-                    if (fm > cm and (fm-cm) >= minep):
-                        #indices.append([cs,fs])
-                        indices.append(Episodio(cm, fm, tipoModerado))
-                    t, cm = 0, 0
-                    a, final, mod = False, False, False
+        cini, cfin = 0, 0
+        tipo, sbool, sedb, ligb, modb = self.encuentraTipo(0, sueno, sed, lig, mod)
+        for i in range(len(sueno)-1):
+            if(sueno[i+1] == 1 and not sbool):
+                cfin = i
+                indices.append(Episodio(cini, cfin, tipo))
+                tipo, sbool, sedb, ligb, modb = self.encuentraTipo(i+1, sueno, sed, lig, mod)
+                cini = i+1
+            elif(sueno[i+1] == 0):
+                if(sed[i+1] == 1 and not sedb):
+                    cfin = i
+                    indices.append(Episodio(cini, cfin, tipo))
+                    tipo, sbool, sedb, ligb, modb = self.encuentraTipo(i+1, sueno, sed, lig, mod)
+                    cini = i+1
+                elif(lig[i+1] == 1 and not ligb):
+                    cfin = i
+                    indices.append(Episodio(cini, cfin, tipo))
+                    tipo, sbool, sedb, ligb, modb = self.encuentraTipo(i+1, sueno, sed, lig, mod)
+                    cini = i+1
+                elif(mod[i+1] == 1 and not modb):
+                    cfin = i
+                    indices.append(Episodio(cini, cfin, tipo))
+                    tipo, sbool, sedb, ligb, modb = self.encuentraTipo(i+1, sueno, sed, lig, mod)
+                    cini = i+1
+        indices.append(Episodio(cini, len(sueno)-1, tipo))
         return indices
+        
+        
+eps = selEpisodio('../data.csv')
+ind = eps.cachitos2(15, 4, eps.csv.sueno, eps.csv.actsd, eps.csv.actli, eps.csv.actmd)
+print len(ind)
+for i in range(len(ind)):
+    print ind[i].ini, ind[i].fin, ind[i].tipo
 
-
-
-#pruba = selEpisodio()
-
+print len(ind)
+print "Agrupados"
+nind = eps.creaEpisodios2(5, 35, 7, 4, 3, ind)
+for i in range(len(nind)):
+    print nind[i].ini, nind[i].fin, nind[i].tipo, nind[i].fin - nind[i].ini + 1
+print len(nind)
 
 """
-trocitos =  cachitos(15,6)
-s, l, m = 0, 0, 0
-#print trocitos
-
-for i in trocitos:
-    if (i.tipo == tipoSedentario):
-        s += 1
-        print i.ini, i.fin, i.tipo
-    elif(i.tipo == tipoLigera):
-        l += 1
-        print i.ini, i.fin, i.tipo
-    elif(i.tipo == tipoModerado):
-        m += 1
-        print i.ini, i.fin, i.tipo
-print str(s) + "S " + str(l) + "L " + str(m) + "M "
-print len(trocitos)
-"""
-"""
-suenete = cachitoSueno()
-for i in suenete:
-    print i.ini, i.fin, i.tipo
-
-epis = creaEpisodios(15, 9)
-for i in epis:
-    print i.ini, i.fin, i.tipo
-print len(epis)
+vs = 0
+for i in range(len(ind)):
+    if (ind[i].tipo == tipoSueno):
+        vs += 1
+        print ind[i].ini, ind[i].fin, ind[i].tipo, "duracion:", ind[i].fin - ind[i].ini+1
+print vs
 """
