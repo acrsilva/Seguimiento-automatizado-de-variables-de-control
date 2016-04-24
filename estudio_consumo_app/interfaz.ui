@@ -23,6 +23,12 @@
       <height>411</height>
      </rect>
     </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
     <layout class="QVBoxLayout" name="layout_pie_tiempos"/>
    </widget>
    <widget class="QWidget" name="widget_2" native="true">
@@ -70,6 +76,12 @@
       <width>1051</width>
       <height>251</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <layout class="QVBoxLayout" name="layout_bar_ratio"/>
    </widget>
