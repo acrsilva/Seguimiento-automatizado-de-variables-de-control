@@ -42,6 +42,17 @@ para vaciar cada figura (plt.clf()) y volver a repintar
     - En cachitos crear un metodo filtrar con un parámetro por cada tipo de actividad y dejar el init únicamente con
         todos los episodios calculados ya que no siempre interesa aplicar filtros.
     - En cachitos hacer una clase EpisodioSimple con inicio, fin y tipo y otra EpisodioCompleto que herede con el resto de atributos necesarios    
-        
+
+Cachitos:
+- Intérprete: CSV completo, cortar por episodios de sueño.
+- Scatterplots: CSV completo, cortar por actividades y sueño
+- Estudio consumos: CSV troceado en días completos, cortar cada día por actividades y sueño. CSV completo para el resumen general
+- Estudio flujos: CSV completo, cortar por episodios de sueño. Cortar por actividades
+Casos de posible interrupción de un episodio:
+- Que entre dos medidas consecutivas haya más de un minuto de tiempo. El paciente puede haberse quitado el brazalete
+- Datos con NaN, el paciente puede haberse quitado el brazalete
+- Cambio de tipo de actividad o sueño
+
+
 Exportar el proyecto a exe o py
 - http://www.py2exe.org/
