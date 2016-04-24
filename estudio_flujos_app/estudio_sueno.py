@@ -14,7 +14,7 @@ import cachitos
 import colores
 import clustering
 
-DEBUG = 1
+DEBUG = 0
 
 
 
@@ -103,7 +103,7 @@ class Main(QMainWindow, Ui_MainWindow):
             fname = '../data.csv'
         else:    
             fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
-        print "Abriendo fichero ", fname
+        #print "Abriendo fichero ", fname
         self.selep = cachitos.selEpisodio(fname, sedentario=False, ligero=False, moderado=False)
         self.configureComboBox()
         self.updateUI()
@@ -181,7 +181,6 @@ if __name__ == '__main__':
     
     app = QtGui.QApplication(sys.argv)
     main = Main()
-    
     
     main.show()
     sys.exit(app.exec_())
