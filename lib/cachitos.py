@@ -216,6 +216,11 @@ class selEpisodio():
         return indices
         
     def creaEpisodios(self, sueno, sed, lig, mod, minep, intr):
+        """
+        listas para crear los episodios: sueño, sedentaria, ligera, moderada
+        minep: tamaño minimo de episodio
+        intr: interrupciones por actividad
+        """
         lista = self.cachitos(sueno, sed, lig, mod)
         self.filtraEpisodios(minep, intr, lista)
         return lista
