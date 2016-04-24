@@ -345,3 +345,4 @@ for i in range(len(ind)):
         print ind[i].ini, ind[i].fin, ind[i].tipo, "duracion:", ind[i].fin - ind[i].ini+1
 print vs
 """
+
