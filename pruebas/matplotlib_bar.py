@@ -1,4 +1,3 @@
-"""
 
 #!/usr/bin/env python
 # a stacked bar plot with errorbars
@@ -16,8 +15,8 @@ ind = np.arange(N)    # the x locations for the groups
 print ind
 #ind = NN
 width = 0.35       # the width of the bars: can also be len(x) sequence
-
-p1 = plt.bar(ind, menMeans, width, color='r')
+colors = ['r', 'w', 'y', 'r']
+p1 = plt.bar(ind, menMeans, width, color=colors)
 #p2 = plt.bar(ind, womenMeans, width, color='y', bottom=menMeans, yerr=womenStd)
 
 plt.ylabel('Scores')
@@ -28,7 +27,6 @@ plt.yticks(np.arange(0, 81, 10))
 
 plt.show()
 
-"""
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -65,35 +63,5 @@ plt.show()
 
 """
 
-import matplotlib.pyplot as plt
 
-def main():
-    # Make an example pie plot
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-
-    labels = ['Apple', 'Mango', 'Orange']
-    wedges, plt_labels = ax.pie([20, 40, 60], labels=labels)
-    ax.axis('equal')
-
-    make_picker(fig, wedges)
-    plt.show()
-
-def make_picker(fig, wedges):
-
-    def onclick(event):
-        wedge = event.artist
-        label = wedge.get_label()
-        print label
-
-# Make wedges selectable
-    for wedge in wedges:
-        wedge.set_picker(True)
-
-    fig.canvas.mpl_connect('pick_event', onclick)
-
-if __name__ == '__main__':
-    main()
-    
-    
     

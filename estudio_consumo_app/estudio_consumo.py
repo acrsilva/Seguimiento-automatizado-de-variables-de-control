@@ -10,9 +10,14 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 import numpy as np
 import math
 import cachitos
+import colores
 
 Ui_MainWindow, QMainWindow = loadUiType('interfaz.ui')
 
+class prueba:
+    def __init__(self, num):
+        self.num = num
+        self.p = "clase prueba"
 
 class Main(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -25,8 +30,9 @@ class Main(QMainWindow, Ui_MainWindow):
         self.drawRatioBar()
     
     def __crearPieWidget__(self, sizes):
-        labels = ['Dormido', 'Sedentario', 'Act. Ligera', 'Act. Moderada', 'Act. Intensa', 'Act. Muy intensa']
-        colors = ['gold', 'yellowgreen', 'lightcoral', 'lightskyblue', 'red', 'red'] #CAMBIAR COLORES!!!
+        #labels = ['Dormido', 'Sedentario', 'Act. Ligera', 'Act. Moderada', 'Act. Intensa', 'Act. Muy intensa']
+        labels = ['Dormido', 'Sedentario', 'Act. Ligera', 'Act. Moderada']
+        colors = [colores.sueno, colores.sedentario, colores.ligero, colores.moderado]
         fig = plt.figure(facecolor='white')
         ax = fig.add_subplot(111) 
         pie = ax.pie(sizes, colors=colors, autopct='%1.1f%%', shadow=False, startangle=0)
@@ -38,20 +44,42 @@ class Main(QMainWindow, Ui_MainWindow):
     
     def __crearBarWidget__(self, means):
         def onpick(event):
-            print "picado"
-            print events
+            rect = event.artist
+            for i in range(len(self.bar)):
+                if (self.bar[i] == rect):
+                    print "Barra", i, ":", self.selep.epFiltro[i].numCalorias, 'calorías', len(self.selep.epFiltro[i].tiempo), 'minutos'
+                    
         fig = plt.figure(facecolor='white')
         ax = fig.add_subplot(111)
+        colors = []
+        for i in self.selep.epFiltro:
+            if(i.tipo == cachitos.tipoSueno):
+                c = colores.sueno
+            elif(i.tipo == cachitos.tipoSedentario):
+                c = colores.sedentario
+            elif(i.tipo == cachitos.tipoLigera):
+                c = colores.ligero
+            elif(i.tipo == cachitos.tipoModerado):
+                c = colores.moderado
+            colors.append(c)
+            
         ind = np.linspace(10, len(means), num=len(means))
-        bar = ax.bar(ind, means, color='r', picker=1)
+        self.bar = ax.bar(ind, means, color=colors, picker=1, align='center')
+        ax.set_xticklabels(np.arange(len(means)))
         fig.tight_layout()
-        fig.canvas.mpl_connect('pick_event', onpick)
         
-        return FigureCanvas(fig)
+        canvas = FigureCanvas(fig)
+        vbox = QtGui.QGridLayout()
+        vbox.addWidget(canvas)
+        canvas.mpl_connect('pick_event', onpick)
+        
+        #return FigureCanvas(fig)
+        return vbox
     
     def drawActividadesPie(self):
         print "Dibujar gráfica actividades"
-        sizes = [0, 0, 0, 0, 0, 0]
+        #sizes = [0, 0, 0, 0, 0, 0]
+        sizes = [0, 0, 0, 0]
         # Calcular tiempo por actividad
         for i in self.selep.epFiltro:
             if(i.tipo == cachitos.tipoSueno):
@@ -68,7 +96,8 @@ class Main(QMainWindow, Ui_MainWindow):
 
     def drawConsumosPie(self):
         print "Dibujar gráfica consumos"
-        sizes = [0, 0, 0, 0, 0, 0]
+        #sizes = [0, 0, 0, 0, 0, 0]
+        sizes = [0, 0, 0, 0]
         # Calcular calorías consumidas por actividad
         for i in self.selep.epFiltro:
             if(i.tipo == cachitos.tipoSueno):
@@ -90,7 +119,7 @@ class Main(QMainWindow, Ui_MainWindow):
         for i in self.selep.epFiltro:
             ratios.append(i.numCalorias / (i.fin - i.ini))
         
-        self.layout_bar_ratio.addWidget(self.__crearBarWidget__(ratios))
+        self.layout_bar_ratio.addLayout(self.__crearBarWidget__(ratios))
         
 if __name__ == '__main__':
     import sys

@@ -19,7 +19,7 @@ import numpy as np
 import os
 import selecepisodio
 import time
-import datetime
+#import datetime
 
 pg.mkQApp()
 
@@ -91,7 +91,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.setupUi(self)
         
         #Obtener los datos del episodio a mostrar
-        self.selep = selecepisodio.SelecEpisodio()
+        self.selep = self.loadData()
         
         #Obtener el layout de gráficos (GraphicsLayoutWidget)
         win = self.ui.plotConsumo
@@ -170,12 +170,20 @@ class MainWindow(TemplateBaseClass):
         #Configurar los botones
         self.ui.next_e_btn.clicked.connect(self.nextEp)
         self.ui.prev_e_btn.clicked.connect(self.prevEp)
-        self.ui.btnLoadFile.clicked.connect(self.loadData)
+        self.ui.btnLoadFile.clicked.connect(self.openFile)
         
         self.show()
         
+    def openFile(self):
+        self.selep = self.loadData()
+        self.pintarDatos()
+    
     def loadData(self):
-        print "Abriendo fichero "  
+        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
+        print "Abriendo fichero ", fname
+        #selep = cachitos.selEpisodio(fname)
+        selep = selecepisodio.SelecEpisodio(fname)
+        return selep
         
     def nextEp(self):
         #Actualizar y mostrar el nuevo episodio

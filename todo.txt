@@ -4,8 +4,8 @@ Interprete
 - No dibujar en los saltos temporales 
 - Mostrar cuadrícula en todas las gráficas
 - Marcar hora y valor en el punto seleccionado con el raton
-- Cambiar colores de la barra
-- Unificar los colores de barra y graficos con el resto de programas
+* Cambiar colores de la barra
+/ Unificar los colores de barra y graficos con el resto de programas
 
 Scatterplot
 * Marcar hora en los puntos de dispersion
@@ -14,8 +14,9 @@ Scatterplot
 - No dibujar en los saltos temporales
 * Etiquetar correctamente la grafica superior tras normalizar
 * Mostrar consumo energético en kcal por episodio  y % total consumido
-- Unificar los colores de barra y graficos con el resto de programas
+* Unificar los colores de barra y graficos con el resto de programas
 - Mejorar rendimiento (*)
+- Fallo: no muestra calorias y % en todos los ficheros (nan)
 
 Estudio flujos: (clustering)
 (Individuo: episodio definido por flujo térmico y temperatura)
@@ -24,10 +25,14 @@ Estudio flujos: (clustering)
 - Normalizar por trozos o entero
 - Obtener matriz de distancias por DTW y hacer clustering jerarquico y obtener el dendograma
 - Clasificar los episodios de sueño de un mismo individuo para detectar anomalías
+- Probar clustering con otras actividades
 
 Estudio consumo:
-- Unificar colores
-
+* Unificar colores
+- Mostrar duración, inicio, fin y tipos de episodios internos en cada actividad de la gráfica de barras. Mostrar un identificador por cada episodio (sue1, actlig1, actlig2...)
+- Cargar ficheros
+- Figuras con tamaño autoajustable. Son demasiado grandes por defecto
+- Dibujar en la gráfica de barras una recta con la media de los ratios de cada actividad
 
 (*)Mejorar rendimiento: en vez vaciar los widgets y volver a crear todas las figuras, crear una clase widget con métodos
 para vaciar cada figura (plt.clf()) y volver a repintar
