@@ -36,7 +36,13 @@ class Main(QMainWindow, Ui_MainWindow):
         self.btnPrev.clicked.connect(self.retroceder)
         self.btnNext.clicked.connect(self.avanzar)
         self.btnSelFile.clicked.connect(self.openFile)
-    
+        
+        self.filSueno = True
+        self.filSedentario = True
+        self.filLigero =True
+        self.filModerado = True
+        
+        
     def openFile(self):
         self.selep = self.loadData()
         self.limpiarLayout() 
@@ -151,32 +157,32 @@ class Main(QMainWindow, Ui_MainWindow):
             
     def filtrarSueno(self):
         print "Filtrar sueño"
-        self.selep.filSueno = self.cbSueno.isChecked() #Cambiar el filtro
-        self.selep.update() #Actualizar el array de episodios filtrados
+        self.filSueno = self.cbSueno.isChecked() #Cambiar el filtro
+        self.selep.update(self.filSueno, self.filSedentario, self.filLigero, self.filModerado) #Actualizar el array de episodios filtrados
         self.setBounds()
-        self.limpiarLayout() 
-        self.updateView() 
+        self.limpiarLayout()
+        self.updateView()
         
     def filtrarSedentario(self):
         print "Filtrar sedentario"
-        self.selep.filSedentario = self.cbSedentario.isChecked()
-        self.selep.update()
+        self.filSedentario = self.cbSedentario.isChecked()
+        self.selep.update(self.filSueno, self.filSedentario, self.filLigero, self.filModerado)
         self.setBounds()
         self.limpiarLayout()
         self.updateView()
         
     def filtrarLigera(self):
         print "Filtrar ligera"
-        self.selep.filLigero = self.cbLigera.isChecked()
-        self.selep.update()
+        self.filLigero = self.cbLigera.isChecked()
+        self.selep.update(self.filSueno, self.filSedentario, self.filLigero, self.filModerado)
         self.setBounds()
         self.limpiarLayout()
         self.updateView()
         
     def filtrarModerada(self):
         print "Filtrar moderada"
-        self.selep.filModerado = self.cbModerada.isChecked()
-        self.selep.update()
+        self.filModerado = self.cbModerada.isChecked()
+        self.selep.update(self.filSueno, self.filSedentario, self.filLigero, self.filModerado)
         self.setBounds()
         self.limpiarLayout()
         self.updateView()
