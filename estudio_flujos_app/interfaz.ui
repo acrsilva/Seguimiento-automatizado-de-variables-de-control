@@ -118,19 +118,6 @@
         <string>Episodio 2</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="btnCluster">
-       <property name="geometry">
-        <rect>
-         <x>570</x>
-         <y>130</y>
-         <width>98</width>
-         <height>27</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Clustering</string>
-       </property>
-      </widget>
       <widget class="QPushButton" name="btnAbrir">
        <property name="geometry">
         <rect>
@@ -142,6 +129,19 @@
        </property>
        <property name="text">
         <string>Abrir</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="checkClustering">
+       <property name="geometry">
+        <rect>
+         <x>780</x>
+         <y>50</y>
+         <width>97</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Clustering</string>
        </property>
       </widget>
      </widget>

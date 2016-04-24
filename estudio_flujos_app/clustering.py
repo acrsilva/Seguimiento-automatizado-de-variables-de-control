@@ -12,7 +12,7 @@ from fastdtw import fastdtw
 import scipy.spatial.distance as ssd
 import math
 import mlpy
-
+import cachitos
 
 
 
@@ -32,8 +32,8 @@ class HierarchicalClustering():
         # Normalizar por estandarización cada episodio de sueño (temperatura y flujo)
         eps_sueno = []
         for i in sel.epFiltro:
-            a = preprocessing.scale(i.temp, copy=False)
-            b = preprocessing.scale(i.flujo, copy=False)
+            a = preprocessing.scale(i.temp, copy=True)
+            b = preprocessing.scale(i.flujo, copy=True)
             eps_sueno.append(Individuo(i.tiempo, a, b))
 
 
@@ -68,15 +68,16 @@ class HierarchicalClustering():
         #Obtener la diagonal de la matriz de distancias
         dists = ssd.squareform(distancias)
         #Calcular clustering jerárquico
-        Z = linkage(dists, 'average')
+        self.Z = linkage(dists, 'average')
 
 
+        
+    def getDendogram(self):
         #Dibujar dendograma
-        plt.figure('Clustering')
+        f = plt.figure('Clustering')
         plt.title('Dendograma de clustering jerarquico')
         plt.xlabel('Indice de episodio')
         plt.ylabel('Distancia')
-        dendrogram(Z, leaf_rotation=90., leaf_font_size=8.)
-        plt.show()
-
-
+        dendrogram(self.Z, leaf_rotation=90., leaf_font_size=8.)
+        #plt.show()
+        return f
