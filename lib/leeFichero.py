@@ -46,6 +46,10 @@ class LeeFichero(object):
         #print "Hay %i dias" % len(indices)
         
     def datosPorDia(self, dia, act):
+        """
+        Devuelve una lista con los datos de un tipo de actividad act y
+        de un día concreto
+        """
         if(act == 'sueno'):
             return self.sueno[dia[0]:dia[1]+1]
         elif(act == 'tiempo'):
@@ -77,23 +81,4 @@ for i in datos.dias:
     print dt.utcfromtimestamp(dia[len(dia)-1])
            
 """
-"""        
-class Example(QtGui.QMainWindow):
-    def __init__(self):
-        super(Example, self).__init__() 
-    
-        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
-        lee = LeeFichero(open(fname, 'r'))
-        print lee.nomCols[19]
-        print lee.actli
-        print lee.nomCols[15]
-        print lee.sueno
-        print lee.nomCols[17]
-        print lee.consm
-    
-    
-app = QtGui.QApplication(sys.argv)
-ex = Example()
-sys.exit(app.exec_())        
 
-"""
