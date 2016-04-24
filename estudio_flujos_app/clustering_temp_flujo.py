@@ -23,7 +23,7 @@ class Individuo:
         self.stf = flujo
 
 #Cargar datos y filtrar por episodios de sueño
-sel = cachitos.selEpisodio("../ejemplos/csv2.csv")
+sel = cachitos.selEpisodio("../data.csv")
 
 sel.filSueno = True
 sel.filSedentario = False
