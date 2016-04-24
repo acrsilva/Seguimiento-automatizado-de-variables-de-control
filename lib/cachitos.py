@@ -336,6 +336,7 @@ nind = eps.creaEpisodios2(5, 35, 7, 4, 3, ind)
 for i in range(len(nind)):
     print nind[i].ini, nind[i].fin, nind[i].tipo, nind[i].fin - nind[i].ini + 1
 print len(nind)
+
 """
 vs = 0
 for i in range(len(ind)):
