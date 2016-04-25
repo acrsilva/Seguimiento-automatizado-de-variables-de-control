@@ -57,5 +57,20 @@ Casos de posible interrupción de un episodio:
 - Cambio de tipo de actividad o sueño
 
 
+Arreglar:
+- Duración de los episodios como (fin-ini)+1 en vez de len()
+- Revisar rangos al crear Episodio
+- Etiquetar actividades
+- Etiquetar combobox
+- Filtrar clustering
+- Calculo de calorias NaN
+- Comprobar datos. datos repetidos en mª carmen
+- Optimización de scatterplots
+- Estudio_consumos por días
+- Estudio_consumos graficas autoajustables
+- Mostrar datos de actividad en barra en estudio_consumos
+- Usar cachitos con interprete
+- Acortar bucle al pinchar en barra en estudio_consumos
+
 Exportar el proyecto a exe o py
 - http://www.py2exe.org/

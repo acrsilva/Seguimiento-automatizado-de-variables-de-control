@@ -60,11 +60,12 @@ class HierarchicalClustering():
             print '.'
 
         #Vector con las distancias requeridas para hacer clustering
-        print distancias
+        #print distancias
         print distancias.shape
 
         #Obtener la diagonal de la matriz de distancias
         dists = ssd.squareform(distancias)
+        print dists
         #Calcular clustering jerárquico
         self.Z = linkage(dists, 'average')
 
@@ -79,6 +80,6 @@ class HierarchicalClustering():
         labels=[]
         for i in self.eps_sueno:
             labels.append(i.nombre)
-        dendrogram(self.Z, labels=labels, leaf_rotation=90., leaf_font_size=8.)
+        dendrogram(self.Z, leaf_rotation=90., leaf_font_size=8.)
         #plt.show()
         return f
