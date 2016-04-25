@@ -51,11 +51,8 @@ class selEpisodio():
             self.dt.append(datetime.fromtimestamp(i))
         
         self.episodios = self.creaEpisodios(self.csv.sueno, self.csv.actsd, self.csv.actli, self.csv.actmd, 5, interrupcion)
-        self.epsDias = []
         
-        if dias:
-            for i in self.csv.dias:
-                self.epsDias.append(self.creaEpisodios(self.csv.datosDia(i, "sueno"), self.csv.datosDia(i, "actsd"), self.csv.datosDia(i, "actli"), self.csv.datosDia(i, "actmd"), 5, interrupcion))
+        if dias: self.epsDias = self.creaEpisodiosDia(self.csv.dias, 5, interrupcion)
         
         self.epFiltro = []
         self.update(sueno, sedentario, ligero, moderado)
@@ -237,13 +234,28 @@ class selEpisodio():
         lista = self.cachitos(sueno, sed, lig, mod)
         self.filtraEpisodios(minep, intr, lista)
         return lista
+    
+    def creaEpisodiosDia(self, dias, minep, intr):
+        """
+        Crea los episodios con las listas de los dias independientes
+        minep: tamaño minimo de episodio
+        intr: interrupciones por actividad
+        """
+        listaD = []
+        for i in dias:
+            sueno = self.csv.datosDia(i, "sueno")
+            sed = self.csv.datosDia(i, "actsd")
+            lig = self.csv.datosDia(i, "actli")
+            mod = self.csv.datosDia(i, "actmd")
+            listaD.append(self.creaEpisodios(sueno, sed, lig, mod, minep, intr))
+        return listaD
         
     def imprimeEpisodios(self, lista):
         for ind in lista:
             print ind.nombre, ind.ini, ind.fin, "duracion:", ind.fin - ind.ini + 1
         
 
-eps = selEpisodio('../data7.csv', dias=True)
+eps = selEpisodio('../data8.csv', dias=True)
 
 """
 print len(eps.episodios)
