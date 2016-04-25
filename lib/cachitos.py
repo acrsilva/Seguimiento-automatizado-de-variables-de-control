@@ -30,9 +30,17 @@ class Episodio():
         self.temp = temperaturas[self.ini:self.fin]
         self.flujo = flujo[self.ini:self.fin]
         self.correlacion, p = pearsonr(self.temp, self.flujo)
-        self.numCalorias = sum(consumo[self.ini:self.fin])
+        self.numCalorias = np.nansum(consumo[self.ini:self.fin])
+        #self.numCalorias = self.getCalorias(consumo)
+    """    
+    def getCalorias(self, consumo):
+        numCal = 0
+        for i in consumo:
+            if(np.logical_not(np.isnan(i))):
+                numCal += i
+        return numCal
+    """
     
-
 class selEpisodio():
     def __init__(self, filename, sueno=True, sedentario=True, ligero=True, moderado=True):
         self.csv = leeFichero.LeeFichero(open(filename, 'r'))
@@ -46,7 +54,7 @@ class selEpisodio():
         
         self.epFiltro = []
         self.update(sueno, sedentario, ligero, moderado)
-        self.totalCal = sum(self.csv.consm)
+        self.totalCal = np.nansum(self.csv.consm)
         
     #Crea el array de episodios con los filtros aplicados
     def update(self, sueno=True, sedentario=True, ligero=True, moderado=True):

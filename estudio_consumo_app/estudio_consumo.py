@@ -45,9 +45,11 @@ class Main(QMainWindow, Ui_MainWindow):
     def __crearBarWidget__(self, means):
         def onpick(event):
             rect = event.artist
-            for i in range(len(self.bar)):
+            for i in range(len(self.bar)): #MEJORAR!!
                 if (self.bar[i] == rect):
-                    print "Barra", i, ":", self.selep.epFiltro[i].numCalorias, 'calorías', len(self.selep.epFiltro[i].tiempo), 'minutos'
+                    print "Barra", self.selep.epFiltro[i].nombre, self.selep.epFiltro[i].numCalorias, 'calorías', len(self.selep.epFiltro[i].tiempo), 'minutos'
+                    lbl = '(' + self.selep.epFiltro[i].nombre + ') ' + str(self.selep.epFiltro[i].numCalorias)[:6] + ' calorías ' + str(len(self.selep.epFiltro[i].tiempo)) + ' minutos'
+                    self.lblDetalles.setText(lbl)
                     
         fig = plt.figure(facecolor='white')
         ax = fig.add_subplot(111)
