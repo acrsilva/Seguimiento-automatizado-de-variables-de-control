@@ -42,8 +42,9 @@ class LeeFichero(object):
                 indices.append((ini, fin))
                 ini = i+1
         indices.append((ini, len(self.tiempo)-1))
+        print "Hay %i dias" % len(indices)
         return indices
-        #print "Hay %i dias" % len(indices)
+        
         
     def datosPorDia(self, dia, act):
         """
