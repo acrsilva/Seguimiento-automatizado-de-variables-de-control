@@ -34,7 +34,7 @@ class Episodio():
     
 
 class selEpisodio():
-    def __init__(self, filename, sueno=True, sedentario=True, ligero=True, moderado=True):
+    def __init__(self, filename, sueno=True, sedentario=True, ligero=True, moderado=True, dias=False):
         self.csv = leeFichero.LeeFichero(open(filename, 'r'))
         
         #Pasar minutos a Datetime
@@ -43,6 +43,11 @@ class selEpisodio():
             self.dt.append(datetime.fromtimestamp(i))
         
         self.episodios = self.creaEpisodios(self.csv.sueno, self.csv.actsd, self.csv.actli, self.csv.actmd, 5, interrupcion)
+        self.epsDias = []
+        
+        if dias:
+            for i in self.csv.dias:
+                self.epsDias.append(self.creaEpisodios(self.csv.datosDia(i, "sueno"), self.csv.datosDia(i, "actsd"), self.csv.datosDia(i, "actli"), self.csv.datosDia(i, "actmd"), 5, interrupcion))
         
         self.epFiltro = []
         self.update(sueno, sedentario, ligero, moderado)
@@ -102,7 +107,7 @@ class selEpisodio():
                 lista.remove(lista[i+1])
             self.ponerNombres(lista[i], nums)
             i += 1
-        self.ponerNombres(lista[i], nums)
+        self.ponerNombres(lista[len(lista)-1], nums)
         
     def ponerNombres(self, episodio, nums):
         """
@@ -229,9 +234,10 @@ class selEpisodio():
         for ind in lista:
             print ind.nombre, ind.ini, ind.fin, "duracion:", ind.fin - ind.ini + 1
         
-"""
-eps = selEpisodio('../data7.csv')
 
+eps = selEpisodio('../data7.csv', dias=True)
+
+"""
 print len(eps.episodios)
 print "Agrupados"
 for i in range(len(eps.episodios)):
@@ -245,3 +251,8 @@ for i in range(len(eps.episodios)):
         vs += 1
         print eps.episodios[i].nombre, eps.episodios[i].ini, eps.episodios[i].fin, "duracion:", eps.episodios[i].fin - eps.episodios[i].ini+1
 """
+
+print len(eps.epsDias)
+for i in range(len(eps.epsDias)):
+    print "Dia", i+1
+    eps.imprimeEpisodios(eps.epsDias[i])

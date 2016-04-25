@@ -45,7 +45,7 @@ class LeeFichero(object):
         return indices
         #print "Hay %i dias" % len(indices)
         
-    def datosPorDia(self, dia, act):
+    def datosDia(self, dia, act):
         """
         Devuelve una lista con los datos de un tipo de actividad act y
         de un día concreto
