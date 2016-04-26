@@ -50,6 +50,7 @@ class Main(QMainWindow, Ui_MainWindow):
                     print "Barra", self.selep.epFiltro[i].nombre, self.selep.epFiltro[i].numCalorias, 'calorías', len(self.selep.epFiltro[i].tiempo), 'minutos'
                     lbl = '(' + self.selep.epFiltro[i].nombre + ') ' + str(self.selep.epFiltro[i].numCalorias)[:6] + ' calorías ' + str(len(self.selep.epFiltro[i].tiempo)) + ' minutos'
                     self.lblDetalles.setText(lbl)
+                    return
                     
         fig = plt.figure(facecolor='white')
         ax = fig.add_subplot(111)

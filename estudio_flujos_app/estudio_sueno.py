@@ -94,26 +94,61 @@ class Main(QMainWindow, Ui_MainWindow):
         self.cbx1.clear()
         self.cbx2.clear()
         #Solución temporal, el nombre debe ser el del propio Episodio!!!!!
-        for i in range(len(self.selep.epFiltro)):
-            self.cbx1.addItem('sueno'+str(i))
-            self.cbx2.addItem('sueno'+str(i))
-    
+        for i in self.selep.epFiltro:
+            self.cbx1.addItem(i.nombre)
+            self.cbx2.addItem(i.nombre)
+   
     def loadData(self):
-        if(DEBUG): 
-            fname = '../data.csv'
-        else:    
-            fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
-        #print "Abriendo fichero ", fname
+        def updateUI():
+            print "Actualizando interfaz"
+            #idx = int(self.cbx1.currentText()[5])
+            #idx = self.getCbxIdx()
+            idx = self.cbx1.currentIndex()
+            self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, 25, 40)
+            self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, -20, 220)
+            self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, 25, 40)
+            self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, -20, 220)
+            
+        if(DEBUG): fname = '../data.csv'
+        else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
+        
+        print "Abriendo fichero ", fname
         self.selep = cachitos.selEpisodio(fname, sedentario=False, ligero=False, moderado=False)
         self.configureComboBox()
-        self.updateUI()
+        updateUI()
+        
+    def updateGraphs(self, ep1=True, ep2=True):
+        if(ep1):
+            print "Actualizar episodio izquierdo"
+            idx = self.cbx1.currentIndex()
+            if(self.checkTemp.isChecked()):
+                self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, 25, 40)
+            else:
+                self.plotGraph(self.fig1_var1, 0, 0, 25, 40, clear=True)
+            if(self.checkFlujo.isChecked()):
+                self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, -20, 220)
+            else:
+                self.plotGraph(self.fig1_var2, 0, 0, 25, 40, clear=True)
+        if(ep2):
+            print "Actualizar episodio derecho"
+            idx = self.cbx2.currentIndex()
+            if(self.checkTemp.isChecked()):
+                self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, 25, 40)
+            else:
+                self.plotGraph(self.fig2_var1, 0, 0, 25, 40, clear=True)
+            if(self.checkFlujo.isChecked()):
+                self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, -20, 220)
+            else:
+                self.plotGraph(self.fig2_var2, 0, 0, 25, 40, clear=True)
+        
+    
         
     def cbx1Listener(self, text):
-        print "Episodio 1", text   
+        print "Episodio izquierdo", text   
         self.updateGraphs(ep2=False)
         
     def cbx2Listener(self, text):
-        print "Episodio 2", text
+        print "Episodio derecho", text
         self.updateGraphs(ep1=False)
         
     def checkTempListener(self):
@@ -142,38 +177,7 @@ class Main(QMainWindow, Ui_MainWindow):
             print "Cerrar dendograma"
             plt.close(self.f)
         
-    def updateGraphs(self, ep1=True, ep2=True):
-        if(ep1):
-            print "Actualizar episodio 1"
-            idx = int(self.cbx1.currentText()[5])
-            if(self.checkTemp.isChecked()):
-                self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, 25, 40)
-            else:
-                self.plotGraph(self.fig1_var1, 0, 0, 25, 40, clear=True)
-            if(self.checkFlujo.isChecked()):
-                self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, -20, 220)
-            else:
-                self.plotGraph(self.fig1_var2, 0, 0, 25, 40, clear=True)
-        if(ep2):
-            print "Actualizar episodio 2"
-            idx = int(self.cbx2.currentText()[5])
-            if(self.checkTemp.isChecked()):
-                self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, 25, 40)
-            else:
-                self.plotGraph(self.fig2_var1, 0, 0, 25, 40, clear=True)
-            if(self.checkFlujo.isChecked()):
-                self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, -20, 220)
-            else:
-                self.plotGraph(self.fig2_var2, 0, 0, 25, 40, clear=True)
-        
-    def updateUI(self):
-        print "Actualizando interfaz"
-        idx = int(self.cbx1.currentText()[5])
-        self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, 25, 40)
-        self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, -20, 220)
-        self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, 25, 40)
-        self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, -20, 220)
-
+    
 
 if __name__ == '__main__':
     import sys

@@ -80,6 +80,6 @@ class HierarchicalClustering():
         labels=[]
         for i in self.eps_sueno:
             labels.append(i.nombre)
-        dendrogram(self.Z, leaf_rotation=90., leaf_font_size=8.)
+        dendrogram(self.Z, leaf_rotation=90., leaf_font_size=8., labels = labels)
         #plt.show()
         return f

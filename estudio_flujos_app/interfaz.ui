@@ -95,14 +95,14 @@
       <widget class="QLabel" name="label">
        <property name="geometry">
         <rect>
-         <x>440</x>
+         <x>390</x>
          <y>20</y>
-         <width>71</width>
-         <height>17</height>
+         <width>131</width>
+         <height>20</height>
         </rect>
        </property>
        <property name="text">
-        <string>Episodio 1</string>
+        <string>Episodio izquierdo</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_2">
@@ -110,12 +110,12 @@
         <rect>
          <x>580</x>
          <y>20</y>
-         <width>81</width>
+         <width>121</width>
          <height>17</height>
         </rect>
        </property>
        <property name="text">
-        <string>Episodio 2</string>
+        <string>Episodio derecho</string>
        </property>
       </widget>
       <widget class="QPushButton" name="btnAbrir">

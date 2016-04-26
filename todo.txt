@@ -60,8 +60,8 @@ Casos de posible interrupción de un episodio:
 Arreglar:
 - Duración de los episodios como (fin-ini)+1 en vez de len()
 - Revisar rangos al crear Episodio
-- Etiquetar actividades
-- Etiquetar combobox
+* Etiquetar actividades
+* Etiquetar combobox
 - Filtrar clustering
 - Calculo de calorias NaN
 - Comprobar datos. datos repetidos en mª carmen
@@ -70,7 +70,40 @@ Arreglar:
 - Estudio_consumos graficas autoajustables
 - Mostrar datos de actividad en barra en estudio_consumos
 - Usar cachitos con interprete
-- Acortar bucle al pinchar en barra en estudio_consumos
+* Acortar bucle al pinchar en barra en estudio_consumos
 
 Exportar el proyecto a exe o py
 - http://www.py2exe.org/
+
+
+.Resumen de todos los episodios seguidos
+.Ver cada episodio de sueño. distinguir entre diurnos y docturnos, siestas y sueños largos. Comportamientos difernetes
+.Mostrar episodio y momento en q se despierta, fase de sueño
+.Mostrar acelerometros
+
+
+Reunión con doctor 25/4
+analizar
+primero comprobar si coincide patron flujo-temp en un paciente
+si coincide, clustering de eps.sueño con flujo-temp
+q pasa en intervalos cortos cuando esta acostado, viendo tv? por q? periodos cortos dif de largos.
+
+por dias q los ciclos se repiten 
+
+clustering eps. sueño con clasif.sueños
+
+dif entre temp cerca piel y cuerpo depende grasa
+
+comparar dias con sueños parecidos
+informe
+
+infra-peso
+
+tumbado-sueño-despertar. interrupciones, tiepmpo %
+clasificacion de eps. sueño, profundo etc
+siestas mas homogeneas, tumbado
+temperaturas dependiendo el sueño profundo, sube en profundo
+
+consultar flujo termico.
+
+
