@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 from PyQt4.uic import loadUiType
 from pyqtgraph.Qt import QtCore, QtGui
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
 import numpy as np
 import matplotlib.dates as md
 import math
@@ -14,21 +16,24 @@ import cachitos
 import colores
 import clustering
 
-DEBUG = 0
+DEBUG = 1
 
 
 
 Ui_MainWindow, QMainWindow = loadUiType('interfaz.ui')
 
+
+
+
+
 # plotLayout
 # cbx1, cbx2
 # checkTemp, checkFlujo
-# btnAbrir, btnCluster
+# btnAbrir, btnClustering
 class Main(QMainWindow, Ui_MainWindow):
     def __init__(self, ):
         super(Main, self).__init__()
         self.setupUi(self)
-        
         
         self.__initGraphs__()
         self.loadData()
@@ -37,10 +42,10 @@ class Main(QMainWindow, Ui_MainWindow):
         self.cbx1.activated[str].connect(self.cbx1Listener)
         self.cbx2.activated[str].connect(self.cbx2Listener)
         self.btnAbrir.clicked.connect(self.loadData)
-        self.checkClustering.clicked.connect(self.checkClusteringListener)
+        #self.checkClustering.clicked.connect(self.checkClusteringListener)
         self.checkTemp.clicked.connect(self.checkTempListener)
         self.checkFlujo.clicked.connect(self.checkFlujoListener)
-        
+        self.btnClustering.clicked.connect(self.btnClusteringListener)
     
     def __initGraphs__(self):
         #Graficas izquierda
@@ -68,16 +73,18 @@ class Main(QMainWindow, Ui_MainWindow):
         self.plotLayout.addLayout(vbox1)
         self.plotLayout.addLayout(vbox2)
         
-        self.f = plt.figure("Dendogram")
-    
-    def plotGraph(self, fig, tiempo, data, limMin, limMax, clear=False):
+    def plotGraph(self, fig, tiempo, data, clear=False, temperatura=False, flujo=False):
         ax = fig.axes[0]
         ax.clear()
         
         if(not clear):
             ax.plot(tiempo, data, 'b-')
-        ax.set_ylabel('Temperatura (ºC)', color='b')
-        ax.set_ylim([limMin,limMax])
+            if(temperatura):
+                ax.set_ylabel('Temperatura (ºC)', color='b')
+                ax.set_ylim([25,40])
+            elif(flujo):
+                ax.set_ylabel('Flujo térmico', color='b')
+                ax.set_ylim([-20,220])
         for tl in ax.get_yticklabels():
             tl.set_color('b')
         fig.autofmt_xdate()
@@ -104,10 +111,10 @@ class Main(QMainWindow, Ui_MainWindow):
             #idx = int(self.cbx1.currentText()[5])
             #idx = self.getCbxIdx()
             idx = self.cbx1.currentIndex()
-            self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, 25, 40)
-            self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, -20, 220)
-            self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, 25, 40)
-            self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, -20, 220)
+            self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
+            self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
+            self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
+            self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
             
         if(DEBUG): fname = '../data.csv'
         else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
@@ -122,26 +129,41 @@ class Main(QMainWindow, Ui_MainWindow):
             print "Actualizar episodio izquierdo"
             idx = self.cbx1.currentIndex()
             if(self.checkTemp.isChecked()):
-                self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, 25, 40)
+                self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
             else:
-                self.plotGraph(self.fig1_var1, 0, 0, 25, 40, clear=True)
+                self.plotGraph(self.fig1_var1, 0, 0, clear=True)
             if(self.checkFlujo.isChecked()):
-                self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, -20, 220)
+                self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
             else:
-                self.plotGraph(self.fig1_var2, 0, 0, 25, 40, clear=True)
+                self.plotGraph(self.fig1_var2, 0, 0, clear=True)
         if(ep2):
             print "Actualizar episodio derecho"
             idx = self.cbx2.currentIndex()
             if(self.checkTemp.isChecked()):
-                self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, 25, 40)
+                self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
             else:
-                self.plotGraph(self.fig2_var1, 0, 0, 25, 40, clear=True)
+                self.plotGraph(self.fig2_var1, 0, 0, clear=True)
             if(self.checkFlujo.isChecked()):
-                self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, -20, 220)
+                self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
             else:
-                self.plotGraph(self.fig2_var2, 0, 0, 25, 40, clear=True)
+                self.plotGraph(self.fig2_var2, 0, 0, clear=True)
         
-    
+    class MyTable(QTableWidget):
+        def __init__(self, data, *args):
+            QTableWidget.__init__(self, *args)
+            self.data = data
+            self.setmydata()
+            self.resizeColumnsToContents()
+            self.resizeRowsToContents()
+     
+        def setmydata(self):
+            i, j = 0
+            for i in range(self.data):
+                for k in elf.data[key]):
+                    newitem = QTableWidgetItem(item)
+                    self.setItem(m, n, newitem)
+            self.setHorizontalHeaderLabels(horHeaders)
+        
         
     def cbx1Listener(self, text):
         print "Episodio izquierdo", text   
@@ -159,25 +181,23 @@ class Main(QMainWindow, Ui_MainWindow):
         print "Filtrar Flujo"
         self.updateGraphs()
             
-    def checkClusteringListener(self):
-        if(self.checkClustering.isChecked()):
-            print "Mostrar dendograma"
-            #self.clusters = clustering.HierarchicalClustering(self.selep)
-            self.f = clustering.HierarchicalClustering(self.selep).getDendogram()
-            self.f.show()
-            """
-            f = plt.figure('Clustering')
-            plt.title('Dendograma de clustering jerarquico')
-            plt.xlabel('Indice de episodio')
-            plt.ylabel('Distancia')
-            plt.plot(self.selep.epFiltro[0].tiempo, self.selep.epFiltro[0].flujo)
-            f.show()
-            """
-        else:
-            print "Cerrar dendograma"
-            plt.close(self.f)
-        
-    
+    def createTable(self, clusters):
+        horHeaders = []
+        for i in self.selep.epFiltro:
+            horHeaders.append(i.nombre)
+                
+        table = self.MyTable(clusters.distancias, len(clusters.distancias)+1, len(clusters.distancias)+1)
+        table.setHorizontalHeaderLabels(horHeaders)    
+        return table        
+                
+    def btnClusteringListener(self):
+        print "Clustering"
+        clusters = clustering.HierarchicalClustering(self.selep)
+        canvas = FigureCanvas(clusters.getDendogram())
+        vbox = QtGui.QGridLayout()
+        vbox.addWidget(canvas)
+        vbox.addWidget(self.createTable(clusters))
+        self.plotLayout.addLayout(vbox)
 
 if __name__ == '__main__':
     import sys

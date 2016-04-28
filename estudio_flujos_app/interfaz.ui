@@ -6,144 +6,174 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1043</width>
-    <height>756</height>
+    <width>1094</width>
+    <height>771</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QWidget" name="widget" native="true">
+     <widget class="QWidget" name="widget_3" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <layout class="QHBoxLayout" name="plotLayout"/>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QWidget" name="widget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <layout class="QHBoxLayout" name="plotLayout"/>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_2" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>180</height>
+          </size>
+         </property>
+         <widget class="QCheckBox" name="checkTemp">
+          <property name="geometry">
+           <rect>
+            <x>230</x>
+            <y>50</y>
+            <width>141</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Temperatura</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="checkFlujo">
+          <property name="geometry">
+           <rect>
+            <x>230</x>
+            <y>90</y>
+            <width>97</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Flujo</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="cbx1">
+          <property name="geometry">
+           <rect>
+            <x>390</x>
+            <y>50</y>
+            <width>141</width>
+            <height>27</height>
+           </rect>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>300</height>
+           </size>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="cbx2">
+          <property name="geometry">
+           <rect>
+            <x>570</x>
+            <y>50</y>
+            <width>141</width>
+            <height>27</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label">
+          <property name="geometry">
+           <rect>
+            <x>390</x>
+            <y>20</y>
+            <width>131</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Episodio izquierdo</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_2">
+          <property name="geometry">
+           <rect>
+            <x>580</x>
+            <y>20</y>
+            <width>121</width>
+            <height>17</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Episodio derecho</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="btnAbrir">
+          <property name="geometry">
+           <rect>
+            <x>360</x>
+            <y>130</y>
+            <width>98</width>
+            <height>27</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Abrir</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="checkClustering">
+          <property name="geometry">
+           <rect>
+            <x>780</x>
+            <y>50</y>
+            <width>97</width>
+            <height>22</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Clustering</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="btnClustering">
+          <property name="geometry">
+           <rect>
+            <x>790</x>
+            <y>90</y>
+            <width>98</width>
+            <height>27</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Clustering &gt;&gt;</string>
+          </property>
+         </widget>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
     <item>
-     <widget class="QWidget" name="widget_2" native="true">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>180</height>
-       </size>
-      </property>
-      <widget class="QCheckBox" name="checkTemp">
-       <property name="geometry">
-        <rect>
-         <x>230</x>
-         <y>50</y>
-         <width>141</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Temperatura</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="checkFlujo">
-       <property name="geometry">
-        <rect>
-         <x>230</x>
-         <y>90</y>
-         <width>97</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Flujo</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QComboBox" name="cbx1">
-       <property name="geometry">
-        <rect>
-         <x>390</x>
-         <y>50</y>
-         <width>141</width>
-         <height>27</height>
-        </rect>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>300</height>
-        </size>
-       </property>
-      </widget>
-      <widget class="QComboBox" name="cbx2">
-       <property name="geometry">
-        <rect>
-         <x>570</x>
-         <y>50</y>
-         <width>141</width>
-         <height>27</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label">
-       <property name="geometry">
-        <rect>
-         <x>390</x>
-         <y>20</y>
-         <width>131</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Episodio izquierdo</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_2">
-       <property name="geometry">
-        <rect>
-         <x>580</x>
-         <y>20</y>
-         <width>121</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Episodio derecho</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="btnAbrir">
-       <property name="geometry">
-        <rect>
-         <x>360</x>
-         <y>130</y>
-         <width>98</width>
-         <height>27</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Abrir</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="checkClustering">
-       <property name="geometry">
-        <rect>
-         <x>780</x>
-         <y>50</y>
-         <width>97</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Clustering</string>
-       </property>
-      </widget>
+     <widget class="QWidget" name="widget_4" native="true">
+      <layout class="QVBoxLayout" name="clusteringLayout"/>
      </widget>
     </item>
    </layout>
@@ -153,7 +183,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1043</width>
+     <width>1094</width>
      <height>25</height>
     </rect>
    </property>

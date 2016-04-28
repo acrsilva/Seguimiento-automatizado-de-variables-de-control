@@ -49,22 +49,22 @@ class HierarchicalClustering():
         """
         #Calcular matriz de distancias entre cada individuo por DTW
         s = len(self.eps_sueno)
-        distancias = np.zeros((s, s))
+        self.distancias = np.zeros((s, s))
         for i in range(s):
             for j in range(s):
                 #distanceTemp , path = fastdtw(eps_sueno[i].stt, eps_sueno[j].stt, dist=euclidean) #Distancia en temperatura
                 #distanceFlujo , path = fastdtw(eps_sueno[i].stf, eps_sueno[j].stf, dist=euclidean) #Distancia en flujo
                 distanceTemp = mlpy.dtw_std(self.eps_sueno[i].stt, self.eps_sueno[j].stt, dist_only=True) #Dist. euclidea
                 distanceFlujo = mlpy.dtw_std(self.eps_sueno[i].stf, self.eps_sueno[j].stf, dist_only=True)
-                distancias[j][i] = math.sqrt(math.pow(distanceTemp, 2) + math.pow(distanceFlujo, 2)) #Distancia euclídea total
+                self.distancias[j][i] = math.sqrt(math.pow(distanceTemp, 2) + math.pow(distanceFlujo, 2)) #Distancia euclídea total
             print '.'
 
         #Vector con las distancias requeridas para hacer clustering
         #print distancias
-        print distancias.shape
+        print self.distancias.shape
 
         #Obtener la diagonal de la matriz de distancias
-        dists = ssd.squareform(distancias)
+        dists = ssd.squareform(self.distancias)
         print dists
         #Calcular clustering jerárquico
         self.Z = linkage(dists, 'average')
