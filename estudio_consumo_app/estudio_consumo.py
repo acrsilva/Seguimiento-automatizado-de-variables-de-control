@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 import sys
 sys.path.insert(0, '../lib')
@@ -23,12 +24,17 @@ class Main(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(Main, self).__init__()
         self.setupUi(self)
-        self.selep = cachitos.selEpisodio("../data.csv")
+        self.selep = cachitos.selEpisodio("../data.csv", dias=True)
+        self.__initCombobox__()
         
         self.drawActividadesPie()
         self.drawConsumosPie()
         self.drawRatioBar()
     
+    def __initCombobox__(self):
+        for i in range(len(self.selep.epsDias)):
+            self.cboxDia.addItem("Día " + str(i))
+        
     def __crearPieWidget__(self, sizes):
         #labels = ['Dormido', 'Sedentario', 'Act. Ligera', 'Act. Moderada', 'Act. Intensa', 'Act. Muy intensa']
         labels = ['Dormido', 'Sedentario', 'Act. Ligera', 'Act. Moderada']
