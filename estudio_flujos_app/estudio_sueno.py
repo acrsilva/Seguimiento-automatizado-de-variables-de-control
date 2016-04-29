@@ -19,17 +19,12 @@ import clustering
 DEBUG = 1
 
 
-
 Ui_MainWindow, QMainWindow = loadUiType('interfaz.ui')
-
-
-
-
 
 # plotLayout
 # cbx1, cbx2
-# checkTemp, checkFlujo
 # btnAbrir, btnClustering
+# rbTemperatura, rbConsumo
 class Main(QMainWindow, Ui_MainWindow):
     def __init__(self, ):
         super(Main, self).__init__()
@@ -38,15 +33,40 @@ class Main(QMainWindow, Ui_MainWindow):
         self.__initGraphs__()
         self.loadData()
         
+        #Flags
+        self.showClustering = True
+        self.temp = True
+        self.cons = False        
+        
         #Conectar elementos de la interfaz
         self.cbx1.activated[str].connect(self.cbx1Listener)
         self.cbx2.activated[str].connect(self.cbx2Listener)
         self.btnAbrir.clicked.connect(self.loadData)
-        #self.checkClustering.clicked.connect(self.checkClusteringListener)
-        self.checkTemp.clicked.connect(self.checkTempListener)
-        self.checkFlujo.clicked.connect(self.checkFlujoListener)
         self.btnClustering.clicked.connect(self.btnClusteringListener)
-    
+        self.rbTemperatura.clicked.connect(self.rbListener)
+        self.rbConsumo.clicked.connect(self.rbListener)
+
+    #Mejorar con hide/show
+    def cluster(self):
+        if(self.showClustering):
+            print "Mostrar dendograma y distancias"
+            for cnt in reversed(range(self.vblClustering.count())):
+                widget = self.vblClustering.takeAt(cnt).widget()
+                if widget is not None: 
+                    widget.deleteLater()
+            clusters = clustering.HierarchicalClustering(self.selep, tf=self.rbTemperatura.isChecked(), cons=self.rbConsumo.isChecked())
+            self.canvasCluster = FigureCanvas(clusters.getDendogram())
+            self.vblClustering = QtGui.QVBoxLayout()
+            self.vblClustering.addWidget(self.canvasCluster)
+            self.vblClustering.addWidget(self.createTable(clusters.distancias))
+            self.clusteringLayout.addLayout(self.vblClustering)
+        else:
+            print "Borrar dendograma"
+            for cnt in reversed(range(self.vblClustering.count())):
+                widget = self.vblClustering.takeAt(cnt).widget()
+                if widget is not None: 
+                    widget.deleteLater()
+
     def __initGraphs__(self):
         #Graficas izquierda
         self.fig1_var1 = plt.figure(tight_layout=True)
@@ -73,7 +93,11 @@ class Main(QMainWindow, Ui_MainWindow):
         self.plotLayout.addLayout(vbox1)
         self.plotLayout.addLayout(vbox2)
         
-    def plotGraph(self, fig, tiempo, data, clear=False, temperatura=False, flujo=False):
+        
+        self.vblClustering = QtGui.QVBoxLayout()
+        #self.clusteringLayout.addLayout(self.vblClustering)
+        
+    def plotGraph(self, fig, tiempo, data, clear=False, temperatura=False, flujo=False, consumo=False):
         ax = fig.axes[0]
         ax.clear()
         
@@ -85,6 +109,9 @@ class Main(QMainWindow, Ui_MainWindow):
             elif(flujo):
                 ax.set_ylabel('Flujo térmico', color='b')
                 ax.set_ylim([-20,220])
+            elif(consumo):
+                ax.set_ylabel('Consumo (cal)', color='b')
+                #ax.set_ylim([-20,220])
         for tl in ax.get_yticklabels():
             tl.set_color('b')
         fig.autofmt_xdate()
@@ -128,24 +155,20 @@ class Main(QMainWindow, Ui_MainWindow):
         if(ep1):
             print "Actualizar episodio izquierdo"
             idx = self.cbx1.currentIndex()
-            if(self.checkTemp.isChecked()):
+            if(self.rbTemperatura.isChecked()):
                 self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
-            else:
-                self.plotGraph(self.fig1_var1, 0, 0, clear=True)
-            if(self.checkFlujo.isChecked()):
                 self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
-            else:
+            elif(self.rbConsumo.isChecked()):
+                self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, consumo=True)
                 self.plotGraph(self.fig1_var2, 0, 0, clear=True)
         if(ep2):
             print "Actualizar episodio derecho"
             idx = self.cbx2.currentIndex()
-            if(self.checkTemp.isChecked()):
+            if(self.rbTemperatura.isChecked()):
                 self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
-            else:
-                self.plotGraph(self.fig2_var1, 0, 0, clear=True)
-            if(self.checkFlujo.isChecked()):
                 self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
-            else:
+            elif(self.rbConsumo.isChecked()):
+                self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, consumo=True)
                 self.plotGraph(self.fig2_var2, 0, 0, clear=True)
         
     class MyTable(QTableWidget):
@@ -157,12 +180,10 @@ class Main(QMainWindow, Ui_MainWindow):
             self.resizeRowsToContents()
      
         def setmydata(self):
-            i, j = 0
-            for i in range(self.data):
-                for k in elf.data[key]):
-                    newitem = QTableWidgetItem(item)
-                    self.setItem(m, n, newitem)
-            self.setHorizontalHeaderLabels(horHeaders)
+            for i in range(self.data.shape[0]):
+                for k in range(self.data.shape[1]):
+                    newitem = QTableWidgetItem(str(self.data[i][k])[:6])
+                    self.setItem(i, k, newitem)
         
         
     def cbx1Listener(self, text):
@@ -172,33 +193,30 @@ class Main(QMainWindow, Ui_MainWindow):
     def cbx2Listener(self, text):
         print "Episodio derecho", text
         self.updateGraphs(ep1=False)
+    
+    def rbListener(self):
+        print "Radio button"
+        self.updateGraphs(ep1=True, ep2=True)
+        self.cluster()
         
-    def checkTempListener(self):
-        print "Filtrar Temperatura"
-        self.updateGraphs()
-        
-    def checkFlujoListener(self):
-        print "Filtrar Flujo"
-        self.updateGraphs()
-            
     def createTable(self, clusters):
         horHeaders = []
         for i in self.selep.epFiltro:
             horHeaders.append(i.nombre)
-                
-        table = self.MyTable(clusters.distancias, len(clusters.distancias)+1, len(clusters.distancias)+1)
-        table.setHorizontalHeaderLabels(horHeaders)    
-        return table        
+        table = self.MyTable(clusters, len(clusters), len(clusters))
+        table.setHorizontalHeaderLabels(horHeaders)
+        table.setVerticalHeaderLabels(horHeaders)
+        return table
                 
     def btnClusteringListener(self):
-        print "Clustering"
-        clusters = clustering.HierarchicalClustering(self.selep)
-        canvas = FigureCanvas(clusters.getDendogram())
-        vbox = QtGui.QGridLayout()
-        vbox.addWidget(canvas)
-        vbox.addWidget(self.createTable(clusters))
-        self.plotLayout.addLayout(vbox)
-
+        if(not self.showClustering):
+            print "Mostrar dendograma y distancias"
+            self.showClustering = True
+            self.cluster()
+        else:
+            self.showClustering = False
+            self.cluster()
+        
 if __name__ == '__main__':
     import sys
     from PyQt4 import QtGui
