@@ -25,6 +25,8 @@ Ui_MainWindow, QMainWindow = loadUiType('interfaz.ui')
 # cbx1, cbx2
 # btnAbrir, btnClustering
 # rbTemperatura, rbConsumo
+# tableDistancias
+# wgDendograma
 class Main(QMainWindow, Ui_MainWindow):
     def __init__(self, ):
         super(Main, self).__init__()
@@ -36,36 +38,17 @@ class Main(QMainWindow, Ui_MainWindow):
         #Flags
         self.showClustering = True
         self.temp = True
-        self.cons = False        
+        self.cons = False
         
         #Conectar elementos de la interfaz
         self.cbx1.activated[str].connect(self.cbx1Listener)
         self.cbx2.activated[str].connect(self.cbx2Listener)
         self.btnAbrir.clicked.connect(self.loadData)
-        self.btnClustering.clicked.connect(self.btnClusteringListener)
+        #self.btnClustering.clicked.connect(self.btnClusteringListener)
         self.rbTemperatura.clicked.connect(self.rbListener)
         self.rbConsumo.clicked.connect(self.rbListener)
 
-    #Mejorar con hide/show
-    def cluster(self):
-        if(self.showClustering):
-            print "Mostrar dendograma y distancias"
-            for cnt in reversed(range(self.vblClustering.count())):
-                widget = self.vblClustering.takeAt(cnt).widget()
-                if widget is not None: 
-                    widget.deleteLater()
-            clusters = clustering.HierarchicalClustering(self.selep, tf=self.rbTemperatura.isChecked(), cons=self.rbConsumo.isChecked())
-            self.canvasCluster = FigureCanvas(clusters.getDendogram())
-            self.vblClustering = QtGui.QVBoxLayout()
-            self.vblClustering.addWidget(self.canvasCluster)
-            self.vblClustering.addWidget(self.createTable(clusters.distancias))
-            self.clusteringLayout.addLayout(self.vblClustering)
-        else:
-            print "Borrar dendograma"
-            for cnt in reversed(range(self.vblClustering.count())):
-                widget = self.vblClustering.takeAt(cnt).widget()
-                if widget is not None: 
-                    widget.deleteLater()
+    
 
     def __initGraphs__(self):
         #Graficas izquierda
@@ -73,10 +56,10 @@ class Main(QMainWindow, Ui_MainWindow):
         self.fig1_var1.add_subplot(111)
         self.fig1_var2 = plt.figure(tight_layout=True)
         self.fig1_var2.add_subplot(111)
-        self.canvas11 = FigureCanvas(self.fig1_var1)
+        canvas11 = FigureCanvas(self.fig1_var1)
         canvas12 = FigureCanvas(self.fig1_var2)
         vbox1 = QtGui.QGridLayout()
-        vbox1.addWidget(self.canvas11)
+        vbox1.addWidget(canvas11)
         vbox1.addWidget(canvas12)
         
         #Graficas derecha
@@ -94,9 +77,57 @@ class Main(QMainWindow, Ui_MainWindow):
         self.plotLayout.addLayout(vbox2)
         
         
-        self.vblClustering = QtGui.QVBoxLayout()
+        #self.vblClustering = QtGui.QVBoxLayout()
         #self.clusteringLayout.addLayout(self.vblClustering)
         
+    def loadData(self):
+        """
+        def updatePlots():
+            print "Actualizando gráficas"
+            idx = self.cbx1.currentIndex()
+            self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
+            self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
+            self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
+            self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
+        """    
+        if(DEBUG): fname = '../data.csv'
+        else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
+        
+        print "Abriendo fichero ", fname
+        self.selep = cachitos.selEpisodio(fname, sedentario=False, ligero=False, moderado=False)
+        self.configureComboBox()
+        #updatePlots() #mejor updateGraphs?
+        self.updatePlots(ep1=True, ep2=True)
+    
+    # Añade los nombres de los episodios en las listas desplegables
+    def configureComboBox(self):
+        print "Configurando combobox"
+        self.cbx1.clear()
+        self.cbx2.clear()
+        for i in self.selep.epFiltro:
+            self.cbx1.addItem(i.nombre)
+            self.cbx2.addItem(i.nombre)
+    
+    def updatePlots(self, ep1=False, ep2=False):
+        if(ep1):
+            print "Actualizar episodio izquierdo"
+            idx = self.cbx1.currentIndex()
+            if(self.rbTemperatura.isChecked()):
+                self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
+                self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
+            elif(self.rbConsumo.isChecked()):
+                self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, consumo=True)
+                self.plotGraph(self.fig1_var2, 0, 0, clear=True)
+        if(ep2):
+            print "Actualizar episodio derecho"
+            idx = self.cbx2.currentIndex()
+            if(self.rbTemperatura.isChecked()):
+                self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
+                self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
+            elif(self.rbConsumo.isChecked()):
+                self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, consumo=True)
+                self.plotGraph(self.fig2_var2, 0, 0, clear=True)
+    
     def plotGraph(self, fig, tiempo, data, clear=False, temperatura=False, flujo=False, consumo=False):
         ax = fig.axes[0]
         ax.clear()
@@ -123,54 +154,30 @@ class Main(QMainWindow, Ui_MainWindow):
         #fig.canvas.update()
         fig.canvas.draw()
     
-    def configureComboBox(self):
-        print "Configurando combobox"
-        self.cbx1.clear()
-        self.cbx2.clear()
-        #Solución temporal, el nombre debe ser el del propio Episodio!!!!!
-        for i in self.selep.epFiltro:
-            self.cbx1.addItem(i.nombre)
-            self.cbx2.addItem(i.nombre)
-   
-    def loadData(self):
-        def updateUI():
-            print "Actualizando interfaz"
-            #idx = int(self.cbx1.currentText()[5])
-            #idx = self.getCbxIdx()
-            idx = self.cbx1.currentIndex()
-            self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
-            self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
-            self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
-            self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
-            
-        if(DEBUG): fname = '../data.csv'
-        else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
         
-        print "Abriendo fichero ", fname
-        self.selep = cachitos.selEpisodio(fname, sedentario=False, ligero=False, moderado=False)
-        self.configureComboBox()
-        updateUI()
+    
         
-    def updateGraphs(self, ep1=True, ep2=True):
-        if(ep1):
-            print "Actualizar episodio izquierdo"
-            idx = self.cbx1.currentIndex()
-            if(self.rbTemperatura.isChecked()):
-                self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
-                self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
-            elif(self.rbConsumo.isChecked()):
-                self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, consumo=True)
-                self.plotGraph(self.fig1_var2, 0, 0, clear=True)
-        if(ep2):
-            print "Actualizar episodio derecho"
-            idx = self.cbx2.currentIndex()
-            if(self.rbTemperatura.isChecked()):
-                self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
-                self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
-            elif(self.rbConsumo.isChecked()):
-                self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, consumo=True)
-                self.plotGraph(self.fig2_var2, 0, 0, clear=True)
-        
+    #Mejorar con hide/show
+    def cluster(self):
+        if(self.showClustering):
+            print "Mostrar dendograma y distancias"
+            for cnt in reversed(range(self.vblClustering.count())):
+                widget = self.vblClustering.takeAt(cnt).widget()
+                if widget is not None:
+                    widget.deleteLater()
+            clusters = clustering.HierarchicalClustering(self.selep, tf=self.rbTemperatura.isChecked(), cons=self.rbConsumo.isChecked())
+            self.canvasCluster = FigureCanvas(clusters.getDendogram())
+            self.vblClustering = QtGui.QVBoxLayout()
+            self.vblClustering.addWidget(self.canvasCluster)
+            self.vblClustering.addWidget(self.createTable(clusters.distancias))
+            self.clusteringLayout.addLayout(self.vblClustering)
+        else:
+            print "Borrar dendograma"
+            for cnt in reversed(range(self.vblClustering.count())):
+                widget = self.vblClustering.takeAt(cnt).widget()
+                if widget is not None:
+                    widget.deleteLater()
+    
     class MyTable(QTableWidget):
         def __init__(self, data, *args):
             QTableWidget.__init__(self, *args)

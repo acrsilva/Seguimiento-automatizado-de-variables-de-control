@@ -6,191 +6,163 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1094</width>
-    <height>771</height>
+    <width>1069</width>
+    <height>775</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Estudio sueños</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <widget class="QWidget" name="widget_3" native="true">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QWidget" name="widget" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <layout class="QHBoxLayout" name="plotLayout"/>
-        </widget>
-       </item>
-       <item>
-        <widget class="QWidget" name="widget_2" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>180</height>
-          </size>
-         </property>
-         <widget class="QComboBox" name="cbx1">
-          <property name="geometry">
-           <rect>
-            <x>50</x>
-            <y>50</y>
-            <width>141</width>
-            <height>27</height>
-           </rect>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>300</height>
-           </size>
-          </property>
-         </widget>
-         <widget class="QComboBox" name="cbx2">
-          <property name="geometry">
-           <rect>
-            <x>230</x>
-            <y>50</y>
-            <width>141</width>
-            <height>27</height>
-           </rect>
-          </property>
-         </widget>
-         <widget class="QLabel" name="label">
-          <property name="geometry">
-           <rect>
-            <x>50</x>
-            <y>20</y>
-            <width>131</width>
-            <height>20</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Episodio izquierdo</string>
-          </property>
-         </widget>
-         <widget class="QLabel" name="label_2">
-          <property name="geometry">
-           <rect>
-            <x>240</x>
-            <y>20</y>
-            <width>121</width>
-            <height>17</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Episodio derecho</string>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="btnAbrir">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>130</y>
-            <width>98</width>
-            <height>27</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Abrir</string>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="btnClustering">
-          <property name="geometry">
-           <rect>
-            <x>260</x>
-            <y>130</y>
-            <width>98</width>
-            <height>27</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Clustering &gt;&gt;</string>
-          </property>
-         </widget>
-         <widget class="QRadioButton" name="rbTemperatura">
-          <property name="geometry">
-           <rect>
-            <x>50</x>
-            <y>90</y>
-            <width>171</width>
-            <height>22</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Temperatura y flujo</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QRadioButton" name="rbConsumo">
-          <property name="geometry">
-           <rect>
-            <x>250</x>
-            <y>90</y>
-            <width>116</width>
-            <height>22</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Consumo</string>
-          </property>
-         </widget>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QWidget" name="widget_4" native="true">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>500</width>
-        <height>0</height>
-       </size>
-      </property>
-      <layout class="QVBoxLayout" name="clusteringLayout"/>
-     </widget>
-    </item>
-   </layout>
+   <widget class="QComboBox" name="cbx1">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>50</y>
+      <width>171</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>16777215</width>
+      <height>300</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="cbx2">
+    <property name="geometry">
+     <rect>
+      <x>860</x>
+      <y>50</y>
+      <width>171</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="rbTemperatura">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>660</y>
+      <width>171</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Temperatura y flujo</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnClustering">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>690</y>
+      <width>98</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Clustering &gt;&gt;</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="rbConsumo">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>660</y>
+      <width>116</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Consumo</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnAbrir">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>690</y>
+      <width>98</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Abrir</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="tableDistancias">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>50</y>
+      <width>371</width>
+      <height>321</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QWidget" name="wgDendograma" native="true">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>390</y>
+      <width>371</width>
+      <height>251</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>311</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Matriz de distancias entre episodios de sueño</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>20</y>
+      <width>261</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Comparación entre episodios de sueño</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="widget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>90</y>
+      <width>631</width>
+      <height>551</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
+  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1094</width>
+     <width>1069</width>
      <height>25</height>
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>
