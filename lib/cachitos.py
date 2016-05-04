@@ -30,6 +30,7 @@ class Episodio():
         self.temp = temperaturas[self.ini:self.fin]
         self.flujo = flujo[self.ini:self.fin]
         self.correlacion, p = pearsonr(self.temp, self.flujo)
+        self.consumo = consumo[self.ini:self.fin]
         self.numCalorias = np.nansum(consumo[self.ini:self.fin])
         #self.numCalorias = self.getCalorias(consumo)
     """    
@@ -255,7 +256,7 @@ class selEpisodio():
             print ind.nombre, ind.ini, ind.fin, "duracion:", ind.fin - ind.ini + 1
         
 
-eps = selEpisodio('../data8.csv', dias=True)
+#eps = selEpisodio('../data8.csv', dias=True)
 
 """
 print len(eps.episodios)
@@ -271,8 +272,9 @@ for i in range(len(eps.episodios)):
         vs += 1
         print eps.episodios[i].nombre, eps.episodios[i].ini, eps.episodios[i].fin, "duracion:", eps.episodios[i].fin - eps.episodios[i].ini+1
 """
-
+"""
 print len(eps.epsDias)
 for i in range(len(eps.epsDias)):
     print "Dia", i+1
     eps.imprimeEpisodios(eps.epsDias[i])
+"""
