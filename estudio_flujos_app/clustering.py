@@ -76,7 +76,9 @@ class HierarchicalClustering():
         #Calcular clustering jerárquico
         self.Z = linkage(dists, 'average')
 
-
+        self.labels=[]
+        for i in self.eps_sueno:
+            self.labels.append(i.nombre)
         
     def getDendogram(self):
         #Dibujar dendograma

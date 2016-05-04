@@ -15,6 +15,7 @@ import math
 import cachitos
 import colores
 import clustering
+from scipy.cluster.hierarchy import dendrogram
 
 DEBUG = 1
 
@@ -163,21 +164,31 @@ class Main(QMainWindow, Ui_MainWindow):
         #fig.canvas.update()
         fig.canvas.draw()
         
+    def plotDendrogram(self, c1, c2):
+        fig, self.axes = plt.subplots(1, 1, figsize=(8, 3))
+        if(self.rbTemperatura.isChecked()):
+            dn1 = dendrogram(c1.Z, ax=self.axes, leaf_rotation=20., labels=c1.labels)
+        elif(self.rbConsumo.isChecked()):
+            dn2 = dendrogram(c2.Z, ax=self.axes, leaf_rotation=20., labels=c2.labels)
+        return FigureCanvas(fig)
+        
     def initCluster(self):
         self.cluster_tf = clustering.HierarchicalClustering(self.selep, tf=True)
         self.cluster_cons = clustering.HierarchicalClustering(self.selep, cons=True)
         
-        self.canvasCluster_tf = FigureCanvas(self.cluster_tf.getDendogram())
-        self.canvasCluster_cons = FigureCanvas(self.cluster_cons.getDendogram())
+        #self.canvasCluster_tf = FigureCanvas(self.plotDendrogram(self.cluster_tf))
+        #self.canvasCluster_cons = FigureCanvas(self.plotDendrogram(self.cluster_cons))
         
-        self.dendogramLayout.addWidget(self.canvasCluster_tf)
-        self.dendogramLayout.addWidget(self.canvasCluster_cons)
+        #self.dendogramLayout.addWidget(self.canvasCluster_tf)
+        #self.dendogramLayout.addWidget(self.canvasCluster_cons)
         
+        self.dendogramLayout.addWidget(self.plotDendrogram(self.cluster_tf, self.cluster_cons))
         """
         self.fc = plt.figure()
         self.fc.add_subplot(111)
         self.canvasCluster = FigureCanvas(self.fc)
         """
+        
         
     #Mejorar con hide/show
     def cluster(self, consumo=False):
@@ -186,17 +197,16 @@ class Main(QMainWindow, Ui_MainWindow):
             widget = self.tableLayout.takeAt(cnt).widget()
             if widget is not None:
                 widget.deleteLater()
-        """
         for cnt in reversed(range(self.dendogramLayout.count())):
             widget = self.dendogramLayout.takeAt(cnt).widget()
             if widget is not None:
                 widget.deleteLater()
-        """
-        
         """    
         self.dendogramLayout.removeWidget(self.canvasCluster)
         self.canvasCluster.close()
         """
+        
+        self.dendogramLayout.addWidget(self.plotDendrogram(self.cluster_tf, self.cluster_cons))
         
         if(self.rbTemperatura.isChecked()):
             #self.canvasCluster_tf.show()
@@ -230,6 +240,7 @@ class Main(QMainWindow, Ui_MainWindow):
     #Selecciona los individuos a agrupar
     def rbListener(self):
         print "Radio button"
+        self.axes.clear()
         self.cluster()
         
     
