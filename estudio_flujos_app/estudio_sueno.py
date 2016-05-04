@@ -195,15 +195,15 @@ class Main(QMainWindow, Ui_MainWindow):
         
     def cbx1Listener(self, text):
         print "Episodio izquierdo", text   
-        self.updateGraphs(ep2=False)
+        self.updatePlots(ep1=True)
         
     def cbx2Listener(self, text):
         print "Episodio derecho", text
-        self.updateGraphs(ep1=False)
+        self.updatePlots(ep2=True)
     
     def rbListener(self):
         print "Radio button"
-        self.updateGraphs(ep1=True, ep2=True)
+        self.updatePlots(ep1=True, ep2=True)
         self.cluster()
         
     def createTable(self, clusters):

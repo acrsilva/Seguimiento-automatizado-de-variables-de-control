@@ -146,10 +146,11 @@
      <rect>
       <x>420</x>
       <y>90</y>
-      <width>631</width>
+      <width>611</width>
       <height>551</height>
      </rect>
     </property>
+    <layout class="QHBoxLayout" name="plotLayout"/>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
