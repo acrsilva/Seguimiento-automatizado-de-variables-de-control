@@ -40,17 +40,7 @@ class HierarchicalClustering():
             for i in sel.epFiltro:
                 a = preprocessing.scale(i.consumo, copy=True)
                 self.eps_sueno.append(Individuo(i.nombre, i.tiempo, consumo=a))
-        """
-        #La diagonal de distancias no da 0 con fastdtw, mismas ST dan distancias >0 !!!
-        for i in range(s):
-            print eps_sueno[i].stt[-1], eps_sueno[i].stt[-1]
-        for i in range(s):
-            d, p = fastdtw(eps_sueno[i].stt, eps_sueno[i].stt, dist=euclidean)
-            dd, p = fastdtw(eps_sueno[i].stf, eps_sueno[i].stf, dist=euclidean)
-            dt = mlpy.dtw_std(eps_sueno[i].stt, eps_sueno[i].stt, dist_only=True)
-            df = mlpy.dtw_std(eps_sueno[i].stf, eps_sueno[i].stf, dist_only=True)
-            print d, dd, dt, df
-        """
+        
         #Calcular matriz de distancias entre cada individuo por DTW
         s = len(self.eps_sueno)
         self.distancias = np.zeros((s, s))

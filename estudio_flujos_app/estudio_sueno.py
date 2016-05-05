@@ -17,7 +17,7 @@ import colores
 import clustering
 from scipy.cluster.hierarchy import dendrogram
 
-DEBUG = 1
+DEBUG = 0
 
 
 Ui_MainWindow, QMainWindow = loadUiType('interfaz.ui')
@@ -56,8 +56,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.loadData()
         
         
-        self.initCluster()
-        self.cluster()
+        
         print "Listo"
 
         #Conectar elementos de la interfaz
@@ -103,8 +102,7 @@ class Main(QMainWindow, Ui_MainWindow):
         
         
     #Carga un fichero de datos csv y lo trocea en episodios de sueño
-    #Actualiza el contenido de los combobox
-    #Actualiza el contenido de las gráficas
+    #Actualiza el contenido de toda la interfaz
     def loadData(self):
         if(DEBUG): fname = '../data.csv'
         else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
@@ -113,6 +111,8 @@ class Main(QMainWindow, Ui_MainWindow):
         self.selep = cachitos.selEpisodio(fname, sedentario=False, ligero=False, moderado=False)
         self.configureComboBox()
         self.updatePlots(ep1=True, ep2=True)
+        self.initCluster()
+        self.cluster()
     
     # Añade los nombres de los episodios en las listas desplegables
     def configureComboBox(self):
@@ -141,18 +141,21 @@ class Main(QMainWindow, Ui_MainWindow):
     def plotGraph(self, fig, tiempo, data, clear=False, temperatura=False, flujo=False, consumo=False):
         ax = fig.axes[0]
         ax.clear()
-        
+        color = 'b'
         if(not clear):
-            ax.plot(tiempo, data, 'b-')
             if(temperatura):
-                ax.set_ylabel('Temperatura (ºC)', color='b')
+                color = colores.temperatura
+                ax.set_ylabel('Temperatura (ºC)', color=color)
                 ax.set_ylim([25,40])
             elif(flujo):
-                ax.set_ylabel('Flujo térmico', color='b')
+                color=colores.flujo
+                ax.set_ylabel('Flujo térmico', color=color)
                 ax.set_ylim([-20,220])
             elif(consumo):
-                ax.set_ylabel('Consumo (cal)', color='b')
-                #ax.set_ylim([-20,220])
+                color=colores.consumo
+                ax.set_ylabel('Consumo (cal)', color=color)
+                ax.set_ylim([5,20])
+            ax.plot(tiempo, data, color)
         for tl in ax.get_yticklabels():
             tl.set_color('b')
         fig.autofmt_xdate()
@@ -165,7 +168,7 @@ class Main(QMainWindow, Ui_MainWindow):
         fig.canvas.draw()
         
     def plotDendrogram(self, c1, c2):
-        fig, self.axes = plt.subplots(1, 1, figsize=(8, 3))
+        fig, self.axes = plt.subplots(1, 1, figsize=(8, 3), tight_layout=True)
         if(self.rbTemperatura.isChecked()):
             dn1 = dendrogram(c1.Z, ax=self.axes, leaf_rotation=20., labels=c1.labels)
         elif(self.rbConsumo.isChecked()):
@@ -216,9 +219,6 @@ class Main(QMainWindow, Ui_MainWindow):
             #self.canvasCluster_tf.hide()
             #self.canvasCluster_cons.show()
             self.tableLayout.addWidget(self.createTable(self.cluster_cons.distancias))
-        
-        
-        
         
     def createTable(self, clusters):
         horHeaders = []
