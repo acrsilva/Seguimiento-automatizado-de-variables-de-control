@@ -32,15 +32,7 @@ class Episodio():
         self.correlacion, p = pearsonr(self.temp, self.flujo)
         self.consumo = consumo[self.ini:self.fin]
         self.numCalorias = np.nansum(consumo[self.ini:self.fin])
-        #self.numCalorias = self.getCalorias(consumo)
-    """    
-    def getCalorias(self, consumo):
-        numCal = 0
-        for i in consumo:
-            if(np.logical_not(np.isnan(i))):
-                numCal += i
-        return numCal
-    """
+        
     
 class selEpisodio():
     def __init__(self, filename, sueno=True, sedentario=True, ligero=True, moderado=True, dias=False):
@@ -249,6 +241,8 @@ class selEpisodio():
             lig = self.csv.datosDia(i, "actli")
             mod = self.csv.datosDia(i, "actmd")
             listaD.append(self.creaEpisodios(sueno, sed, lig, mod, minep, intr))
+            for k in listaD[-1]:
+                k.filtrar(self.dt, self.csv.temp, self.csv.flujo, self.csv.consm)    
         return listaD
         
     def imprimeEpisodios(self, lista):
