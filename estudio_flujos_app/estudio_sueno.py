@@ -16,6 +16,7 @@ import cachitos
 import colores
 import clustering
 from scipy.cluster.hierarchy import dendrogram
+from datetime import datetime
 
 DEBUG = 1
 
@@ -123,9 +124,11 @@ class Main(QMainWindow, Ui_MainWindow):
     
     #Actualiza el contenido de las gráficas con el episodio seleccionado por los combobox
     def updatePlots(self, ep1=False, ep2=False):
+        #PRUEBAS
         if(ep1):
             print "Actualizar episodio izquierdo"
             idx = self.cbx1.currentIndex()
+            #self.plotGraph(self.selep.epFiltro[idx], self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
             self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
             self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
             self.plotGraph(self.fig1_var3, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, consumo=True)
@@ -136,24 +139,29 @@ class Main(QMainWindow, Ui_MainWindow):
             self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
             self.plotGraph(self.fig2_var3, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, consumo=True)
     
-    def plotGraph(self, fig, tiempo, data, clear=False, temperatura=False, flujo=False, consumo=False):
+    #self.ax.axvspan(0.25, 0.75, facecolor='0.5', alpha=0.5)
+    def plotGraph(self, fig, tiempo, data, temperatura=False, flujo=False, consumo=False):
         ax = fig.axes[0]
         ax.clear()
         color = 'b'
-        if(not clear):
-            if(temperatura):
-                color = colores.temperatura
-                ax.set_ylabel('Temperatura (ºC)', color=color)
-                ax.set_ylim([25,40])
-            elif(flujo):
-                color=colores.flujo
-                ax.set_ylabel('Flujo térmico', color=color)
-                ax.set_ylim([-20,220])
-            elif(consumo):
-                color=colores.consumo
-                ax.set_ylabel('Consumo (cal)', color=color)
-                ax.set_ylim([5,20])
-            ax.plot(tiempo, data, color)
+        if(temperatura):
+            ax.set_ylabel('Temperatura (ºC)', color=colores.temperatura)
+            ax.set_ylim([25,40])
+        elif(flujo):
+            ax.set_ylabel('Flujo térmico', color=colores.flujo)
+            ax.set_ylim([-20,220])
+        elif(consumo):
+            ax.set_ylabel('Consumo (cal)', color=colores.consumo)
+            ax.set_ylim([5,20])
+
+        #PRUEBAS
+        """
+        t = []    
+        for i in tiempo:
+            t.append(datetime.fromtimestamp(i))    
+        """
+            
+        ax.plot(tiempo, data, color)
         for tl in ax.get_yticklabels():
             tl.set_color('b')
         fig.autofmt_xdate()
@@ -162,6 +170,14 @@ class Main(QMainWindow, Ui_MainWindow):
         start, end = ax.get_xlim()
         ax.grid(True)
         
+        ###PRUEBAS
+        """
+        desp = self.selep.getNotDespierto(int(tiempo[0]), int(tiempo[-1]))
+        print "ESTOY AQUI", desp
+        for i in desp:
+            ax.axvspan(i[0], i[1], facecolor='0.5', alpha=0.5)
+        """    
+            
         #fig.canvas.update()
         fig.canvas.draw()
         

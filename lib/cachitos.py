@@ -41,7 +41,9 @@ class selEpisodio():
         #Pasar minutos a Datetime
         self.dt = [] 
         for i in self.csv.tiempo:
+            #PRUEBAS
             self.dt.append(datetime.fromtimestamp(i))
+            #self.dt.append(i)
         
         self.episodios = self.creaEpisodios(self.csv.sueno, self.csv.actsd, self.csv.actli, self.csv.actmd, 5, interrupcion)
         
@@ -248,7 +250,30 @@ class selEpisodio():
     def imprimeEpisodios(self, lista):
         for ind in lista:
             print ind.nombre, ind.ini, ind.fin, "duracion:", ind.fin - ind.ini + 1
+    
+    #PRUEBAS
+    def getNotDespierto(self, i, f):
+        class Rango:
+            def __init__(self, ini, fin):
+                self.inicio = ini
+                self.fin = fin
+            
+        flag = False
+        ii = 0
+        rangos = []
         
+        for k in range(i,f):
+            if(not self.csv.sueno[k] and not flag):
+                flag = True
+                ii = k
+            elif(not self.csv.sueno[k] and flag):
+                flag = False
+                rangos.append((ii,k))
+            elif(k == f-1 and not self.csv.sueno[k]):
+                rangos.append((ii,k))
+            
+        return rangos
+            
 
 #eps = selEpisodio('../data8.csv', dias=True)
 

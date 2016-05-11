@@ -24,26 +24,34 @@ class Main(QMainWindow, Ui_MainWindow):
         super(Main, self).__init__()
         self.setupUi(self)
         
+        self.initGraphs()
+        self.loadData()
+        
+        self.cbx_izq.activated[str].connect(self.cbxIzqListener)
+        self.cbx_der.activated[str].connect(self.cbxDerListener)
+        self.actionAbrir.triggered.connect(self.loadData)
+    
+    def initCombobox(self):
+        self.cbx_izq.clear()
+        self.cbx_der.clear()
+        for i in range(len(self.selep.epsDias)):
+            self.cbx_izq.addItem("Día " + str(i+1))
+            self.cbx_der.addItem("Día " + str(i+1))
+            self.ldias.append("Día " + str(i+1))
+    
+    def loadData(self):
         if(DEBUG): fname = '../data.csv'
         else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
         
         print "Abriendo fichero ", fname
         self.selep = cachitos.selEpisodio(fname, dias=True)
+        self.ldias = []
         
         self.initCombobox()
-        self.initGraphs()
         self.plotGraph(self.fig_izq, self.cbx_izq.currentIndex())
         self.plotGraph(self.fig_der, self.cbx_der.currentIndex())
         self.plotBarDiario()
-        
-        self.cbx_izq.activated[str].connect(self.cbxIzqListener)
-        self.cbx_der.activated[str].connect(self.cbxDerListener)
-    
-    def initCombobox(self):
-        for i in range(len(self.selep.epsDias)):
-            self.cbx_izq.addItem("Día " + str(i+1))
-            self.cbx_der.addItem("Día " + str(i+1))
-    
+            
     def initGraphs(self):
         print "Inicializar gráficas"
         #Gráfico de barras diario
@@ -63,6 +71,10 @@ class Main(QMainWindow, Ui_MainWindow):
         self.layout_dia_der.addWidget(canvas_der)
         
     def plotGraph(self, fig, cbx_idx):
+        
+        for i in fig.axes:
+            i.clear()
+        
         labels = ['Dormido', 'Sedentario', 'Act. Ligera', 'Act. Moderada']
         colors = [colores.sueno, colores.sedentario, colores.ligero, colores.moderado]
         #Gráfica de tiempos
@@ -88,6 +100,8 @@ class Main(QMainWindow, Ui_MainWindow):
             ratios.append(i.numCalorias / (i.fin - i.ini))
     
         self.plotRatioBar(ax_bar, cbx_idx, ratios)
+        
+        fig.canvas.draw()
     
     def getSizes(self, idx, tiempo=False, consumo=False):
         sizes = [0, 0, 0, 0]
@@ -117,7 +131,10 @@ class Main(QMainWindow, Ui_MainWindow):
         print sizes
         return sizes
     
-    
+    """
+    means. medidas de las barras
+    idx. indice del día
+    """
     def plotRatioBar(self, ax, idx, means):
         def onpick(event):
             rect = event.artist
@@ -129,6 +146,7 @@ class Main(QMainWindow, Ui_MainWindow):
                     return
                     
         colors = []
+        labels = []
         for i in self.selep.epsDias[idx]:
             if(i.tipo == cachitos.tipoSueno):
                 c = colores.sueno
@@ -139,11 +157,13 @@ class Main(QMainWindow, Ui_MainWindow):
             elif(i.tipo == cachitos.tipoModerado):
                 c = colores.moderado
             colors.append(c)
+            labels.append(i.tiempo[0].strftime('%H:%M'))
         
-        print len(means), "muestras"    
+        print len(means), "muestras" 
+        print means   
         ind = np.linspace(0, len(means), endpoint=False, num=len(means))
-        bar = ax.bar(ind, means, color=colors, picker=1, align='center')
-        ax.set_xticklabels(np.arange(len(means)))
+        bar = ax.bar(ind, means, color=colors, picker=1)
+        ax.set_xticklabels(labels, rotation=70)
         #fig.tight_layout()
         
         #canvas = FigureCanvas(fig)
@@ -154,6 +174,8 @@ class Main(QMainWindow, Ui_MainWindow):
     
     
     def plotBarDiario(self):
+        self.fig_barDiario.axes[0].clear()
+        
         suenos = np.empty(len(self.selep.epsDias))
         sedentarias = np.empty(len(self.selep.epsDias))
         ligeras = np.empty(len(self.selep.epsDias))
@@ -173,26 +195,25 @@ class Main(QMainWindow, Ui_MainWindow):
         print suenos    
         print suenos + sedentarias
         ind = np.arange(len(self.selep.epsDias))
-        self.fig_barDiario.axes[0].bar(ind, suenos, color=colores.sueno)
-        self.fig_barDiario.axes[0].bar(ind, sedentarias, bottom=suenos, color=colores.sedentario)
-        self.fig_barDiario.axes[0].bar(ind, ligeras, bottom=suenos+sedentarias, color=colores.ligero)
-        self.fig_barDiario.axes[0].bar(ind, moderadas, bottom=suenos+sedentarias+ligeras, color=colores.moderado)
+        self.fig_barDiario.axes[0].bar(ind, suenos, 0.8, color=colores.sueno, align='center')
+        self.fig_barDiario.axes[0].bar(ind, sedentarias, 0.8, bottom=suenos, color=colores.sedentario, align='center')
+        self.fig_barDiario.axes[0].bar(ind, ligeras, 0.8, bottom=suenos+sedentarias, color=colores.ligero, align='center')
+        self.fig_barDiario.axes[0].bar(ind, moderadas, 0.8, bottom=suenos+sedentarias+ligeras, color=colores.moderado, align='center')
+        self.fig_barDiario.axes[0].set_xticks(ind)
+        self.fig_barDiario.axes[0].set_xticklabels(self.ldias)
+        
+        self.fig_barDiario.canvas.draw()
         
     def cbxIzqListener(self):
         print "Combobox izquierdo"
         print "axes: ", len(self.fig_izq.axes)
-        for i in self.fig_izq.axes:
-            i.clear()
         self.plotGraph(self.fig_izq, self.cbx_izq.currentIndex())
-        self.fig_izq.canvas.draw()
+        
     
     def cbxDerListener(self):
         print "Combobox derecho"
         print "axes: ", len(self.fig_der.axes)
-        for i in self.fig_der.axes:
-            i.clear()
         self.plotGraph(self.fig_der, self.cbx_der.currentIndex())
-        self.fig_der.canvas.draw()
     
     
 if __name__ == '__main__':

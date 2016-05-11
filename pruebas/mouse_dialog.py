@@ -1,5 +1,5 @@
 
-DEBUG = 6
+DEBUG = 3
 
 if(DEBUG == 1):
     from matplotlib.pyplot import figure, show
@@ -64,7 +64,7 @@ elif(DEBUG == 2):
     if __name__ == '__main__':
         main()
 
-elif(DEBUG == 1):
+elif(DEBUG == 3):
 
     import matplotlib.pyplot as plt
     import scipy.spatial as spatial
@@ -160,7 +160,7 @@ elif(DEBUG == 1):
     plt.show()
 
 
-elif(DEBUG == 3):
+elif(DEBUG == 4):
 
     import numpy as np
     import matplotlib.pyplot as plt
@@ -182,7 +182,7 @@ elif(DEBUG == 3):
 
     plt.show()
 
-elif(DEBUG==4):
+elif(DEBUG==5):
     """Example of how to use wx tooltips on a matplotlib figure window.
     Adapted from http://osdir.com/ml/python.matplotlib.devel/2006-09/msg00048.html"""
 
@@ -233,7 +233,7 @@ elif(DEBUG==4):
     example = wxToolTipExample()
     pl.show()
 
-elif(DEBUG==5):
+elif(DEBUG==6):
     #!/usr/bin/env python
 
     """
@@ -410,7 +410,7 @@ elif(DEBUG==5):
 
     plt.show()
 
-elif(DEBUG==6):
+elif(DEBUG==7):
     """
     SVG tooltip example
     ===================

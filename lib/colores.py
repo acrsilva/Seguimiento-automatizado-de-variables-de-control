@@ -15,3 +15,5 @@ flujo = '#8A80E0'
 consumo = '#4E3FC9'
 
 
+#Interfaz
+fondo = '#F2F1F0'
