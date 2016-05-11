@@ -17,7 +17,7 @@ import colores
 import clustering
 from scipy.cluster.hierarchy import dendrogram
 
-DEBUG = 0
+DEBUG = 1
 
 
 Ui_MainWindow, QMainWindow = loadUiType('interfaz.ui')
@@ -45,7 +45,7 @@ class MyTable(QTableWidget):
 class Main(QMainWindow, Ui_MainWindow):
     def __init__(self, ):
         super(Main, self).__init__()
-        self.showMaximized()
+        #self.showMaximized()
         self.setupUi(self)
         
         #Flags
@@ -54,8 +54,6 @@ class Main(QMainWindow, Ui_MainWindow):
         
         self.__initGraphs__()
         self.loadData()
-        
-        
         
         print "Listo"
 
