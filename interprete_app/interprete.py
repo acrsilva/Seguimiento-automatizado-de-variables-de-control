@@ -19,6 +19,7 @@ import numpy as np
 import os
 import selecepisodio
 import time
+import colores
 #import datetime
 
 pg.mkQApp()
@@ -52,19 +53,19 @@ class MainWindow(TemplateBaseClass):
         self.pBarra.addItem(self.selep.barraSuenio)
         
         self.pAF.clear()
-        self.pAF.plot(x=self.selep.horas, y=self.selep.activiData, pen=(255, 126, 0))
+        self.pAF.plot(x=self.selep.horas, y=self.selep.activiData, pen=colores.actividad)
         
         self.pAcel.clear()
-        self.pAcel.plot(x=self.selep.horas, y=self.selep.acelData, pen=(255,0,0))
+        self.pAcel.plot(x=self.selep.horas, y=self.selep.acelData, pen=colores.acelerometro)
         
         self.pCons.clear()
-        self.pCons.addItem(pg.PlotCurveItem(x=self.selep.horas, y=self.selep.consumoData, pen=(0,224,0)))
+        self.pCons.addItem(pg.PlotCurveItem(x=self.selep.horas, y=self.selep.consumoData, pen=colores.consumo))
         
         self.pTemp.clear()
-        self.pTemp.plot(x=self.selep.horas, y=self.selep.tempData, pen=(255, 255, 255))
+        self.pTemp.plot(x=self.selep.horas, y=self.selep.tempData, pen=colores.temperatura)
         
         self.pFlujo.clear()
-        self.pFlujo.addItem(pg.PlotCurveItem(x=self.selep.horas, y=self.selep.flujoData, pen=(0, 255, 0)))
+        self.pFlujo.addItem(pg.PlotCurveItem(x=self.selep.horas, y=self.selep.flujoData, pen=colores.flujo))
         
         #Configurar rangos iniciales de visualización
         self.pBarra.autoRange()
@@ -103,9 +104,9 @@ class MainWindow(TemplateBaseClass):
         self.pBarra.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.pBarra.setMouseEnabled(x=True, y=False)
         self.pBarra.hideAxis('bottom')
-        self.pBarra.getAxis('left').setLabel('', color='#0000FF')
+        #self.pBarra.getAxis('left').setLabel('', color='#0000FF')
         self.pBarra.showAxis('right')
-        self.pBarra.getAxis('right').setLabel('', color='#0000FF')
+        #self.pBarra.getAxis('right').setLabel('', color='#0000FF')
         
         #Configurar primera gráfica con acelerómetros
         win.nextRow()
@@ -127,7 +128,7 @@ class MainWindow(TemplateBaseClass):
         self.pAF.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.pAF.setMouseEnabled(x=True, y=False)
         self.pAF.hideAxis('bottom')
-        self.pAF.getAxis('left').setLabel('Actividad', color='#FF7E00')
+        self.pAF.getAxis('left').setLabel('Actividad', color=colores.actividad)
         self.pAF.setXLink('barClasificacion')
         
         self.pCons = pg.ViewBox()
@@ -135,7 +136,7 @@ class MainWindow(TemplateBaseClass):
         self.pAF.scene().addItem(self.pCons)
         self.pAF.getAxis('right').linkToView(self.pCons)
         self.pCons.setXLink(self.pAF)
-        self.pAF.getAxis('right').setLabel('Consumo', color='#00E000')
+        self.pAF.getAxis('right').setLabel('Consumo', color=colores.consumo)
         self.pAF.vb.sigResized.connect(self.updateViews)
         
         
@@ -147,7 +148,7 @@ class MainWindow(TemplateBaseClass):
         self.pTemp.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.pTemp.setMouseEnabled(x=True, y=False)
         self.pTemp.showGrid(x=True)
-        self.pTemp.getAxis('left').setLabel('Temperatura (ºC)', color='#FFFFFF')
+        self.pTemp.getAxis('left').setLabel('Temperatura (ºC)', color=colores.temperatura)
         #self.pTemp.hideButtons()
         
         self.pFlujo = pg.ViewBox()
@@ -156,7 +157,7 @@ class MainWindow(TemplateBaseClass):
         self.pTemp.getAxis('right').linkToView(self.pFlujo)
         self.pFlujo.setXLink(self.pTemp)
         #self.pFlujo.disableAutoRange(axis=pg.ViewBox.XAxis)
-        self.pTemp.getAxis('right').setLabel('Flujo térmico', color='#00FF00')
+        self.pTemp.getAxis('right').setLabel('Flujo térmico', color=colores.flujo)
         self.pTemp.vb.sigResized.connect(self.updateViews)
         
         #Enchufar los datos

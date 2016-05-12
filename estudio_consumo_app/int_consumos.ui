@@ -7,31 +7,18 @@
     <x>0</x>
     <y>0</y>
     <width>1227</width>
-    <height>829</height>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Estudio de calorías y actividades</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>480</x>
-      <y>20</y>
-      <width>191</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Consumo por minuto diario</string>
-    </property>
-   </widget>
    <widget class="QWidget" name="widget" native="true">
     <property name="geometry">
      <rect>
-      <x>19</x>
-      <y>49</y>
+      <x>20</x>
+      <y>10</y>
       <width>1161</width>
       <height>241</height>
      </rect>
@@ -41,8 +28,8 @@
    <widget class="KSeparator" name="kseparator">
     <property name="geometry">
      <rect>
-      <x>-5</x>
-      <y>310</y>
+      <x>0</x>
+      <y>270</y>
       <width>1181</width>
       <height>20</height>
      </rect>
@@ -52,9 +39,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>400</y>
+      <y>350</y>
       <width>541</width>
-      <height>321</height>
+      <height>381</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="layout_dia_izq"/>
@@ -63,9 +50,9 @@
     <property name="geometry">
      <rect>
       <x>600</x>
-      <y>400</y>
+      <y>350</y>
       <width>571</width>
-      <height>321</height>
+      <height>381</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="layout_dia_der"/>
@@ -87,7 +74,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>350</y>
+      <y>300</y>
       <width>141</width>
       <height>27</height>
      </rect>
@@ -97,7 +84,7 @@
     <property name="geometry">
      <rect>
       <x>600</x>
-      <y>350</y>
+      <y>300</y>
       <width>141</width>
       <height>27</height>
      </rect>

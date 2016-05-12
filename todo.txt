@@ -107,3 +107,6 @@ temperaturas dependiendo el sueño profundo, sube en profundo
 consultar flujo termico.
 
 
+
+Visualizar tumbado -> sueño
+Visualizar tipo de sueño en estudio_sueño

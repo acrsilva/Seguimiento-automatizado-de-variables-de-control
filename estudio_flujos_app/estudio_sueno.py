@@ -30,12 +30,19 @@ class MyTable(QTableWidget):
         self.setmydata()
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
- 
+    #Rellena la diagonal inferior de la tabla y colorea la menor distancia de cada fila
     def setmydata(self):
-        for i in range(self.data.shape[0]):
-            for k in range(self.data.shape[1]):
-                newitem = QTableWidgetItem(str(self.data[i][k])[:6])
-                self.setItem(i, k, newitem)
+        i = self.data.shape[0]-1
+        while(i >= 0):
+            j=i
+            if(j==0): min = j
+            else: min = j-1
+            while(j >= 0):
+                if(i != j and self.data[i][j] < self.data[i][min]): min = j
+                self.setItem(i, j, QTableWidgetItem(format(self.data[i][j], '.1f')))
+                j -= 1
+            self.item(i,min).setBackground(QtGui.QColor(colores.marcatabla))
+            i -= 1
 
 # plotLayout
 # cbx1, cbx2
@@ -121,72 +128,69 @@ class Main(QMainWindow, Ui_MainWindow):
         for i in self.selep.epFiltro:
             self.cbx1.addItem(i.nombre)
             self.cbx2.addItem(i.nombre)
-    
+        if(len(self.selep.epFiltro) > 1):
+            self.cbx2.setCurrentIndex(1)
+        
+        
     #Actualiza el contenido de las gráficas con el episodio seleccionado por los combobox
     def updatePlots(self, ep1=False, ep2=False):
-        #PRUEBAS
+        def getDespierto(epi):
+            desp = self.selep.getNotDespierto(epi.ini, epi.fin)
+            print "Despierto intervalo", epi.ini, epi.fin, "en:", desp
+            return desp
+            
         if(ep1):
             print "Actualizar episodio izquierdo"
             idx = self.cbx1.currentIndex()
-            #self.plotGraph(self.selep.epFiltro[idx], self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
-            self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
-            self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
-            self.plotGraph(self.fig1_var3, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, consumo=True)
+            desp = getDespierto(self.selep.epFiltro[idx])
+            self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, temperatura=True)
+            self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, flujo=True)
+            self.plotGraph(self.fig1_var3, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, consumo=True)
         if(ep2):
             print "Actualizar episodio derecho"
             idx = self.cbx2.currentIndex()
-            self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, temperatura=True)
-            self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, flujo=True)
-            self.plotGraph(self.fig2_var3, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, consumo=True)
+            desp = getDespierto(self.selep.epFiltro[idx])
+            self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, temperatura=True)
+            self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, flujo=True)
+            self.plotGraph(self.fig2_var3, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, consumo=True)
     
-    #self.ax.axvspan(0.25, 0.75, facecolor='0.5', alpha=0.5)
-    def plotGraph(self, fig, tiempo, data, temperatura=False, flujo=False, consumo=False):
+    def plotGraph(self, fig, tiempo, data, despierto, temperatura=False, flujo=False, consumo=False):
         ax = fig.axes[0]
         ax.clear()
-        color = 'b'
         if(temperatura):
             ax.set_ylabel('Temperatura (ºC)', color=colores.temperatura)
             ax.set_ylim([25,40])
+            color = colores.temperatura
         elif(flujo):
             ax.set_ylabel('Flujo térmico', color=colores.flujo)
             ax.set_ylim([-20,220])
+            color = colores.flujo
         elif(consumo):
             ax.set_ylabel('Consumo (cal)', color=colores.consumo)
             ax.set_ylim([5,20])
+            color = colores.consumo
 
-        #PRUEBAS
-        """
-        t = []    
-        for i in tiempo:
-            t.append(datetime.fromtimestamp(i))    
-        """
-            
         ax.plot(tiempo, data, color)
-        for tl in ax.get_yticklabels():
-            tl.set_color('b')
         fig.autofmt_xdate()
         xfmt = md.DateFormatter('%H:%M')
         ax.xaxis.set_major_formatter(xfmt)
         start, end = ax.get_xlim()
         ax.grid(True)
         
-        ###PRUEBAS
-        """
-        desp = self.selep.getNotDespierto(int(tiempo[0]), int(tiempo[-1]))
-        print "ESTOY AQUI", desp
-        for i in desp:
-            ax.axvspan(i[0], i[1], facecolor='0.5', alpha=0.5)
-        """    
+        #Lineas verticales con la clasificación de sueños
+        for i in despierto:
+            ax.axvspan(i[0], i[1], facecolor=colores.despierto, alpha=0.5, edgecolor=colores.despierto)
             
-        #fig.canvas.update()
         fig.canvas.draw()
         
     def plotDendrogram(self, c1, c2):
         fig, self.axes = plt.subplots(1, 1, figsize=(8, 3), tight_layout=True)
         if(self.rbTemperatura.isChecked()):
             dn1 = dendrogram(c1.Z, ax=self.axes, leaf_rotation=20., labels=c1.labels)
+            self.axes.set_title("Dendrograma de temperatura y flujo")
         elif(self.rbConsumo.isChecked()):
             dn2 = dendrogram(c2.Z, ax=self.axes, leaf_rotation=20., labels=c2.labels)
+            self.axes.set_title("Dendrograma de consumo")
         return FigureCanvas(fig)
         
     def initCluster(self):
@@ -236,8 +240,8 @@ class Main(QMainWindow, Ui_MainWindow):
         
     def createTable(self, clusters):
         horHeaders = []
-        for i in self.selep.epFiltro:
-            horHeaders.append(i.nombre)
+        for i in range(len(self.selep.epFiltro)):
+            horHeaders.append(str(i+1))
         table = MyTable(clusters, len(clusters), len(clusters))
         table.setHorizontalHeaderLabels(horHeaders)
         table.setVerticalHeaderLabels(horHeaders)

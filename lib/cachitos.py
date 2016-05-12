@@ -115,7 +115,7 @@ class selEpisodio():
         """
         if episodio.tipo == tipoSueno:
             nums[0] += 1
-            episodio.nombre = str(nums[0]) + ". Sueño"
+            episodio.nombre = self.dt[episodio.ini].strftime('%d') + ".S" + str(nums[0])
         elif episodio.tipo == tipoSedentario:
             nums[1]  += 1
             episodio.nombre = str(nums[1]) + ". Sedentario"
@@ -252,25 +252,20 @@ class selEpisodio():
             print ind.nombre, ind.ini, ind.fin, "duracion:", ind.fin - ind.ini + 1
     
     #PRUEBAS
-    def getNotDespierto(self, i, f):
-        class Rango:
-            def __init__(self, ini, fin):
-                self.inicio = ini
-                self.fin = fin
-            
+    def getNotDespierto(self, ini, fin):
         flag = False
         ii = 0
         rangos = []
         
-        for k in range(i,f):
-            if(not self.csv.sueno[k] and not flag):
+        for i in range(ini,fin):
+            if(not self.csv.sueno[i] and not flag):
                 flag = True
-                ii = k
-            elif(not self.csv.sueno[k] and flag):
+                ii = i
+            elif(self.csv.sueno[i] and flag):
                 flag = False
-                rangos.append((ii,k))
-            elif(k == f-1 and not self.csv.sueno[k]):
-                rangos.append((ii,k))
+                rangos.append((self.dt[ii],self.dt[i]))
+            elif(i == fin-1 and not self.csv.sueno[i]):
+                rangos.append((self.dt[ii],self.dt[i]))
             
         return rangos
             

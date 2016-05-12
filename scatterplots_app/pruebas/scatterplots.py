@@ -15,7 +15,94 @@ from matplotlib.backends.backend_qt4agg import (
 import cachitos
 import matplotlib.dates as md
 from sklearn import preprocessing
-import colores
+
+import scipy.spatial as spatial
+
+
+DEBUG = 1
+
+
+def fmt(x, y):
+    return 'x: {x:0.2f}\ny: {y:0.2f}'.format(x=x, y=y)
+
+class FollowDotCursor(object):
+    """Display the x,y location of the nearest data point.
+    http://stackoverflow.com/a/4674445/190597 (Joe Kington)
+    http://stackoverflow.com/a/13306887/190597 (unutbu)
+    http://stackoverflow.com/a/15454427/190597 (unutbu)
+    """
+    def __init__(self, ax, x, y, tolerance=5, formatter=fmt, offsets=(-20, 20)):
+        try:
+            x = np.asarray(x, dtype='float')
+        except (TypeError, ValueError):
+            x = np.asarray(md.date2num(x), dtype='float')
+        y = np.asarray(y, dtype='float')
+        mask = ~(np.isnan(x) | np.isnan(y))
+        x = x[mask]
+        y = y[mask]
+        self._points = np.column_stack((x, y))
+        self.offsets = offsets
+        y = y[np.abs(y-y.mean()) <= 3*y.std()]
+        self.scale = x.ptp()
+        self.scale = y.ptp() / self.scale if self.scale else 1
+        self.tree = spatial.cKDTree(self.scaled(self._points))
+        self.formatter = formatter
+        self.tolerance = tolerance
+        self.ax = ax
+        self.fig = ax.figure
+        self.ax.xaxis.set_label_position('top')
+        self.dot = ax.scatter(
+            [x.min()], [y.min()], s=130, color='green', alpha=0.7)
+        self.annotation = self.setup_annotation()
+        plt.connect('motion_notify_event', self)
+
+    def scaled(self, points):
+        points = np.asarray(points)
+        return points * (self.scale, 1)
+
+    def __call__(self, event):
+        print "a"
+        ax = self.ax
+        # event.inaxes is always the current axis. If you use twinx, ax could be
+        # a different axis.
+        if event.inaxes == ax:
+            x, y = event.xdata, event.ydata
+        elif event.inaxes is None:
+            return
+        else:
+            inv = ax.transData.inverted()
+            x, y = inv.transform([(event.x, event.y)]).ravel()
+        annotation = self.annotation
+        x, y = self.snap(x, y)
+        annotation.xy = x, y
+        annotation.set_text(self.formatter(x, y))
+        self.dot.set_offsets((x, y))
+        bbox = ax.viewLim
+        event.canvas.draw()
+
+    def setup_annotation(self):
+        print "b"
+        """Draw and hide the annotation box."""
+        annotation = self.ax.annotate(
+            '', xy=(0, 0), ha = 'right',
+            xytext = self.offsets, textcoords = 'offset points', va = 'bottom',
+            bbox = dict(
+                boxstyle='round,pad=0.5', fc='yellow', alpha=0.75),
+            arrowprops = dict(
+                arrowstyle='->', connectionstyle='arc3,rad=0'))
+        return annotation
+
+    def snap(self, x, y):
+        print "c"
+        """Return the value in self.tree closest to x, y."""
+        dist, idx = self.tree.query(self.scaled((x, y)), k=1, p=1)
+        try:
+            return self._points[idx]
+        except IndexError:
+            # IndexError: index out of bounds
+            return self._points[0]
+
+
     
 Ui_MainWindow, QMainWindow = loadUiType('scatterplots.ui')
 
@@ -27,7 +114,9 @@ class Main(QMainWindow, Ui_MainWindow):
         
         self.epActual = 0
         self.selep = self.loadData()
-        self.updateView()
+        #self.updateView()
+        self.init_figures()
+        self.updateFigures()
         
         self.cbSueno.clicked.connect(self.filtrarSueno)
         self.cbSedentario.clicked.connect(self.filtrarSedentario)
@@ -45,14 +134,28 @@ class Main(QMainWindow, Ui_MainWindow):
         
     def openFile(self):
         self.selep = self.loadData()
-        self.limpiarLayout()
-        self.updateView()
+        self.limpiarLayout() 
+        #self.updateView() 
     
     def loadData(self):
-        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
+        if(DEBUG): fname = '../data.csv'
+        else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
         print "Abriendo fichero ", fname
         selep = cachitos.selEpisodio(fname)
         return selep
+    
+    def init_figures(self):
+        self.fig, self.ax = plt.subplots()
+        canvas = FigureCanvas(self.fig)
+        self.layoutMatplot1.addWidget(canvas)
+        #canvas.mpl_connect('pick_event', lambda event: self.onpick(event, 1))
+    
+    def updateFigures(self):
+        a = self.selep.epFiltro[self.epActual].temp
+        b = self.selep.epFiltro[self.epActual].flujo
+        self.ax.plot(a, b, 'o', picker=5)
+        cursor = FollowDotCursor(self.ax, a, b, tolerance=0.5)
+        
     
     def getTime(self, a, b, ep):
         for i in self.selep.epFiltro[self.epActual + ep].temp:
@@ -71,6 +174,15 @@ class Main(QMainWindow, Ui_MainWindow):
         ind = event.ind
         print xdata[ind[0]], ydata[ind[0]]
         self.label.setText('Instante ' + str(self.getTime(xdata[ind[0]], ydata[ind[0]], ep)))
+        
+        self.ax.annotate(
+            '', xy=(0, 0), ha = 'right',
+            textcoords = 'offset points', va = 'bottom',
+            bbox = dict(
+                boxstyle='round,pad=0.5', fc='yellow', alpha=0.75),
+            arrowprops = dict(
+                arrowstyle='->', connectionstyle='arc3,rad=0'))
+        
             
     def creaFiguras(self, t, a, b):
         #Serie temporal
@@ -80,12 +192,12 @@ class Main(QMainWindow, Ui_MainWindow):
         preprocessing.scale(b, copy=True)
         #Curva temperatura
         ax1 = fig0.add_subplot(111)
-        ax1.plot(t, a, '-', color=colores.temperatura)
+        ax1.plot(t, a, 'b-')
         #ax1.set_ylim([-5,5])
         #ax1.set_xlabel('Tiempo (m)')
-        ax1.set_ylabel('Temperatura (ºC)', color=colores.temperatura)
+        ax1.set_ylabel('Temperatura (ºC)', color='b')
         for tl in ax1.get_yticklabels():
-            tl.set_color(colores.temperatura)
+            tl.set_color('b')
         fig0.autofmt_xdate()
         xfmt = md.DateFormatter('%H:%M')
         ax1.xaxis.set_major_formatter(xfmt)
@@ -96,11 +208,11 @@ class Main(QMainWindow, Ui_MainWindow):
         
         #Curva flujo térmico
         ax2 = ax1.twinx()
-        ax2.plot(t, b, '-', color=colores.flujo)
+        ax2.plot(t, b, 'r-')
         #ax2.set_ylim([-5,5])
-        ax2.set_ylabel('Flujo térmico', color=colores.flujo)
+        ax2.set_ylabel('Flujo térmico', color='r')
         for tl in ax2.get_yticklabels():
-            tl.set_color(colores.flujo)
+            tl.set_color('r')
         
         #Scatterplot
         fig1 = plt.figure(tight_layout=True)
@@ -108,8 +220,10 @@ class Main(QMainWindow, Ui_MainWindow):
         line, = ax1f1.plot(a, b, 'o', picker=5)
         #ax1f1.set_xlim([20,45])
         #ax1f1.set_ylim([-20,220])
-        ax1f1.set_xlabel('Temperatura (ºC)', color=colores.temperatura)
-        ax1f1.set_ylabel('Flujo térmico', color=colores.flujo)
+        ax1f1.set_xlabel('Temperatura (ºC)', color='b')
+        ax1f1.set_ylabel('Flujo térmico', color='b')
+        
+        cursor = FollowDotCursor(ax1f1, a, b, tolerance=20)
         
         return fig0, fig1
     
@@ -161,7 +275,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.selep.update(self.filSueno, self.filSedentario, self.filLigero, self.filModerado) #Actualizar el array de episodios filtrados
         self.setBounds()
         self.limpiarLayout()
-        self.updateView()
+        #self.updateView()
         
     def filtrarSedentario(self):
         print "Filtrar sedentario"
@@ -169,7 +283,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.selep.update(self.filSueno, self.filSedentario, self.filLigero, self.filModerado)
         self.setBounds()
         self.limpiarLayout()
-        self.updateView()
+        #self.updateView()
         
     def filtrarLigera(self):
         print "Filtrar ligera"
@@ -177,7 +291,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.selep.update(self.filSueno, self.filSedentario, self.filLigero, self.filModerado)
         self.setBounds()
         self.limpiarLayout()
-        self.updateView()
+        #self.updateView()
         
     def filtrarModerada(self):
         print "Filtrar moderada"
@@ -185,21 +299,21 @@ class Main(QMainWindow, Ui_MainWindow):
         self.selep.update(self.filSueno, self.filSedentario, self.filLigero, self.filModerado)
         self.setBounds()
         self.limpiarLayout()
-        self.updateView()
+        #self.updateView()
     
     def retroceder(self):
         if (self.epActual > 0):
             self.epActual -= 1
             print "episodios", self.epActual, "y", self.epActual+1
             self.limpiarLayout()
-            self.updateView()
+            #self.updateView()
         
     def avanzar(self):
         if (self.epActual < len(self.selep.epFiltro) - 2):
             self.epActual += 1
             print "episodios", self.epActual, "y", self.epActual+1
             self.limpiarLayout()
-            self.updateView()
+            #self.updateView()
         
         
  

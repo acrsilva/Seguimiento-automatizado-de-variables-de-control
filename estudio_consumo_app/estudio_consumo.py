@@ -38,6 +38,8 @@ class Main(QMainWindow, Ui_MainWindow):
             self.cbx_izq.addItem("Día " + str(i+1))
             self.cbx_der.addItem("Día " + str(i+1))
             self.ldias.append("Día " + str(i+1))
+        if(len(self.selep.epsDias) > 1):
+            self.cbx_der.setCurrentIndex(1)
     
     def loadData(self):
         if(DEBUG): fname = '../data.csv'
@@ -55,7 +57,7 @@ class Main(QMainWindow, Ui_MainWindow):
     def initGraphs(self):
         print "Inicializar gráficas"
         #Gráfico de barras diario
-        self.fig_barDiario = plt.figure(tight_layout=True)
+        self.fig_barDiario = plt.figure()
         self.fig_barDiario.add_subplot(111)
         canvas_diario = FigureCanvas(self.fig_barDiario)
         self.layout_diario.addWidget(canvas_diario)
@@ -75,14 +77,15 @@ class Main(QMainWindow, Ui_MainWindow):
         for i in fig.axes:
             i.clear()
         
-        labels = ['Dormido', 'Sedentario', 'Act. Ligera', 'Act. Moderada']
+        #labels = ['Dormido', 'Sedentario', 'Act. Ligera', 'Act. Moderada']
         colors = [colores.sueno, colores.sedentario, colores.ligero, colores.moderado]
         #Gráfica de tiempos
         sizes = self.getSizes(cbx_idx, tiempo=True)
         ax_tiempo = fig.add_subplot(221)
         pie = ax_tiempo.pie(sizes, colors=colors, autopct='%1.1f%%', shadow=False, startangle=0)
-        ax_tiempo.legend(pie[0], labels, loc="upper left", prop={'size':7})
+        #ax_tiempo.legend(pie[0], labels, loc="upper left", prop={'size':7})
         ax_tiempo.axis('equal')
+        ax_tiempo.set_title('Tiempo por actividad')
         
         #Gráfica de consumos
         sizes = self.getSizes(cbx_idx, consumo=True)
@@ -90,6 +93,7 @@ class Main(QMainWindow, Ui_MainWindow):
         pie = ax_consumo.pie(sizes, colors=colors, autopct='%1.1f%%', shadow=False, startangle=0)
         #ax_consumo.legend(pie[0], labels, loc="upper left")
         ax_consumo.axis('equal')
+        ax_consumo.set_title('Consumo por actividad')
         
         #Gráfica de ratios
         ax_bar= fig.add_subplot(212)
@@ -162,8 +166,15 @@ class Main(QMainWindow, Ui_MainWindow):
         print len(means), "muestras" 
         print means   
         ind = np.linspace(0, len(means), endpoint=False, num=len(means))
-        bar = ax.bar(ind, means, color=colors, picker=1)
+        #bar = ax.bar(ind, means, color=colors, picker=1)
+        #markerline, stemlines, baseline = ax.stem(ind, means, color=colors)
+        
+        #line, = ax.plot(ind, means, 'o', picker=5, color=colors) 
+         
+        ax.scatter(ind, means, c=colors)
+            
         ax.set_xticklabels(labels, rotation=70)
+        ax.set_title('Ratio consumo por minuto')
         #fig.tight_layout()
         
         #canvas = FigureCanvas(fig)
@@ -192,16 +203,17 @@ class Main(QMainWindow, Ui_MainWindow):
                 elif(i.tipo == cachitos.tipoModerado):
                     moderadas[idx] += i.numCalorias
             idx += 1
-        print suenos    
-        print suenos + sedentarias
         ind = np.arange(len(self.selep.epsDias))
-        self.fig_barDiario.axes[0].bar(ind, suenos, 0.8, color=colores.sueno, align='center')
-        self.fig_barDiario.axes[0].bar(ind, sedentarias, 0.8, bottom=suenos, color=colores.sedentario, align='center')
-        self.fig_barDiario.axes[0].bar(ind, ligeras, 0.8, bottom=suenos+sedentarias, color=colores.ligero, align='center')
-        self.fig_barDiario.axes[0].bar(ind, moderadas, 0.8, bottom=suenos+sedentarias+ligeras, color=colores.moderado, align='center')
+        self.fig_barDiario.axes[0].bar(ind, suenos, 0.8, color=colores.sueno, align='center', label='Dormido')
+        self.fig_barDiario.axes[0].bar(ind, sedentarias, 0.8, bottom=suenos, color=colores.sedentario, align='center', label='Sedentario')
+        self.fig_barDiario.axes[0].bar(ind, ligeras, 0.8, bottom=suenos+sedentarias, color=colores.ligero, align='center', label='Act. Ligera')
+        self.fig_barDiario.axes[0].bar(ind, moderadas, 0.8, bottom=suenos+sedentarias+ligeras, color=colores.moderado, align='center', label='Act. Moderada')
         self.fig_barDiario.axes[0].set_xticks(ind)
         self.fig_barDiario.axes[0].set_xticklabels(self.ldias)
-        
+        self.fig_barDiario.axes[0].set_title('Consumo diario por actividades')
+        self.fig_barDiario.axes[0].legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, shadow=True, ncol=4)
+        self.fig_barDiario.subplots_adjust(bottom=0.2)
+
         self.fig_barDiario.canvas.draw()
         
     def cbxIzqListener(self):
