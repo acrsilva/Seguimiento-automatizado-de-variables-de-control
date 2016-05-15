@@ -10,13 +10,15 @@ from pyqtgraph.Qt import QtCore, QtGui
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 import numpy as np
 import math
-import cachitos
+import leeFichero as lf
 import colores
 import leeFichero
 import hover
 import datetime 
+import cachitos
 
 DEBUG = 1
+PRUEBAS = 1
 
 Ui_MainWindow, QMainWindow = loadUiType('int_consumos.ui')
 
@@ -36,19 +38,20 @@ class Main(QMainWindow, Ui_MainWindow):
     def initCombobox(self):
         self.cbx_izq.clear()
         self.cbx_der.clear()
-        for i in range(len(self.selep.epsDias)):
+        for i in range(len(self.epsDias)):
             self.cbx_izq.addItem("Día " + str(i+1))
             self.cbx_der.addItem("Día " + str(i+1))
             self.ldias.append("Día " + str(i+1))
-        if(len(self.selep.epsDias) > 1):
+        if(len(self.epsDias) > 1):
             self.cbx_der.setCurrentIndex(1)
     
     def loadData(self):
-        if(DEBUG): fname = '../data.csv'
+        if(PRUEBAS): fname = '../data.csv'
         else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
         
         print "Abriendo fichero ", fname
-        self.selep = cachitos.selEpisodio(fname, dias=True)
+        self.epsDias = lf.LectorFichero(fname, dias=True).selep_dias
+        print len(self.epsDias), 'dias'
         self.ldias = []
         
         self.initCombobox()
@@ -102,7 +105,7 @@ class Main(QMainWindow, Ui_MainWindow):
         
         ratios = []
         #ind = self.cbx_izq.currentIndex()
-        for i in self.selep.epsDias[cbx_idx]:
+        for i in self.epsDias[cbx_idx].epFiltro:
             ratios.append(i.numCalorias / (i.fin - i.ini))
     
         self.plotRatioBar(ax_bar, cbx_idx, ratios)
@@ -114,7 +117,7 @@ class Main(QMainWindow, Ui_MainWindow):
         sizes = [0, 0, 0, 0]
         if(tiempo):
             # Calcular tiempo por actividad
-            for i in self.selep.epsDias[idx]:
+            for i in self.epsDias[idx].epFiltro:
                 if(i.tipo == cachitos.tipoSueno):
                     sizes[0] += len(i.tiempo)
                 elif(i.tipo == cachitos.tipoSedentario):
@@ -125,7 +128,7 @@ class Main(QMainWindow, Ui_MainWindow):
                     sizes[3] += len(i.tiempo)
         elif(consumo):
             # Calcular calorías consumidas por actividad
-            for i in self.selep.epsDias[idx]:
+            for i in self.epsDias[idx].epFiltro:
                 if(i.tipo == cachitos.tipoSueno):
                     sizes[0] += i.numCalorias
                 elif(i.tipo == cachitos.tipoSedentario):
@@ -134,8 +137,8 @@ class Main(QMainWindow, Ui_MainWindow):
                     sizes[2] += i.numCalorias
                 elif(i.tipo == cachitos.tipoModerado):
                     sizes[3] += i.numCalorias
-        
-        print sizes
+        if(DEBUG>2):
+            print sizes
         return sizes
     
     def onpick(self, event):
@@ -158,7 +161,7 @@ class Main(QMainWindow, Ui_MainWindow):
                     
         colors = []
         labels = []
-        for i in self.selep.epsDias[idx]:
+        for i in self.epsDias[idx].epFiltro:
             if(i.tipo == cachitos.tipoSueno):
                 c = colores.sueno
             elif(i.tipo == cachitos.tipoSedentario):
@@ -168,10 +171,12 @@ class Main(QMainWindow, Ui_MainWindow):
             elif(i.tipo == cachitos.tipoModerado):
                 c = colores.moderado
             colors.append(c)
-            labels.append(i.tiempo[0].strftime('%H:%M'))
+            #labels.append(i.tiempo[0].strftime('%H:%M'))
+            labels.append(i.tiempo[0])
         
         print len(means), "muestras"
-        print means
+        if(DEBUG>2):
+            print means
         ind = np.linspace(0, len(means), endpoint=False, num=len(means))
         #bar = ax.bar(ind, means, color=colors, picker=1)
         
@@ -187,8 +192,10 @@ class Main(QMainWindow, Ui_MainWindow):
             
         ax.set_xticklabels(labels, rotation=70)
         ax.set_title('Ratio consumo por minuto')
-        print self.selep.epsDias[idx][0].tiempo[0], self.selep.epsDias[idx][-1].tiempo[-1]
-        ax.set_xlim([self.selep.epsDias[idx][0].tiempo[0], self.selep.epsDias[idx][-1].tiempo[-1]])
+        if(DEBUG): 
+            print self.epsDias[idx].epFiltro[0].tiempo[0], self.epsDias[idx].epFiltro[-1].tiempo[-1]
+            #print labels
+        #ax.set_xlim([self.epsDias[idx].epFiltro[0].tiempo[0], self.epsDias[idx].epFiltro[-1].tiempo[-1]])
         
         #cursor = hover.FollowDotCursor(ax, ind, means, tolerance=20)
         
@@ -204,13 +211,13 @@ class Main(QMainWindow, Ui_MainWindow):
     def plotBarDiario(self):
         self.fig_barDiario.axes[0].clear()
         
-        suenos = np.empty(len(self.selep.epsDias))
-        sedentarias = np.empty(len(self.selep.epsDias))
-        ligeras = np.empty(len(self.selep.epsDias))
-        moderadas = np.empty(len(self.selep.epsDias))
+        suenos = np.empty(len(self.epsDias))
+        sedentarias = np.empty(len(self.epsDias))
+        ligeras = np.empty(len(self.epsDias))
+        moderadas = np.empty(len(self.epsDias))
         idx = 0
-        for j in self.selep.epsDias:
-            for i in j:
+        for j in self.epsDias:
+            for i in j.epFiltro:
                 if(i.tipo == cachitos.tipoSueno):
                     suenos[idx] += i.numCalorias
                 elif(i.tipo == cachitos.tipoSedentario):
@@ -220,7 +227,7 @@ class Main(QMainWindow, Ui_MainWindow):
                 elif(i.tipo == cachitos.tipoModerado):
                     moderadas[idx] += i.numCalorias
             idx += 1
-        ind = np.arange(len(self.selep.epsDias))
+        ind = np.arange(len(self.epsDias))
         self.fig_barDiario.axes[0].bar(ind, suenos, 0.8, color=colores.sueno, align='center', label='Dormido')
         self.fig_barDiario.axes[0].bar(ind, sedentarias, 0.8, bottom=suenos, color=colores.sedentario, align='center', label='Sedentario')
         self.fig_barDiario.axes[0].bar(ind, ligeras, 0.8, bottom=suenos+sedentarias, color=colores.ligero, align='center', label='Act. Ligera')

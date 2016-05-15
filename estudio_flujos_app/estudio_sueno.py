@@ -12,13 +12,13 @@ from PyQt4.QtGui import *
 import numpy as np
 import matplotlib.dates as md
 import math
-import cachitos
+import leeFichero as lf
 import colores
 import clustering
 from scipy.cluster.hierarchy import dendrogram
 from datetime import datetime
 
-DEBUG = 1
+DEBUG = 0
 
 
 Ui_MainWindow, QMainWindow = loadUiType('interfaz.ui')
@@ -114,7 +114,7 @@ class Main(QMainWindow, Ui_MainWindow):
         else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
         
         print "Abriendo fichero ", fname
-        self.selep = cachitos.selEpisodio(fname, sedentario=False, ligero=False, moderado=False)
+        self.selep = lf.LectorFichero(fname, f_sedentario=False, f_ligero=False, f_moderado=False).selep_completo
         self.configureComboBox()
         self.updatePlots(ep1=True, ep2=True)
         self.initCluster()
