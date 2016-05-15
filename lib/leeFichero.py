@@ -6,88 +6,116 @@ import codecs
 import sys
 from datetime import datetime as dt
 from PyQt4 import QtGui
+import cachitos
 
-DEBUG = 1
+DEBUG = 0
+DEBUGP = 0
 
-class LeeFichero(object):
+"""
+Almacena los valores puros de un fichero csv
+Puede separar los datos en días
+"""
+class Datos():
+    def __init__(self, sueno, clasifSueno, flujo, temp, tiempo, actli, actsd, actmd, consm, acltrans):
+        self.sueno = sueno
+        self.clasifSueno = clasifSueno
+        self.flujo = flujo
+        self.temp = temp
+        self.tiempo = tiempo
+        self.actli = actli
+        self.actsd = actsd
+        self.actmd = actmd
+        self.consm = consm
+        self.acltrans = acltrans
+    
+    #BUG. utc, falta +1
+    #Crea una lista días particionando los datos
+    def creaDias(self):
+        #Devuelve una lista con los datos de un día concreto
+        def datosDia(dia):
+            return Datos(self.sueno[dia[0]:dia[1]+1],
+                        self.clasifSueno[dia[0]:dia[1]+1],
+                        self.flujo[dia[0]:dia[1]+1],
+                        self.temp[dia[0]:dia[1]+1],
+                        self.tiempo[dia[0]:dia[1]+1],
+                        self.actli[dia[0]:dia[1]+1],
+                        self.actsd[dia[0]:dia[1]+1],
+                        self.actmd[dia[0]:dia[1]+1],
+                        self.consm[dia[0]:dia[1]+1],
+                        self.acltrans[dia[0]:dia[1]+1])
+        
+        datos_dias = []
+        ini, fin = 0, 0
+        for i in range(len(self.tiempo)-1):
+            fecha1 = dt.utcfromtimestamp(self.tiempo[i])
+            fecha2 = dt.utcfromtimestamp(self.tiempo[i+1])
+            
+            if(fecha1.day != fecha2.day):
+                fin = i
+                datos_dias.append(datosDia((ini, fin)))
+                if(DEBUGP):
+                    print "ini", dt.utcfromtimestamp(self.tiempo[ini]), "fin", dt.utcfromtimestamp(self.tiempo[fin])
+                
+                ini = i+1
+                
+        return datos_dias
+        
+            
+"""
+Obtiene los datos de un fichero csv y crea los episodios
+"""
+class LectorFichero(object):
     """
     Inicializa la matriz con los valores del csv
     
     Parametros de entrada
     - nombre: nombre del fichero csv que contiene los datos
+    - dias: además de todos los datos, obtener los de cada día separados en 24h de 00 a 00
     """
-    def __init__(self, nombre):
-        #self.nombreFichero = nombre
-        self.csv = np.genfromtxt(nombre, delimiter="," , names=True)
-        self.nomCols = self.csv.dtype.names
-        self.nparams = len(self.nomCols)
-        self.sueno = self.csv['Sueño'.encode('iso8859-15')]
-        self.clasifSueno = self.csv['Clasificaciones_del_sueño'.encode('iso8859-15')]
-        self.flujo = self.csv['Flujo_térmico__media'.encode('iso8859-15')]
-        self.temp = self.csv['Temp_cerca_del_cuerpo__media']
-        self.tiempo = self.csv['Time'] / 1000
-        self.actli = self.csv['Ligera']
-        self.actsd = self.csv['Sedentaria']
-        self.actmd = self.csv['Moderada']
-        self.consm = self.csv['Gasto_energético'.encode('iso8859-15')]
-        self.acltrans = self.csv['Acel_transversal__picos']
-        self.dias = self.creaDias()
-        
-    def creaDias(self):
-        indices = []
-        ini, fin = 0, 0
-        for i in range(len(self.tiempo)-1):
-            fecha1 = dt.utcfromtimestamp(self.tiempo[i])
-            fecha2 = dt.utcfromtimestamp(self.tiempo[i+1])
-            if(fecha1.day != fecha2.day):
-                fin = i
-                indices.append((ini, fin))
-                if(DEBUG):
-                    print "ini", fecha1.day, "fin", fecha2.day
-                ini = i+1
-        indices.append((ini, len(self.tiempo)-1))
-        print "Hay %i dias" % len(indices)
-        
-        if(DEBUG):
-            print indices
-        
-        return indices
-        
-        
-    def datosDia(self, dia, act):
-        """
-        Devuelve una lista con los datos de un tipo de actividad act y
-        de un día concreto
-        """
-        if(act == 'sueno'):
-            return self.sueno[dia[0]:dia[1]+1]
-        elif(act == 'tiempo'):
-            return self.tiempo[dia[0]:dia[1]+1]
-        elif(act == 'temp'):
-            return self.temp[dia[0]:dia[1]+1]
-        elif(act == 'flujo'):
-            return self.flujo[dia[0]:dia[1]+1]
-        elif(act == 'actli'):
-            return self.actli[dia[0]:dia[1]+1]
-        elif(act == 'actsd'):
-            return self.actsd[dia[0]:dia[1]+1]
-        elif(act == 'actmd'):
-            return self.actmd[dia[0]:dia[1]+1]
-        elif(act == 'actsd'):
-            return self.actsd[dia[0]:dia[1]+1]
-        elif(act == 'consm'):
-            return self.consm[dia[0]:dia[1]+1]
-        elif(act == 'acltrans'):
-            return self.acltrans[dia[0]:dia[1]+1]
+    def __init__(self, nombre, dias=False, f_sueno=True, f_sedentario=True, f_ligero=True, f_moderado=True):
+        csv = np.genfromtxt(open(nombre, 'r'), delimiter="," , names=True)
+        #self.nomCols = self.csv.dtype.names
+        #self.nparams = len(self.nomCols)
 
-"""
-datos = LeeFichero('../data.csv')
-datos.datosPorDia(datos.dias[2], 'sueno')
-print len(datos.datosPorDia(datos.dias[6], 'sueno'))
-for i in datos.dias:
-    dia = datos.datosPorDia(i, 'tiempo')
-    print dt.utcfromtimestamp(dia[0])
-    print dt.utcfromtimestamp(dia[len(dia)-1])
-           
-"""
+        sueno = csv['Sueño'.encode('iso8859-15')]
+        clasifSueno = csv['Clasificaciones_del_sueño'.encode('iso8859-15')]
+        flujo = csv['Flujo_térmico__media'.encode('iso8859-15')]
+        temp = csv['Temp_cerca_del_cuerpo__media']
+        tiempo = csv['Time'] / 1000
+        actli = csv['Ligera']
+        actsd = csv['Sedentaria']
+        actmd = csv['Moderada']
+        consm = csv['Gasto_energético'.encode('iso8859-15')]
+        acltrans = csv['Acel_transversal__picos']
+        
+        datos_total = Datos(sueno, clasifSueno, flujo, temp, tiempo, actli, actsd, actmd, consm, acltrans)
+        self.selep_completo = cachitos.selEpisodio(datos_total, f_sueno, f_sedentario, f_ligero, f_moderado)
+        
+        if(dias):
+            datos_dias = datos_total.creaDias()
+            self.selep_dias = []
+            for i in datos_dias:
+                self.selep_dias.append(cachitos.selEpisodio(i, f_sueno, f_sedentario, f_ligero, f_moderado))
+       
+        if(DEBUGP):
+            if(dias):
+                print len(datos_dias)
+                for i in datos_dias:
+                    print "ini", i.tiempo[0], "fin", i.tiempo[-1]
+            
+
+if(DEBUG):
+    fichero = LectorFichero('../data.csv', dias=True)
+    #raw_input('Press <ENTER> to continue')
+    
+
+    """
+    datos.datosPorDia(datos.dias[2], 'sueno')
+    print len(datos.datosPorDia(datos.dias[6], 'sueno'))
+    for i in datos.dias:
+        dia = datos.datosPorDia(i, 'tiempo')
+        print dt.utcfromtimestamp(dia[0])
+        print dt.utcfromtimestamp(dia[len(dia)-1])
+    """
+               
 

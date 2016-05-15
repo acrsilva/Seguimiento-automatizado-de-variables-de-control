@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import numpy as np
 from datetime import datetime
 from scipy.stats import pearsonr
-import leeFichero
+#import leeFichero
 import sys
 
 reload(sys)  
@@ -38,9 +38,9 @@ class Episodio():
         
     
 class selEpisodio():
-    def __init__(self, filename, sueno=True, sedentario=True, ligero=True, moderado=True, dias=False):
-        self.csv = leeFichero.LeeFichero(open(filename, 'r'))
-        
+    def __init__(self, csv, sueno=True, sedentario=True, ligero=True, moderado=True):
+        #self.csv = leeFichero.LeeFichero(open(filename, 'r'))
+        self.csv = csv
         #Pasar minutos a Datetime
         self.dt = [] 
         for i in self.csv.tiempo:
@@ -48,11 +48,10 @@ class selEpisodio():
             self.dt.append(datetime.fromtimestamp(i))
             #self.dt.append(i)
         
+        #Todos los episodios, sin filtros
         self.episodios = self.creaEpisodios(self.csv.sueno, self.csv.actsd, self.csv.actli, self.csv.actmd, 5, interrupcion)
         
-        if dias: 
-            self.epsDias = self.creaEpisodiosDia(self.csv.dias, 5, interrupcion)
-        
+        #Episodios con los últimos filtros aplicados
         self.epFiltro = []
         self.update(sueno, sedentario, ligero, moderado)
         self.totalCal = np.nansum(self.csv.consm)
@@ -234,28 +233,6 @@ class selEpisodio():
         self.filtraEpisodios(minep, intr, lista)
         return lista
     
-    def creaEpisodiosDia(self, dias, minep, intr):
-        """
-        Crea los episodios con las listas de los dias independientes
-        minep: tamaño minimo de episodio
-        intr: interrupciones por actividad
-        """
-        listaD = []
-        for i in dias:
-            sueno = self.csv.datosDia(i, "sueno")
-            sed = self.csv.datosDia(i, "actsd")
-            lig = self.csv.datosDia(i, "actli")
-            mod = self.csv.datosDia(i, "actmd")
-            listaD.append(self.creaEpisodios(sueno, sed, lig, mod, minep, intr))
-            for k in listaD[-1]:
-                k.filtrar(self.dt, self.csv.temp, self.csv.flujo, self.csv.consm)   
-                print k.ini
-            """
-            if(P_DEBUG):
-                print "ini", listaD[-1][0].tiempo[0], "fin", listaD[-1][0].tiempo[-1]
-            """    
-                 
-        return listaD
         
     def imprimeEpisodios(self, lista):
         for ind in lista:
@@ -283,7 +260,7 @@ class selEpisodio():
 
 
 if(DEBUG):
-    eps = selEpisodio('../data.csv', dias=True)
+    eps = selEpisodio('../data.csv')
     print len(eps.episodios)
     print "Agrupados"
     for i in range(len(eps.episodios)):
