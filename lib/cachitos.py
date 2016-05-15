@@ -11,7 +11,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 DEBUG = 0
-P_DEBUG = 1
+PRUEBAS = 0
 
 #Definición de tipos
 tipoSueno = "sueño"
@@ -58,8 +58,7 @@ class selEpisodio():
         
     #Crea el array de episodios con los filtros aplicados
     def update(self, sueno=True, sedentario=True, ligero=True, moderado=True):
-        #print self.filSueno, self.filSedentario, self.filLigero, self.filModerado, len(self.epFiltro)
-        print sueno, sedentario, ligero, moderado, len(self.epFiltro)
+        if(DEBUG>0): print sueno, sedentario, ligero, moderado, len(self.epFiltro)
         self.epFiltro = []
         for i in self.episodios:
             if((i.tipo == tipoSueno and sueno) 
@@ -68,9 +67,10 @@ class selEpisodio():
                 or (i.tipo == tipoModerado and moderado)):
                 self.epFiltro.append(i)
                 self.epFiltro[-1].filtrar(self.dt, self.csv.temp, self.csv.flujo, self.csv.consm)
-        print "Total episodios:", len(self.episodios) 
-        print "Total eps con filtros:", len(self.epFiltro)
-        self.imprimeEpisodios(self.epFiltro)
+        if(DEBUG>0):
+            print "Total episodios:", len(self.episodios)
+            print "Total eps con filtros:", len(self.epFiltro)
+            if(DEBUG>2): self.imprimeEpisodios(self.epFiltro)
  
      
     def actualizaEp(self, i, op, lista):
@@ -259,7 +259,7 @@ class selEpisodio():
 
 
 
-if(DEBUG):
+if(PRUEBAS):
     eps = selEpisodio('../data.csv')
     print len(eps.episodios)
     print "Agrupados"
