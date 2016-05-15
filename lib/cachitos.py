@@ -10,6 +10,9 @@ import sys
 reload(sys)  
 sys.setdefaultencoding('utf8')
 
+DEBUG = 0
+P_DEBUG = 1
+
 #Definición de tipos
 tipoSueno = "sueño"
 tipoSedentario = "sedentario"
@@ -49,11 +52,6 @@ class selEpisodio():
         
         if dias: 
             self.epsDias = self.creaEpisodiosDia(self.csv.dias, 5, interrupcion)
-            for i in self.epsDias:
-                for k in range(len(i)):
-                    if(k ==0 or k == (len(i)-1)):
-                        print i[k].tiempo
-                    
         
         self.epFiltro = []
         self.update(sueno, sedentario, ligero, moderado)
@@ -250,7 +248,13 @@ class selEpisodio():
             mod = self.csv.datosDia(i, "actmd")
             listaD.append(self.creaEpisodios(sueno, sed, lig, mod, minep, intr))
             for k in listaD[-1]:
-                k.filtrar(self.dt, self.csv.temp, self.csv.flujo, self.csv.consm)    
+                k.filtrar(self.dt, self.csv.temp, self.csv.flujo, self.csv.consm)   
+                print k.ini
+            """
+            if(P_DEBUG):
+                print "ini", listaD[-1][0].tiempo[0], "fin", listaD[-1][0].tiempo[-1]
+            """    
+                 
         return listaD
         
     def imprimeEpisodios(self, lista):
@@ -276,25 +280,24 @@ class selEpisodio():
         return rangos
             
 
-#eps = selEpisodio('../data8.csv', dias=True)
-
-"""
-print len(eps.episodios)
-print "Agrupados"
-for i in range(len(eps.episodios)):
-    print eps.episodios[i].nombre, "duracion:", eps.episodios[i].fin - eps.episodios[i].ini + 1
-print len(eps.episodios)
 
 
-vs = 0
-for i in range(len(eps.episodios)):
-    if (eps.episodios[i].tipo == tipoSueno):
-        vs += 1
-        print eps.episodios[i].nombre, eps.episodios[i].ini, eps.episodios[i].fin, "duracion:", eps.episodios[i].fin - eps.episodios[i].ini+1
-"""
-"""
-print len(eps.epsDias)
-for i in range(len(eps.epsDias)):
-    print "Dia", i+1
-    eps.imprimeEpisodios(eps.epsDias[i])
-"""
+if(DEBUG):
+    eps = selEpisodio('../data.csv', dias=True)
+    print len(eps.episodios)
+    print "Agrupados"
+    for i in range(len(eps.episodios)):
+        print eps.episodios[i].nombre, "duracion:", eps.episodios[i].fin - eps.episodios[i].ini + 1
+    print len(eps.episodios)
+
+
+    vs = 0
+    for i in range(len(eps.episodios)):
+        if (eps.episodios[i].tipo == tipoSueno):
+            vs += 1
+            print eps.episodios[i].nombre, eps.episodios[i].ini, eps.episodios[i].fin, "duracion:", eps.episodios[i].fin - eps.episodios[i].ini+1
+
+    print len(eps.epsDias)
+    for i in range(len(eps.epsDias)):
+        print "Dia", i+1
+        eps.imprimeEpisodios(eps.epsDias[i])

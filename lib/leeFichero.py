@@ -7,6 +7,8 @@ import sys
 from datetime import datetime as dt
 from PyQt4 import QtGui
 
+DEBUG = 1
+
 class LeeFichero(object):
     """
     Inicializa la matriz con los valores del csv
@@ -40,9 +42,15 @@ class LeeFichero(object):
             if(fecha1.day != fecha2.day):
                 fin = i
                 indices.append((ini, fin))
+                if(DEBUG):
+                    print "ini", fecha1.day, "fin", fecha2.day
                 ini = i+1
         indices.append((ini, len(self.tiempo)-1))
         print "Hay %i dias" % len(indices)
+        
+        if(DEBUG):
+            print indices
+        
         return indices
         
         
@@ -73,7 +81,7 @@ class LeeFichero(object):
             return self.acltrans[dia[0]:dia[1]+1]
 
 """
-datos = LeeFichero('../data2.csv')
+datos = LeeFichero('../data.csv')
 datos.datosPorDia(datos.dias[2], 'sueno')
 print len(datos.datosPorDia(datos.dias[6], 'sueno'))
 for i in datos.dias:
