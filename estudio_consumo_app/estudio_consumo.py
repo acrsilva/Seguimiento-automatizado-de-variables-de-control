@@ -13,6 +13,8 @@ import math
 import cachitos
 import colores
 import leeFichero
+import hover
+import datetime 
 
 DEBUG = 1
 
@@ -106,6 +108,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.plotRatioBar(ax_bar, cbx_idx, ratios)
         
         fig.canvas.draw()
+        fig.canvas.mpl_connect('pick_event', self.onpick)
     
     def getSizes(self, idx, tiempo=False, consumo=False):
         sizes = [0, 0, 0, 0]
@@ -135,19 +138,23 @@ class Main(QMainWindow, Ui_MainWindow):
         print sizes
         return sizes
     
+    def onpick(self, event):
+        print "picado"
+        """
+        rect = event.artist
+        for i in range(len(bar)): #MEJORAR!!
+            if (bar[i] == rect):
+                print "Barra", i, self.selep.epsDias[idx][i].nombre, self.selep.epsDias[idx][i].numCalorias, 'calorías', len(self.selep.epsDias[idx][i].tiempo), 'minutos'
+                #lbl = '(' + self.selep.epFiltro[i].nombre + ') ' + str(self.selep.epFiltro[i].numCalorias)[:6] + ' calorías ' + str(len(self.selep.epFiltro[i].tiempo)) + ' minutos'
+                #self.lblDetalles.setText(lbl)
+                return
+        """
     """
     means. medidas de las barras
     idx. indice del día
     """
     def plotRatioBar(self, ax, idx, means):
-        def onpick(event):
-            rect = event.artist
-            for i in range(len(bar)): #MEJORAR!!
-                if (bar[i] == rect):
-                    print "Barra", i, self.selep.epsDias[idx][i].nombre, self.selep.epsDias[idx][i].numCalorias, 'calorías', len(self.selep.epsDias[idx][i].tiempo), 'minutos'
-                    #lbl = '(' + self.selep.epFiltro[i].nombre + ') ' + str(self.selep.epFiltro[i].numCalorias)[:6] + ' calorías ' + str(len(self.selep.epFiltro[i].tiempo)) + ' minutos'
-                    #self.lblDetalles.setText(lbl)
-                    return
+        
                     
         colors = []
         labels = []
@@ -163,25 +170,35 @@ class Main(QMainWindow, Ui_MainWindow):
             colors.append(c)
             labels.append(i.tiempo[0].strftime('%H:%M'))
         
-        print len(means), "muestras" 
-        print means   
+        print len(means), "muestras"
+        print means
         ind = np.linspace(0, len(means), endpoint=False, num=len(means))
         #bar = ax.bar(ind, means, color=colors, picker=1)
-        #markerline, stemlines, baseline = ax.stem(ind, means, color=colors)
         
-        #line, = ax.plot(ind, means, 'o', picker=5, color=colors) 
-         
-        ax.scatter(ind, means, c=colors)
+        #markerline, stemlines, baseline = ax.stem(ind, means)
+        
+        for i in range(len(ind)):
+            p, q = [], []
+            p.append(ind[i])
+            q.append(means[i])
+            markerline, stemlines, baseline = ax.stem(p, q)
+            plt.setp(markerline, 'markerfacecolor', colors[i])
+            plt.setp(stemlines, 'color', colors[i])
             
         ax.set_xticklabels(labels, rotation=70)
         ax.set_title('Ratio consumo por minuto')
+        print self.selep.epsDias[idx][0].tiempo[0], self.selep.epsDias[idx][-1].tiempo[-1]
+        ax.set_xlim([self.selep.epsDias[idx][0].tiempo[0], self.selep.epsDias[idx][-1].tiempo[-1]])
+        
+        #cursor = hover.FollowDotCursor(ax, ind, means, tolerance=20)
+        
         #fig.tight_layout()
         
         #canvas = FigureCanvas(fig)
         #vbox = QtGui.QGridLayout()
         #vbox.addWidget(canvas)
         #canvas.mpl_connect('pick_event', onpick)
-        self.canvas_izq.mpl_connect('pick_event', onpick)
+        #self.canvas_izq.mpl_connect('pick_event', onpick)
     
     
     def plotBarDiario(self):

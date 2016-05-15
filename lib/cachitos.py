@@ -47,7 +47,13 @@ class selEpisodio():
         
         self.episodios = self.creaEpisodios(self.csv.sueno, self.csv.actsd, self.csv.actli, self.csv.actmd, 5, interrupcion)
         
-        if dias: self.epsDias = self.creaEpisodiosDia(self.csv.dias, 5, interrupcion)
+        if dias: 
+            self.epsDias = self.creaEpisodiosDia(self.csv.dias, 5, interrupcion)
+            for i in self.epsDias:
+                for k in range(len(i)):
+                    if(k ==0 or k == (len(i)-1)):
+                        print i[k].tiempo
+                    
         
         self.epFiltro = []
         self.update(sueno, sedentario, ligero, moderado)
