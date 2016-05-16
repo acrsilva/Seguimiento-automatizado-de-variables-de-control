@@ -8,8 +8,8 @@ from datetime import datetime as dt
 from PyQt4 import QtGui
 import cachitos
 
-DEBUG = 0
-PRUEBAS = 0
+DEBUG = 2
+PRUEBAS = 1
 
 """
 Almacena los valores puros de un fichero csv
@@ -28,7 +28,7 @@ class Datos():
         self.consm = consm
         self.acltrans = acltrans
     
-    #BUG. utc, falta +1
+    #BUG. Pierde el ultimo minuto de cada episodio
     #Crea una lista días particionando los datos
     def creaDias(self):
         #Devuelve una lista con los datos de un día concreto
@@ -47,14 +47,14 @@ class Datos():
         datos_dias = []
         ini, fin = 0, 0
         for i in range(len(self.tiempo)-1):
-            fecha1 = dt.utcfromtimestamp(self.tiempo[i])
-            fecha2 = dt.utcfromtimestamp(self.tiempo[i+1])
-            
-            if(fecha1.day != fecha2.day):
+            fecha1 = dt.fromtimestamp(self.tiempo[i])
+            fecha2 = dt.fromtimestamp(self.tiempo[i+1])
+            #Nuevo dia si cambia el dia o si es el último
+            if(fecha1.day != fecha2.day or i == len(self.tiempo)-2):
                 fin = i
                 datos_dias.append(datosDia((ini, fin)))
                 if(DEBUG):
-                    print "ini", dt.utcfromtimestamp(self.tiempo[ini]), "fin", dt.utcfromtimestamp(self.tiempo[fin])
+                    print "ini", dt.fromtimestamp(self.tiempo[ini]), "fin", dt.fromtimestamp(self.tiempo[fin])
                 
                 ini = i+1
                 

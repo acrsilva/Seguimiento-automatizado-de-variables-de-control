@@ -16,8 +16,11 @@ import leeFichero
 import hover
 import datetime 
 import cachitos
+from time import mktime
+from datetime import datetime
 
-DEBUG = 1
+
+DEBUG = 0
 PRUEBAS = 1
 
 Ui_MainWindow, QMainWindow = loadUiType('int_consumos.ui')
@@ -102,6 +105,7 @@ class Main(QMainWindow, Ui_MainWindow):
         
         #Gráfica de ratios
         ax_bar= fig.add_subplot(212)
+        ax_bar.locator_params(nbins=12)
         
         ratios = []
         #ind = self.cbx_izq.currentIndex()
@@ -157,7 +161,6 @@ class Main(QMainWindow, Ui_MainWindow):
     idx. indice del día
     """
     def plotRatioBar(self, ax, idx, means):
-        
                     
         colors = []
         labels = []
@@ -171,27 +174,33 @@ class Main(QMainWindow, Ui_MainWindow):
             elif(i.tipo == cachitos.tipoModerado):
                 c = colores.moderado
             colors.append(c)
-            #labels.append(i.tiempo[0].strftime('%H:%M'))
-            labels.append(i.tiempo[0])
+            labels.append(i.tiempo[0].strftime('%H:%M'))
+            #labels.append(i.tiempo[0])
         
         print len(means), "muestras"
         if(DEBUG>2):
             print means
-        ind = np.linspace(0, len(means), endpoint=False, num=len(means))
+        
+        
+        #ind = np.linspace(0, len(means), endpoint=False, num=len(means))
         #bar = ax.bar(ind, means, color=colors, picker=1)
         
-        #markerline, stemlines, baseline = ax.stem(ind, means)
-        
-        for i in range(len(ind)):
+        #Mejorar
+        r=[]
+        for i in range(len(labels)):
             p, q = [], []
-            p.append(ind[i])
+            p.append(mktime(datetime.strptime(labels[i], "%H:%M").timetuple())) 
+            r.append(mktime(datetime.strptime(labels[i], "%H:%M").timetuple()))
             q.append(means[i])
             markerline, stemlines, baseline = ax.stem(p, q)
             plt.setp(markerline, 'markerfacecolor', colors[i])
             plt.setp(stemlines, 'color', colors[i])
-            
-        ax.set_xticklabels(labels, rotation=70)
+        
+        
+        ax.set_xticks(r)
+        ax.set_xticklabels(labels, rotation=70, fontsize=10)
         ax.set_title('Ratio consumo por minuto')
+        
         if(DEBUG): 
             print self.epsDias[idx].epFiltro[0].tiempo[0], self.epsDias[idx].epFiltro[-1].tiempo[-1]
             #print labels
