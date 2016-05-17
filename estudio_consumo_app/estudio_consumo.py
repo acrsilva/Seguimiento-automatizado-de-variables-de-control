@@ -41,10 +41,10 @@ class Main(QMainWindow, Ui_MainWindow):
     def initCombobox(self):
         self.cbx_izq.clear()
         self.cbx_der.clear()
-        for i in range(len(self.epsDias)):
-            self.cbx_izq.addItem("Día " + str(i+1))
-            self.cbx_der.addItem("Día " + str(i+1))
-            self.ldias.append("Día " + str(i+1))
+        for i in self.epsDias:
+            self.cbx_izq.addItem("Día " + str(i.epFiltro[0].tiempo[0].day))
+            self.cbx_der.addItem("Día " + str(i.epFiltro[0].tiempo[0].day))
+            self.ldias.append("Día " + str(i.epFiltro[0].tiempo[0].day))
         if(len(self.epsDias) > 1):
             self.cbx_der.setCurrentIndex(1)
     
@@ -198,8 +198,9 @@ class Main(QMainWindow, Ui_MainWindow):
         
         
         ax.set_xticks(r)
-        ax.set_xticklabels(labels, rotation=70, fontsize=10)
+        ax.set_xticklabels(labels, rotation=90, fontsize=10)
         ax.set_title('Ratio consumo por minuto')
+        ax.set_ylim(0, 60)
         
         if(DEBUG): 
             print self.epsDias[idx].epFiltro[0].tiempo[0], self.epsDias[idx].epFiltro[-1].tiempo[-1]

@@ -239,7 +239,7 @@ class selEpisodio():
             print ind.nombre, ind.ini, ind.fin, "duracion:", ind.fin - ind.ini + 1
     
     #PRUEBAS
-    def getNotDespierto(self, ini, fin):
+    def getDespierto(self, ini, fin):
         flag = False
         ii = 0
         rangos = []
@@ -255,7 +255,23 @@ class selEpisodio():
                 rangos.append((self.dt[ii],self.dt[i]))
             
         return rangos
+        
+    def getProfundo(self, ini, fin):
+        flag = False
+        ii = 0
+        rangos = []
+        
+        for i in range(ini,fin):
+            if(self.csv.clasifSueno[i] ==5 and not flag):
+                flag = True
+                ii = i
+            elif(self.csv.clasifSueno[i] !=5 and flag):
+                flag = False
+                rangos.append((self.dt[ii],self.dt[i]))
+            elif(i == fin-1 and self.csv.clasifSueno[i] ==5):
+                rangos.append((self.dt[ii],self.dt[i]))
             
+        return rangos
 
 
 

@@ -18,7 +18,7 @@ import clustering
 from scipy.cluster.hierarchy import dendrogram
 from datetime import datetime
 
-DEBUG = 0
+DEBUG = 1
 
 
 Ui_MainWindow, QMainWindow = loadUiType('interfaz.ui')
@@ -135,26 +135,33 @@ class Main(QMainWindow, Ui_MainWindow):
     #Actualiza el contenido de las gráficas con el episodio seleccionado por los combobox
     def updatePlots(self, ep1=False, ep2=False):
         def getDespierto(epi):
-            desp = self.selep.getNotDespierto(epi.ini, epi.fin)
+            desp = self.selep.getDespierto(epi.ini, epi.fin)
             print "Despierto intervalo", epi.ini, epi.fin, "en:", desp
             return desp
+        
+        def getProfundo(epi):
+            prof = self.selep.getProfundo(epi.ini, epi.fin)
+            print "Sueño profundo intervalo", epi.ini, epi.fin, "en:", prof
+            return prof
             
         if(ep1):
             print "Actualizar episodio izquierdo"
             idx = self.cbx1.currentIndex()
             desp = getDespierto(self.selep.epFiltro[idx])
-            self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, temperatura=True)
-            self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, flujo=True)
-            self.plotGraph(self.fig1_var3, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, consumo=True)
+            prof = getProfundo(self.selep.epFiltro[idx])
+            self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, prof, temperatura=True)
+            self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, prof, flujo=True)
+            self.plotGraph(self.fig1_var3, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, prof, consumo=True)
         if(ep2):
             print "Actualizar episodio derecho"
             idx = self.cbx2.currentIndex()
             desp = getDespierto(self.selep.epFiltro[idx])
-            self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, temperatura=True)
-            self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, flujo=True)
-            self.plotGraph(self.fig2_var3, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, consumo=True)
+            prof = getProfundo(self.selep.epFiltro[idx])
+            self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, prof, temperatura=True)
+            self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, prof, flujo=True)
+            self.plotGraph(self.fig2_var3, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, prof, consumo=True)
     
-    def plotGraph(self, fig, tiempo, data, despierto, temperatura=False, flujo=False, consumo=False):
+    def plotGraph(self, fig, tiempo, data, despierto, profundo, temperatura=False, flujo=False, consumo=False):
         ax = fig.axes[0]
         ax.clear()
         if(temperatura):
@@ -178,8 +185,13 @@ class Main(QMainWindow, Ui_MainWindow):
         ax.grid(True)
         
         #Lineas verticales con la clasificación de sueños
+        for i in profundo:
+            ax.axvspan(i[0], i[1], facecolor=colores.suenoProfundo, alpha=0.3, edgecolor=colores.suenoProfundo)
+            
         for i in despierto:
             ax.axvspan(i[0], i[1], facecolor=colores.despierto, alpha=0.5, edgecolor=colores.despierto)
+        
+        
             
         fig.canvas.draw()
         

@@ -14,11 +14,11 @@ from pyqtgraph.Qt import QtCore, QtGui
 import numpy as np
 import time
 import datetime
-import leeFichero
+import leeFichero as lf
 import colores
 
 #Cargar datos
-csv = leeFichero.LeeFichero('../data.csv')
+csv = lf.LectorFichero('../data.csv').datos_total
 
 def cargarActividad():
     print "Cargando clasificación de actividad física"
