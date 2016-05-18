@@ -16,6 +16,10 @@ import cachitos
 import matplotlib.dates as md
 from sklearn import preprocessing
 import colores
+import leeFichero as lf
+
+DEBUG = 0
+
     
 Ui_MainWindow, QMainWindow = loadUiType('scatterplots.ui')
 
@@ -28,6 +32,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.epActual = 0
         self.selep = self.loadData()
         self.updateView()
+        self.configureComboBox()
         
         self.cbSueno.clicked.connect(self.filtrarSueno)
         self.cbSedentario.clicked.connect(self.filtrarSedentario)
@@ -35,23 +40,40 @@ class Main(QMainWindow, Ui_MainWindow):
         self.cbModerada.clicked.connect(self.filtrarModerada)
         self.btnPrev.clicked.connect(self.retroceder)
         self.btnNext.clicked.connect(self.avanzar)
-        self.btnSelFile.clicked.connect(self.openFile)
+        #self.btnSelFile.clicked.connect(self.openFile)
+        self.actionAbrir.triggered.connect(self.openFile)
+        self.cbx_izq.activated[str].connect(self.cbx_izqListener)
+        self.cbx_der.activated[str].connect(self.cbx_derListener)
+        
         
         self.filSueno = True
         self.filSedentario = True
         self.filLigero =True
         self.filModerado = True
         
+    def configureComboBox(self):
+        print "Configurando combobox"
+        self.cbx_izq.clear()
+        self.cbx_der.clear()
+        for i in self.selep.epFiltro:
+            self.cbx_izq.addItem(i.nombre)
+            self.cbx_der.addItem(i.nombre)
+        if(len(self.selep.epFiltro) > 1):
+            self.cbx_der.setCurrentIndex(1)
+        self.cbx_izq.setCurrentIndex(self.epActual)
         
     def openFile(self):
         self.selep = self.loadData()
+        self.configureComboBox()
         self.limpiarLayout()
         self.updateView()
+        
     
     def loadData(self):
-        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
+        if(DEBUG): fname = '../data.csv'
+        else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
         print "Abriendo fichero ", fname
-        selep = cachitos.selEpisodio(fname)
+        selep = lf.LectorFichero(fname).selep_completo
         return selep
     
     def getTime(self, a, b, ep):
@@ -118,7 +140,7 @@ class Main(QMainWindow, Ui_MainWindow):
         canvas1 = FigureCanvas(fig10)
         canvas2 = FigureCanvas(fig11)
         vbox = QtGui.QGridLayout()
-        vbox.addWidget(QtGui.QLabel("<b>Episodio:</b> " + filtro.tipo))
+        vbox.addWidget(QtGui.QLabel("<b>Episodio:</b> " + filtro.nombre))
         vbox.addWidget(QtGui.QLabel("<b>Inicio:</b> " + str(filtro.tiempo[0])))
         vbox.addWidget(QtGui.QLabel("<b>Final:</b> " + str(filtro.tiempo[-1])))
         vbox.addWidget(QtGui.QLabel("<b>Duración:</b> %i min" % (len(filtro.tiempo))))
@@ -162,6 +184,8 @@ class Main(QMainWindow, Ui_MainWindow):
         self.setBounds()
         self.limpiarLayout()
         self.updateView()
+        self.configureComboBox()
+        
         
     def filtrarSedentario(self):
         print "Filtrar sedentario"
@@ -170,6 +194,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.setBounds()
         self.limpiarLayout()
         self.updateView()
+        self.configureComboBox()
         
     def filtrarLigera(self):
         print "Filtrar ligera"
@@ -178,6 +203,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.setBounds()
         self.limpiarLayout()
         self.updateView()
+        self.configureComboBox()
         
     def filtrarModerada(self):
         print "Filtrar moderada"
@@ -186,6 +212,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.setBounds()
         self.limpiarLayout()
         self.updateView()
+        self.configureComboBox()
     
     def retroceder(self):
         if (self.epActual > 0):
@@ -200,8 +227,19 @@ class Main(QMainWindow, Ui_MainWindow):
             print "episodios", self.epActual, "y", self.epActual+1
             self.limpiarLayout()
             self.updateView()
+    
+    def cbx_izqListener(self):
+        self.epActual = self.cbx_izq.currentIndex()
+        print "episodios", self.epActual
+        self.limpiarLayout()
+        self.updateView()
         
-        
+    def cbx_derListener(self):
+        self.epActual = self.cbx_der.currentIndex()
+        print "episodios", self.epActual
+        self.limpiarLayout()
+        self.updateView() 
+
  
 if __name__ == '__main__':
     import sys

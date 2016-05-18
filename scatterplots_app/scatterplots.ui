@@ -16,13 +16,6 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QPushButton" name="btnSelFile">
-      <property name="text">
-       <string>Abrir</string>
-      </property>
-     </widget>
-    </item>
-    <item>
      <widget class="QWidget" name="wScatter1" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -168,6 +161,29 @@
         <bool>true</bool>
        </property>
       </widget>
+      <widget class="QComboBox" name="cbx_izq">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>60</y>
+         <width>78</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="cbx_der">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>710</x>
+         <y>60</y>
+         <width>78</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -181,8 +197,20 @@
      <height>25</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuArchivo">
+    <property name="title">
+     <string>Archivo</string>
+    </property>
+    <addaction name="actionAbrir"/>
+   </widget>
+   <addaction name="menuArchivo"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionAbrir">
+   <property name="text">
+    <string>Abrir</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

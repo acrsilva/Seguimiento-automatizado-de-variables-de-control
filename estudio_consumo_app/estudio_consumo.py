@@ -21,7 +21,7 @@ from datetime import datetime
 
 
 DEBUG = 0
-PRUEBAS = 1
+PRUEBAS = 0
 
 Ui_MainWindow, QMainWindow = loadUiType('int_consumos.ui')
 
@@ -47,7 +47,7 @@ class Main(QMainWindow, Ui_MainWindow):
             self.ldias.append("Día " + str(i.epFiltro[0].tiempo[0].day))
         if(len(self.epsDias) > 1):
             self.cbx_der.setCurrentIndex(1)
-    
+        
     def loadData(self):
         if(PRUEBAS): fname = '../data.csv'
         else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
@@ -61,6 +61,15 @@ class Main(QMainWindow, Ui_MainWindow):
         self.plotGraph(self.fig_izq, self.cbx_izq.currentIndex())
         self.plotGraph(self.fig_der, self.cbx_der.currentIndex())
         self.plotBarDiario()
+        
+        self.setLabel(izq=True)
+        self.setLabel(izq=False)
+    
+    def setLabel(self, izq):
+        if(izq):
+            self.lbl_izq.setText('Comienzo: ' + self.epsDias[self.cbx_izq.currentIndex()].epFiltro[0].tiempo[0].strftime('%H:%M %d-%m-%y') + "\n" + str(int(self.epsDias[self.cbx_izq.currentIndex()].totalCal)) + " calorías")
+        else:
+            self.lbl_der.setText('Comienzo: ' + self.epsDias[self.cbx_der.currentIndex()].epFiltro[0].tiempo[0].strftime('%H:%M %d-%m-%y') + "\n" + str(int(self.epsDias[self.cbx_der.currentIndex()].totalCal)) + " calorías")
             
     def initGraphs(self):
         print "Inicializar gráficas"
@@ -82,15 +91,35 @@ class Main(QMainWindow, Ui_MainWindow):
         
     def plotGraph(self, fig, cbx_idx):
         
+        def make_autopct(values):
+            def my_autopct(pct):
+                total = sum(values)
+                val = int(round(pct*total/100.0))
+                return '{p:1.1f}%  ({v:d})'.format(p=pct,v=val)
+            return my_autopct
+        
         for i in fig.axes:
             i.clear()
+        
+        def make_picker(fig, wedges, texts):
+            def onclick(event):
+                wedge = event.artist
+                label = wedge.get_label()
+                print label
+            # Make wedges selectable
+            for wedge in wedges:
+                wedge.set_picker(True)
+            fig.canvas.mpl_connect('pick_event', onclick)
+
+        
         
         #labels = ['Dormido', 'Sedentario', 'Act. Ligera', 'Act. Moderada']
         colors = [colores.sueno, colores.sedentario, colores.ligero, colores.moderado]
         #Gráfica de tiempos
         sizes = self.getSizes(cbx_idx, tiempo=True)
         ax_tiempo = fig.add_subplot(221)
-        pie = ax_tiempo.pie(sizes, colors=colors, autopct='%1.1f%%', shadow=False, startangle=0)
+        wedges, plt_labels, autotexts = ax_tiempo.pie(sizes, colors=colors, autopct='%1.1f%%', shadow=False, startangle=0)
+        #make_picker(fig, wedges, autotexts)
         #ax_tiempo.legend(pie[0], labels, loc="upper left", prop={'size':7})
         ax_tiempo.axis('equal')
         ax_tiempo.set_title('Tiempo por actividad')
@@ -115,7 +144,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.plotRatioBar(ax_bar, cbx_idx, ratios)
         
         fig.canvas.draw()
-        fig.canvas.mpl_connect('pick_event', self.onpick)
+        #fig.canvas.mpl_connect('pick_event', self.onpick)
     
     def getSizes(self, idx, tiempo=False, consumo=False):
         sizes = [0, 0, 0, 0]
@@ -200,7 +229,7 @@ class Main(QMainWindow, Ui_MainWindow):
         ax.set_xticks(r)
         ax.set_xticklabels(labels, rotation=90, fontsize=10)
         ax.set_title('Ratio consumo por minuto')
-        ax.set_ylim(0, 60)
+        ax.set_ylim(0, 15)
         
         if(DEBUG): 
             print self.epsDias[idx].epFiltro[0].tiempo[0], self.epsDias[idx].epFiltro[-1].tiempo[-1]
@@ -254,13 +283,13 @@ class Main(QMainWindow, Ui_MainWindow):
         print "Combobox izquierdo"
         print "axes: ", len(self.fig_izq.axes)
         self.plotGraph(self.fig_izq, self.cbx_izq.currentIndex())
-        
+        self.setLabel(izq=True)
     
     def cbxDerListener(self):
         print "Combobox derecho"
         print "axes: ", len(self.fig_der.axes)
         self.plotGraph(self.fig_der, self.cbx_der.currentIndex())
-    
+        self.setLabel(izq=False)
     
 if __name__ == '__main__':
     import sys

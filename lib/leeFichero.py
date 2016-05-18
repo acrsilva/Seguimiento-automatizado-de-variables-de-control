@@ -8,8 +8,8 @@ from datetime import datetime as dt
 from PyQt4 import QtGui
 import cachitos
 
-DEBUG = 2
-PRUEBAS = 1
+DEBUG = 0
+PRUEBAS = 0
 
 """
 Almacena los valores puros de un fichero csv

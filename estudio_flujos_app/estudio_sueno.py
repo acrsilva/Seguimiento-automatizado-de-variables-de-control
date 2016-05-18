@@ -18,7 +18,7 @@ import clustering
 from scipy.cluster.hierarchy import dendrogram
 from datetime import datetime
 
-DEBUG = 1
+DEBUG = 0
 
 
 Ui_MainWindow, QMainWindow = loadUiType('interfaz.ui')
@@ -119,7 +119,9 @@ class Main(QMainWindow, Ui_MainWindow):
         self.updatePlots(ep1=True, ep2=True)
         self.initCluster()
         self.cluster()
-    
+        self.setLabel(sup=True)
+        self.setLabel(sup=False)
+        
     # Añade los nombres de los episodios en las listas desplegables
     def configureComboBox(self):
         print "Configurando combobox"
@@ -131,6 +133,11 @@ class Main(QMainWindow, Ui_MainWindow):
         if(len(self.selep.epFiltro) > 1):
             self.cbx2.setCurrentIndex(1)
         
+    def setLabel(self, sup):
+        if(sup):
+            self.lbl1.setText(self.selep.epFiltro[self.cbx1.currentIndex()].tiempo[0].strftime('%d-%m-%y (%H:%M') +" - "+ self.selep.epFiltro[self.cbx1.currentIndex()].tiempo[-1].strftime('%H:%M)'))
+        else:
+            self.lbl2.setText(self.selep.epFiltro[self.cbx2.currentIndex()].tiempo[0].strftime('%d-%m-%y (%H:%M') +" - "+ self.selep.epFiltro[self.cbx2.currentIndex()].tiempo[-1].strftime('%H:%M)'))
         
     #Actualiza el contenido de las gráficas con el episodio seleccionado por los combobox
     def updatePlots(self, ep1=False, ep2=False):
@@ -262,10 +269,12 @@ class Main(QMainWindow, Ui_MainWindow):
     def cbx1Listener(self, text):
         print "Episodio izquierdo", text   
         self.updatePlots(ep1=True)
+        self.setLabel(sup=True)
         
     def cbx2Listener(self, text):
         print "Episodio derecho", text
         self.updatePlots(ep2=True)
+        self.setLabel(sup=False)
     
     #Selecciona los individuos a agrupar
     def rbListener(self):
