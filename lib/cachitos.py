@@ -118,7 +118,7 @@ class selEpisodio():
         """
         if episodio.tipo == tipoSueno:
             nums[0] += 1
-            episodio.nombre = self.dt[episodio.ini].strftime('%d') + ".S" + str(nums[0])
+            episodio.nombre = self.dt[episodio.ini].strftime('%d') + "-Su" + str(nums[0])
         elif episodio.tipo == tipoSedentario:
             nums[1]  += 1
             episodio.nombre = str(nums[1]) + ". Sedentario"

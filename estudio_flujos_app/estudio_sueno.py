@@ -22,6 +22,7 @@ DEBUG = 0
 PRUEBAS=1
 
 
+
 Ui_MainWindow, QMainWindow = loadUiType('interfaz.ui')
 
 class TablaDiagonal(QTableWidget):
@@ -50,16 +51,12 @@ class TablaDiagonal(QTableWidget):
 # btnAbrir, btnClustering
 # rbTemperatura, rbConsumo
 # tableDistancias
-# wgDendograma
+# dendrogramLayout
 class Main(QMainWindow, Ui_MainWindow):
     def __init__(self, ):
         super(Main, self).__init__()
         #self.showMaximized()
         self.setupUi(self)
-        
-        #Flags
-        self.temp = True
-        self.cons = False
         
         self.__initGraphs__()
         self.loadData()
@@ -72,9 +69,8 @@ class Main(QMainWindow, Ui_MainWindow):
         self.actionAbrir.triggered.connect(self.loadData)
         self.rbTemperatura.clicked.connect(self.rbListener)
         self.rbConsumo.clicked.connect(self.rbListener)
-
     
-    #Inicializa las figuras de cada layout en las que se va a dibujar las gráficas
+    #Inicializa las figuras de cada layout que contendrán las gráficas
     def __initGraphs__(self):
         #Graficas superior
         self.fig1_var1 = plt.figure(tight_layout=True)
@@ -106,10 +102,8 @@ class Main(QMainWindow, Ui_MainWindow):
         self.plotLayoutBot.addWidget(canvas22)
         self.plotLayoutBot.addWidget(canvas23)
         
-        
-        
-    #Carga un fichero de datos csv y lo trocea en episodios de sueño
-    #Actualiza el contenido de toda la interfaz
+    #Carga un fichero de datos csv y obtiene los episodios de sueño
+    #Inicializa el contenido de la interfaz
     def loadData(self):
         if(PRUEBAS): fname = '../data.csv'
         else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
@@ -123,7 +117,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.setLabel(sup=True)
         self.setLabel(sup=False)
         
-    # Añade los nombres de los episodios en las listas desplegables
+    #Añade los nombres de los episodios en las listas desplegables
     def configureComboBox(self):
         print "Configurando combobox"
         self.cbx1.clear()
@@ -133,7 +127,8 @@ class Main(QMainWindow, Ui_MainWindow):
             self.cbx2.addItem(i.nombre)
         if(len(self.selep.epFiltro) > 1):
             self.cbx2.setCurrentIndex(1)
-        
+    
+    #Muestra la fecha y la hora del episodio seleccionado
     def setLabel(self, sup):
         if(sup):
             self.lbl1.setText(self.selep.epFiltro[self.cbx1.currentIndex()].tiempo[0].strftime('%d-%m-%y (%H:%M') +" - "+ self.selep.epFiltro[self.cbx1.currentIndex()].tiempo[-1].strftime('%H:%M)'))
@@ -169,6 +164,7 @@ class Main(QMainWindow, Ui_MainWindow):
             self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, prof, flujo=True)
             self.plotGraph(self.fig2_var3, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, prof, consumo=True)
     
+    #Actualiza el contenido de la figura especificada
     def plotGraph(self, fig, tiempo, data, despierto, profundo, temperatura=False, flujo=False, consumo=False):
         ax = fig.axes[0]
         ax.clear()
@@ -198,56 +194,44 @@ class Main(QMainWindow, Ui_MainWindow):
             
         for i in despierto:
             ax.axvspan(i[0], i[1], facecolor=colores.despierto, alpha=0.5, edgecolor=colores.despierto)
-        
-        
             
         fig.canvas.draw()
         
+    #Dibuja el dendrograma
     def plotDendrogram(self, c1, c2):
         fig, self.axes = plt.subplots(1, 1, figsize=(8, 3), tight_layout=True)
         if(self.rbTemperatura.isChecked()):
-            dn1 = dendrogram(c1.Z, ax=self.axes, leaf_rotation=20., labels=c1.labels)
+            dn1 = dendrogram(c1.Z, ax=self.axes, leaf_rotation=90., labels=c1.labels, leaf_font_size=10., )
             self.axes.set_title("Dendrograma de temperatura y flujo")
         elif(self.rbConsumo.isChecked()):
-            dn2 = dendrogram(c2.Z, ax=self.axes, leaf_rotation=20., labels=c2.labels)
+            dn2 = dendrogram(c2.Z, ax=self.axes, leaf_rotation=90., labels=c2.labels, leaf_font_size=10., )
             self.axes.set_title("Dendrograma de consumo")
+            
+        self.axes.set_xlabel('Episodios de sueño')
+        self.axes.set_ylabel('Distancia')
         return FigureCanvas(fig)
-        
+    
+    #Realiza el clustering de temperatura y flujo y de consumo y dibuja el dendrograma
     def initCluster(self):
         self.cluster_tf = clustering.HierarchicalClustering(self.selep, tf=True)
         self.cluster_cons = clustering.HierarchicalClustering(self.selep, cons=True)
         
-        #self.canvasCluster_tf = FigureCanvas(self.plotDendrogram(self.cluster_tf))
-        #self.canvasCluster_cons = FigureCanvas(self.plotDendrogram(self.cluster_cons))
-        
-        #self.dendogramLayout.addWidget(self.canvasCluster_tf)
-        #self.dendogramLayout.addWidget(self.canvasCluster_cons)
-        
-        self.dendogramLayout.addWidget(self.plotDendrogram(self.cluster_tf, self.cluster_cons))
-        """
-        self.fc = plt.figure()
-        self.fc.add_subplot(111)
-        self.canvasCluster = FigureCanvas(self.fc)
-        """
-        
+        self.dendrogramLayout.addWidget(self.plotDendrogram(self.cluster_tf, self.cluster_cons))
+       
         
     #Mejorar con hide/show
     def cluster(self, consumo=False):
-        print "Mostrar dendograma y distancias"
+        print "Mostrar dendrograma y distancias"
         for cnt in reversed(range(self.tableLayout.count())):
             widget = self.tableLayout.takeAt(cnt).widget()
             if widget is not None:
                 widget.deleteLater()
-        for cnt in reversed(range(self.dendogramLayout.count())):
-            widget = self.dendogramLayout.takeAt(cnt).widget()
+        for cnt in reversed(range(self.dendrogramLayout.count())):
+            widget = self.dendrogramLayout.takeAt(cnt).widget()
             if widget is not None:
                 widget.deleteLater()
-        """    
-        self.dendogramLayout.removeWidget(self.canvasCluster)
-        self.canvasCluster.close()
-        """
-        
-        self.dendogramLayout.addWidget(self.plotDendrogram(self.cluster_tf, self.cluster_cons))
+                
+        self.dendrogramLayout.addWidget(self.plotDendrogram(self.cluster_tf, self.cluster_cons))
         
         if(self.rbTemperatura.isChecked()):
             #self.canvasCluster_tf.show()
@@ -282,8 +266,6 @@ class Main(QMainWindow, Ui_MainWindow):
         print "Radio button"
         self.axes.clear()
         self.cluster()
-        
-    
                 
         
 if __name__ == '__main__':

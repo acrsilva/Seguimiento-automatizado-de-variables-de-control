@@ -70,15 +70,3 @@ class HierarchicalClustering():
         for i in self.eps_sueno:
             self.labels.append(i.nombre)
         
-    def getDendogram(self):
-        #Dibujar dendograma
-        f = plt.figure('Clustering')
-        #plt.title('Dendograma de clustering jerarquico')
-        plt.xlabel('Indice de episodio')
-        plt.ylabel('Distancia')
-        labels=[]
-        for i in self.eps_sueno:
-            labels.append(i.nombre)
-        dendrogram(self.Z, leaf_rotation=20., leaf_font_size=8., labels = labels)
-        #plt.show()
-        return f
