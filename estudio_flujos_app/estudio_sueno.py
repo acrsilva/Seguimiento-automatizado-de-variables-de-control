@@ -19,27 +19,28 @@ from scipy.cluster.hierarchy import dendrogram
 from datetime import datetime
 
 DEBUG = 0
+PRUEBAS=1
 
 
 Ui_MainWindow, QMainWindow = loadUiType('interfaz.ui')
 
-class MyTable(QTableWidget):
+class TablaDiagonal(QTableWidget):
     def __init__(self, data, *args):
         QTableWidget.__init__(self, *args)
         self.data = data
-        self.setmydata()
+        self.rellenar()
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
-    #Rellena la diagonal inferior de la tabla y colorea la menor distancia de cada fila
-    def setmydata(self):
-        i = self.data.shape[0]-1
+    #Rellena la diagonal inferior de la tabla y colorea la distancia menor de cada fila
+    def rellenar(self):
+        i = self.data.shape[0]-2
         while(i >= 0):
             j=i
             if(j==0): min = j
             else: min = j-1
             while(j >= 0):
-                if(i != j and self.data[i][j] < self.data[i][min]): min = j
-                self.setItem(i, j, QTableWidgetItem(format(self.data[i][j], '.1f')))
+                if(self.data[i+1][j] < self.data[i+1][min]): min = j
+                self.setItem(i, j, QTableWidgetItem(format(self.data[i+1][j], '.1f')))
                 j -= 1
             self.item(i,min).setBackground(QtGui.QColor(colores.marcatabla))
             i -= 1
@@ -110,7 +111,7 @@ class Main(QMainWindow, Ui_MainWindow):
     #Carga un fichero de datos csv y lo trocea en episodios de sueño
     #Actualiza el contenido de toda la interfaz
     def loadData(self):
-        if(DEBUG): fname = '../data.csv'
+        if(PRUEBAS): fname = '../data.csv'
         else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
         
         print "Abriendo fichero ", fname
@@ -143,12 +144,12 @@ class Main(QMainWindow, Ui_MainWindow):
     def updatePlots(self, ep1=False, ep2=False):
         def getDespierto(epi):
             desp = self.selep.getDespierto(epi.ini, epi.fin)
-            print "Despierto intervalo", epi.ini, epi.fin, "en:", desp
+            if(DEBUG): print "Despierto intervalo", epi.ini, epi.fin, "en:", desp
             return desp
         
         def getProfundo(epi):
             prof = self.selep.getProfundo(epi.ini, epi.fin)
-            print "Sueño profundo intervalo", epi.ini, epi.fin, "en:", prof
+            if(DEBUG): print "Sueño profundo intervalo", epi.ini, epi.fin, "en:", prof
             return prof
             
         if(ep1):
@@ -258,12 +259,12 @@ class Main(QMainWindow, Ui_MainWindow):
             self.tableLayout.addWidget(self.createTable(self.cluster_cons.distancias))
         
     def createTable(self, clusters):
-        horHeaders = []
-        for i in range(len(self.selep.epFiltro)):
-            horHeaders.append(str(i+1))
-        table = MyTable(clusters, len(clusters), len(clusters))
-        table.setHorizontalHeaderLabels(horHeaders)
-        table.setVerticalHeaderLabels(horHeaders)
+        header = []
+        for i in self.selep.epFiltro:
+            header.append(i.nombre)
+        table = TablaDiagonal(clusters, len(clusters)-1, len(clusters)-1)
+        table.setHorizontalHeaderLabels([self.selep.epFiltro[i].nombre for i in range(0, len(self.selep.epFiltro)-1)])
+        table.setVerticalHeaderLabels([self.selep.epFiltro[i].nombre for i in range(1, len(self.selep.epFiltro))])
         return table
         
     def cbx1Listener(self, text):
