@@ -28,12 +28,12 @@ class Episodio():
         self.tipo = tipo
         self.nombre = nombre
     def filtrar(self, tiempo, temperaturas, flujo, consumo):
-        self.tiempo = tiempo[self.ini:self.fin]
-        self.temp = temperaturas[self.ini:self.fin]
-        self.flujo = flujo[self.ini:self.fin]
+        self.tiempo = tiempo[self.ini:self.fin+1]
+        self.temp = temperaturas[self.ini:self.fin+1]
+        self.flujo = flujo[self.ini:self.fin+1]
         self.correlacion, p = pearsonr(self.temp, self.flujo)
-        self.consumo = consumo[self.ini:self.fin]
-        self.numCalorias = np.nansum(consumo[self.ini:self.fin])
+        self.consumo = consumo[self.ini:self.fin+1]
+        self.numCalorias = np.nansum(consumo[self.ini:self.fin+1])
         
     
 class selEpisodio():

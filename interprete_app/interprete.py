@@ -17,10 +17,14 @@ import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtGui
 import numpy as np
 import os
-import selecepisodio
+import selEpSueno
 import time
 import colores
 #import datetime
+
+
+DEBUG = 1
+
 
 pg.mkQApp()
 
@@ -53,7 +57,7 @@ class MainWindow(TemplateBaseClass):
         self.pBarra.addItem(self.selep.barraSuenio)
         
         self.pAF.clear()
-        self.pAF.plot(x=self.selep.horas, y=self.selep.activiData, pen=colores.actividad)
+        #self.pAF.plot(x=self.selep.horas, y=self.selep.activiData, pen=colores.actividad)
         
         self.pAcel.clear()
         self.pAcel.plot(x=self.selep.horas, y=self.selep.acelData, pen=colores.acelerometro)
@@ -180,10 +184,11 @@ class MainWindow(TemplateBaseClass):
         self.pintarDatos()
     
     def loadData(self):
-        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
+        if(DEBUG): fname = '../data.csv'
+        else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
         print "Abriendo fichero ", fname
         #selep = cachitos.selEpisodio(fname)
-        selep = selecepisodio.SelecEpisodio(fname)
+        selep = selEpSueno.SelecEpisodio(fname)
         return selep
         
     def nextEp(self):

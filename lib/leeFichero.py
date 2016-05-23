@@ -92,11 +92,14 @@ class LectorFichero(object):
         consm = csv['Gasto_energético'.encode('iso8859-15')]
         acltrans = csv['Acel_transversal__picos']
         
+        #Datos tal cual vienen en el csv, sin particiones
         self.datos_total = Datos(sueno, clasifSueno, flujo, temp, tiempo, actli, actsd, actmd, consm, acltrans)
+        #Episodios particionados según los filtros elegidos
         self.selep_completo = cachitos.selEpisodio(self.datos_total, f_sueno, f_sedentario, f_ligero, f_moderado)
         
         if(dias):
             datos_dias = self.datos_total.creaDias()
+            #Episodios particionados en días de 24h
             self.selep_dias = []
             for i in datos_dias:
                 self.selep_dias.append(cachitos.selEpisodio(i, f_sueno, f_sedentario, f_ligero, f_moderado))
