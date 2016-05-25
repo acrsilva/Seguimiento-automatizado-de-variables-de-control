@@ -175,7 +175,7 @@ class MainWindow(TemplateBaseClass):
         #Configurar los botones
         self.ui.next_e_btn.clicked.connect(self.nextEp)
         self.ui.prev_e_btn.clicked.connect(self.prevEp)
-        self.ui.btnLoadFile.clicked.connect(self.openFile)
+        #self.ui.btnLoadFile.clicked.connect(self.openFile)
         
         self.show()
         

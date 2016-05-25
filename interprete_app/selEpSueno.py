@@ -167,17 +167,17 @@ class SelecEpisodio(object):
 
         
     
-    def episodioSiguiente(cls):
-        if (cls.episodio < len(cls.indices) - 1): #Último episodio
-            cls.episodio += 1
-            print "Episodio: %i" % cls.episodio
-            cls.actualizar()
+    def episodioSiguiente(self):
+        if (self.episodio < len(self.ep_indices) - 1): #Último episodio
+            self.episodio += 1
+            print "Episodio: %i" % self.episodio
+            self.actualizar()
 
-    def episodioAnterior(cls):
-        if (cls.episodio > 0): #Primer episodio
-            cls.episodio -= 1
-            print "Episodio: %i" % cls.episodio
-            cls.actualizar()
+    def episodioAnterior(self):
+        if (self.episodio > 0): #Primer episodio
+            self.episodio -= 1
+            print "Episodio: %i" % self.episodio
+            self.actualizar()
     
     
 #PRUEBAS
