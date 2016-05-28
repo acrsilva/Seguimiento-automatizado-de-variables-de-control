@@ -6,7 +6,6 @@ import codecs
 import sys
 from datetime import datetime as dt
 from PyQt4 import QtGui
-import cachitos
 
 DEBUG = 0
 PRUEBAS = 0
@@ -21,14 +20,13 @@ class Datos():
         self.clasifSueno = clasifSueno
         self.flujo = flujo
         self.temp = temp
-        self.tiempo = tiempo
+        self.tiempo = tiempo #int
         self.actli = actli
         self.actsd = actsd
         self.actmd = actmd
         self.consm = consm
         self.acltrans = acltrans
     
-    #BUG. Pierde el ultimo minuto de cada episodio
     #Crea una lista días particionando los datos
     def creaDias(self):
         #Devuelve una lista con los datos de un día concreto
@@ -73,10 +71,10 @@ class LectorFichero(object):
     - dias: además de todos los datos, obtener los de cada día separados en 24h de 00 a 00
     
     Atributos:
-    - selep_completo: episodios del conjunto de datos
-    - selep_dias: lista con los episodios de cada dia
+    - datos_total: una estructura Datos que contiene todos los datos originales del fichero csv
+    - datos_dias: una estructura Datos por cada día natural
     """
-    def __init__(self, nombre, dias=False, f_sueno=True, f_sedentario=True, f_ligero=True, f_moderado=True):
+    def __init__(self, nombre, dias=False):
         csv = np.genfromtxt(open(nombre, 'r'), delimiter="," , names=True)
         #self.nomCols = self.csv.dtype.names
         #self.nparams = len(self.nomCols)
@@ -94,22 +92,19 @@ class LectorFichero(object):
         
         #Datos tal cual vienen en el csv, sin particiones
         self.datos_total = Datos(sueno, clasifSueno, flujo, temp, tiempo, actli, actsd, actmd, consm, acltrans)
-        #Episodios particionados según los filtros elegidos
-        self.selep_completo = cachitos.selEpisodio(self.datos_total, f_sueno, f_sedentario, f_ligero, f_moderado)
         
         if(dias):
-            datos_dias = self.datos_total.creaDias()
-            #Episodios particionados en días de 24h
-            self.selep_dias = []
-            for i in datos_dias:
-                self.selep_dias.append(cachitos.selEpisodio(i, f_sueno, f_sedentario, f_ligero, f_moderado))
-       
-        if(DEBUG):
-            if(dias):
-                print len(datos_dias)
-                for i in datos_dias:
+            self.datos_dias = self.datos_total.creaDias()
+            if(DEBUG):
+                print len(self.datos_dias), 'dias'
+                for i in self.datos_dias:
                     print "ini", i.tiempo[0], "fin", i.tiempo[-1]
-            
+        
+    def getDatos(self):
+        return self.datos_total
+        
+    def getDatosDias(self):
+        return self.datos_dias
 
 if(PRUEBAS):
     fichero = LectorFichero('../data.csv', dias=True)

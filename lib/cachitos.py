@@ -17,45 +17,57 @@ tipoSueno = "sueño"
 tipoSedentario = "sedentario"
 tipoLigera = "ligero"
 tipoModerado = "moderado"
-#interrupciones: sueño, sedentario, ligero, moderado
+#Lapso de interrupciones en minutos: sueño, sedentario, ligero, moderado
 interrupcion = (35, 7, 4, 3)
 
-#Estructura con la información de un episodio
+#Estructura con la información básica de un episodio
 class Episodio():
     def __init__(self, ini, fin, tipo, nombre):
         self.ini = ini
         self.fin = fin
         self.tipo = tipo
         self.nombre = nombre
-    def filtrar(self, tiempo, temperaturas, flujo, consumo):
-        self.tiempo = tiempo[self.ini:self.fin+1]
-        self.temp = temperaturas[self.ini:self.fin+1]
+        
+#Episodio con más información que del que hereda
+class EpisodioCompleto(Episodio):
+    def __init__(self, ini, fin, tipo, nombre, tiempo, temperatura, flujo, consumo):
+        Episodio.__init__(self, ini, fin, tipo, nombre)
+        self.tiempo = tiempo[self.ini:self.fin+1] #datetime
+        self.temp = temperatura[self.ini:self.fin+1]
         self.flujo = flujo[self.ini:self.fin+1]
         self.correlacion, p = pearsonr(self.temp, self.flujo)
         self.consumo = consumo[self.ini:self.fin+1]
-        self.numCalorias = np.nansum(consumo[self.ini:self.fin+1])
-        
-    
+        self.numCalorias = np.nansum(consumo[self.ini:self.fin+1])        
+
+"""
+Recibe una estructura Datos y unos filtros y particiona en episodios de sueño, sedentario, ligero y moderado
+Permite filtrar los episodios por parámetro y mediante la función update
+
+epsCompletos: True para obtener EpisodioCompleto por cada episodio. False para obtener Episodio.
+"""
 class selEpisodio():
-    def __init__(self, csv, sueno=True, sedentario=True, ligero=True, moderado=True):
-        #self.csv = leeFichero.LeeFichero(open(filename, 'r'))
+    def __init__(self, csv, epsCompletos=True, sueno=True, sedentario=True, ligero=True, moderado=True):
         self.csv = csv
-        #Pasar minutos a Datetime
+        self.epsCompletos = epsCompletos
+        
+        #Pasar minutos a Datetime. UTIL?
         self.dt = [] 
         for i in self.csv.tiempo:
             #PRUEBAS
             self.dt.append(datetime.fromtimestamp(i))
             #self.dt.append(i)
         
-        #Todos los episodios, sin filtros
+        #Lista de Episodio, sin aplicar filtros
         self.episodios = self.creaEpisodios(self.csv.sueno, self.csv.actsd, self.csv.actli, self.csv.actmd, 5, interrupcion)
         
-        #Episodios con los últimos filtros aplicados
+        #Lista de EpisodioCompleto con los filtros especificados
         self.epFiltro = []
         self.update(sueno, sedentario, ligero, moderado)
+        
+        #Consumo total de todos los datos. UTIL?
         self.totalCal = np.nansum(self.csv.consm)
         
-    #Crea el array de episodios con los filtros aplicados
+    #Crea la lista de episodios con los filtros aplicados
     def update(self, sueno=True, sedentario=True, ligero=True, moderado=True):
         if(DEBUG>0): print sueno, sedentario, ligero, moderado, len(self.epFiltro)
         self.epFiltro = []
@@ -64,8 +76,10 @@ class selEpisodio():
                 or (i.tipo == tipoSedentario and sedentario)
                 or (i.tipo == tipoLigera and ligero)
                 or (i.tipo == tipoModerado and moderado)):
-                self.epFiltro.append(i)
-                self.epFiltro[-1].filtrar(self.dt, self.csv.temp, self.csv.flujo, self.csv.consm)
+                if(self.epsCompletos): self.epFiltro.append(EpisodioCompleto(i.ini, i.fin, i.tipo, i.nombre, 
+                                        self.dt, self.csv.temp, self.csv.flujo, self.csv.consm))
+                else: self.epFiltro.append(i)
+                    
         if(DEBUG>0):
             print "Total episodios:", len(self.episodios)
             print "Total eps con filtros:", len(self.epFiltro)
@@ -273,8 +287,16 @@ class selEpisodio():
         return rangos
 
 
+if(PRUEBAS==1):
+    import lectorFichero as lf
+    csv = lf.LectorFichero('../data.csv').getDatos()
+    selep = selEpisodio(csv)
+    print selep.epFiltro[0].nombre, selep.epFiltro[0]
+    selep2 = selEpisodio(csv, epsCompletos=False)
+    print selep2.epFiltro[0].nombre, selep2.epFiltro[0]
+    
 
-if(PRUEBAS):
+if(PRUEBAS==2):
     eps = selEpisodio('../data.csv')
     print len(eps.episodios)
     print "Agrupados"
