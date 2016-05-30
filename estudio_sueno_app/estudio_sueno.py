@@ -24,7 +24,7 @@ PRUEBAS=0
 
 
 
-Ui_MainWindow, QMainWindow = loadUiType('int_estudio_sueno.ui')
+Ui_MainWindow, QMainWindow = loadUiType('int_estudio_sueno_nuevo.ui')
 
 class TablaDiagonal(QTableWidget):
     def __init__(self, data, *args):
