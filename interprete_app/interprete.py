@@ -12,12 +12,12 @@ from selEpisodioSueno import SelEpisodioSueno, EpisodioSueno
 import colores
 
 
-DEBUG = 1
+DEBUG = 0
 
 
 pg.mkQApp()
 path = os.path.dirname(os.path.abspath(__file__))
-uiFile = os.path.join(path, 'interfaz.ui')
+uiFile = os.path.join(path, 'int_interprete.ui')
 WindowTemplate, TemplateBaseClass = pg.Qt.loadUiType(uiFile)
 
 #Etiquetas de tiempo del eje X

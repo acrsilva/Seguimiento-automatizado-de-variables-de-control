@@ -16,12 +16,12 @@ import cachitos
 import matplotlib.dates as md
 from sklearn import preprocessing
 import colores
-import leeFichero as lf
+import lectorFichero as lf
 
 DEBUG = 0
 
     
-Ui_MainWindow, QMainWindow = loadUiType('scatterplots.ui')
+Ui_MainWindow, QMainWindow = loadUiType('int_scatterplots.ui')
 
 
 class Main(QMainWindow, Ui_MainWindow):
@@ -73,7 +73,8 @@ class Main(QMainWindow, Ui_MainWindow):
         if(DEBUG): fname = '../data.csv'
         else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
         print "Abriendo fichero ", fname
-        selep = lf.LectorFichero(fname).selep_completo
+        csv = lf.LectorFichero(fname).getDatos()
+        selep = cachitos.selEpisodio(csv)
         return selep
     
     def getTime(self, a, b, ep):

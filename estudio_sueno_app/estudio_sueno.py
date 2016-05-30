@@ -12,18 +12,19 @@ from PyQt4.QtGui import *
 import numpy as np
 import matplotlib.dates as md
 import math
-import leeFichero as lf
+import lectorFichero as lf
 import colores
 import clustering
 from scipy.cluster.hierarchy import dendrogram
 from datetime import datetime
+import cachitos
 
 DEBUG = 0
 PRUEBAS=0
 
 
 
-Ui_MainWindow, QMainWindow = loadUiType('interfaz.ui')
+Ui_MainWindow, QMainWindow = loadUiType('int_estudio_sueno.ui')
 
 class TablaDiagonal(QTableWidget):
     def __init__(self, data, *args):
@@ -109,7 +110,8 @@ class Main(QMainWindow, Ui_MainWindow):
         else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
         
         print "Abriendo fichero ", fname
-        self.selep = lf.LectorFichero(fname, f_sedentario=False, f_ligero=False, f_moderado=False).selep_completo
+        csv = lf.LectorFichero(fname).getDatos()
+        self.selep = cachitos.selEpisodio(csv, sedentario=False, ligero=False, moderado=False)
         self.configureComboBox()
         self.updatePlots(ep1=True, ep2=True)
         self.initCluster()

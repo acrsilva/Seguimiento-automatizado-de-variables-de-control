@@ -74,7 +74,7 @@ class LectorFichero(object):
     - datos_total: una estructura Datos que contiene todos los datos originales del fichero csv
     - datos_dias: una estructura Datos por cada día natural
     """
-    def __init__(self, nombre, dias=False):
+    def __init__(self, nombre):
         csv = np.genfromtxt(open(nombre, 'r'), delimiter="," , names=True)
         #self.nomCols = self.csv.dtype.names
         #self.nparams = len(self.nomCols)
@@ -93,21 +93,20 @@ class LectorFichero(object):
         #Datos tal cual vienen en el csv, sin particiones
         self.datos_total = Datos(sueno, clasifSueno, flujo, temp, tiempo, actli, actsd, actmd, consm, acltrans)
         
-        if(dias):
-            self.datos_dias = self.datos_total.creaDias()
-            if(DEBUG):
-                print len(self.datos_dias), 'dias'
-                for i in self.datos_dias:
-                    print "ini", i.tiempo[0], "fin", i.tiempo[-1]
-        
     def getDatos(self):
         return self.datos_total
         
     def getDatosDias(self):
-        return self.datos_dias
+        datos_dias = self.datos_total.creaDias()
+        if(DEBUG):
+            print len(self.datos_dias), 'dias'
+            for i in self.datos_dias:
+                print "ini", i.tiempo[0], "fin", i.tiempo[-1]
+        return datos_dias
 
 if(PRUEBAS):
-    fichero = LectorFichero('../data.csv', dias=True)
+    fichero = LectorFichero('../data.csv')
+    fichero.getDatosDias()
     #raw_input('Press <ENTER> to continue')
     
     """

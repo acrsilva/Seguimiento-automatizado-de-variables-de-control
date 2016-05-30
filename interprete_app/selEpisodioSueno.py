@@ -14,8 +14,8 @@ import colores
 from cachitos import Episodio, selEpisodio
 
 
-PRUEBAS = 1
-DEBUG = 1
+PRUEBAS = 0
+DEBUG = 0
 
 #FALTA NORMALIZAR LOS DATOS!
 

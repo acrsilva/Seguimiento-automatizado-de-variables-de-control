@@ -10,9 +10,8 @@ from pyqtgraph.Qt import QtCore, QtGui
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 import numpy as np
 import math
-import leeFichero as lf
+import lectorFichero as lf
 import colores
-import leeFichero
 import hover
 import datetime 
 import cachitos
@@ -53,7 +52,10 @@ class Main(QMainWindow, Ui_MainWindow):
         else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
         
         print "Abriendo fichero ", fname
-        self.epsDias = lf.LectorFichero(fname, dias=True).selep_dias
+        csv_dias = lf.LectorFichero(fname).getDatosDias()
+        self.epsDias = []
+        for i in csv_dias:
+            self.epsDias.append(cachitos.selEpisodio(i, sedentario=False, ligero=False, moderado=False))
         print len(self.epsDias), 'dias'
         self.ldias = []
         
