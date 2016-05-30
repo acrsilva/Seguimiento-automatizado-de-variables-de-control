@@ -14,7 +14,7 @@
    <string>Intérprete de sueños</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="next_e_btn">
+   <widget class="QPushButton" name="btn_next">
     <property name="geometry">
      <rect>
       <x>730</x>
@@ -27,7 +27,7 @@
      <string>Episodio Siguiente</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="prev_e_btn">
+   <widget class="QPushButton" name="btn_prev">
     <property name="geometry">
      <rect>
       <x>130</x>

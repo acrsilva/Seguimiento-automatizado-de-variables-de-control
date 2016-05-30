@@ -1,11 +1,26 @@
+*****
+pyqtgraph sin bugs:
+git clone https://github.com/pyqtgraph/pyqtgraph
+cd pyqtgraph
+sudo python setup.py install
+*****
+
 
 Interprete
-- Poder cargar ficheros de datos
+* Poder cargar ficheros de datos
 - No dibujar en los saltos temporales 
 - Mostrar cuadrícula en todas las gráficas
 - Marcar hora y valor en el punto seleccionado con el raton
 * Cambiar colores de la barra
-/ Unificar los colores de barra y graficos con el resto de programas
+* Unificar los colores de barra y graficos con el resto de programas
+* Nombre del fichero en el título
+* Combobox selector de episodio
+* Consumo autoajustable según el rango del paciente
+* Rediseño con los episodios bien calculados (fichero cachitos) y nueva estructura 
+    (lectorFichero->cachitos->selEpisodioSueno->interprete)
+- Mejorar las etiquetas de los ticks Y para mostrar el último valor que alcanza
+- Eje Y autoajustable para las gráficas que lo requieran
+
 
 Scatterplot
 * Marcar hora en los puntos de dispersion
@@ -58,7 +73,7 @@ Casos de posible interrupción de un episodio:
 
 
 Arreglar:
-- Duración de los episodios como (fin-ini)+1 en vez de len()
+* Duración de los episodios como (fin-ini)+1 en vez de len()
 - Revisar rangos al crear Episodio
 * Etiquetar actividades
 * Etiquetar combobox
@@ -69,7 +84,7 @@ Arreglar:
 - Estudio_consumos por días
 - Estudio_consumos graficas autoajustables
 - Mostrar datos de actividad en barra en estudio_consumos
-- Usar cachitos con interprete
+* Usar cachitos con interprete
 * Acortar bucle al pinchar en barra en estudio_consumos
 
 Exportar el proyecto a exe o py

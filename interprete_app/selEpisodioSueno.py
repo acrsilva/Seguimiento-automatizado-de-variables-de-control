@@ -14,7 +14,7 @@ import colores
 from cachitos import Episodio, selEpisodio
 
 
-PRUEBAS = 0
+PRUEBAS = 1
 DEBUG = 1
 
 #FALTA NORMALIZAR LOS DATOS!
@@ -41,7 +41,11 @@ class EpisodioSueno():
         #self.metsData = []
         #self.activiData = []
         
-
+        self.totCal = np.nansum(consumo)
+        
+"""
+Obtiene una lista de EpisodioSueno 
+"""
 class SelEpisodioSueno(object):
     def __init__(self, filename=''):
         self.csv = lf.LectorFichero(filename).getDatos()
@@ -50,6 +54,8 @@ class SelEpisodioSueno(object):
         self.eps_sueno= []
         for i in selep:
             self.eps_sueno.append(self.initEpisodio(i))
+        
+        self.limConsumo = self.calculaLimites()
         
     #Crea un EpisodioSueno a partir de un episodio dado
     def initEpisodio(self, episodio):
@@ -69,16 +75,16 @@ class SelEpisodioSueno(object):
         #COMPROBAR RANGOS
         #Obtener colores antes, durante y despues del episodio
         colors = []
-        colors.extend(self.coloreaActividades(ep_ini, su_ini))
+        colors.extend(self.coloreaActividades(ep_ini, su_ini-1))
         colors.extend(self.coloreaSueno(su_ini, su_fin))
-        colors.extend(self.coloreaActividades(su_fin, ep_fin))    
+        colors.extend(self.coloreaActividades(su_fin+1, ep_fin))    
         
         return EpisodioSueno(episodio.nombre, ep_ini, ep_fin, su_ini, su_fin, 
                     colors, self.csv.tiempo[ep_ini:ep_fin+1],
                     self.csv.consm[ep_ini:ep_fin+1], self.csv.flujo[ep_ini:ep_fin+1],
                     self.csv.temp[ep_ini:ep_fin+1], self.csv.acltrans[ep_ini:ep_fin+1])
     
-    #Devuelve una lista de colores según la clasificación des sueño 
+    #Devuelve una lista de colores según la clasificación de sueño 
     #en el intervalo especificado    
     def coloreaSueno(self, ini, fin):
         colors = []
@@ -102,21 +108,28 @@ class SelEpisodioSueno(object):
     def coloreaActividades(self, ini, fin):
         colors = []
         i = ini
-        while(i < fin):
+        while(i <= fin):
             if(self.csv.actsd[i]):
                 c = colores.sedentario
             elif(self.csv.actli[i]):
                 c = colores.ligero
             elif(self.csv.actmd[i]):
                 c = colores.moderado
-            else: #SOBRA
-                print "Error de actividad"
-                c = 'r' 
+            else:
+                print "Error al colorear actividad", i
+                c = 'r'
             colors.append(c)
             i += 1
         return colors
     
+    #Obtiene el mayor consumo de todos los minutos en todos los episodios de sueño
+    def calculaLimites(self):
+        M = []
+        for i in self.eps_sueno:
+            M.append(max(i.consumoData))
+        return max(M)
     
 if(PRUEBAS==1):
-    SelEpisodioSueno('../data.csv')
-    
+    selep = SelEpisodioSueno('../data.csv').eps_sueno
+    for i in selep:
+        print i.totCal

@@ -1,33 +1,21 @@
 # -*- coding: utf-8 -*-
-
-"""
-v.03
-
-pyqtgraph sin bugs:
-git clone https://github.com/pyqtgraph/pyqtgraph
-cd pyqtgraph
-sudo python setup.py install
-
-"""
 from __future__ import unicode_literals
 
 import sys
 sys.path.insert(0, '../lib')
+import os
+import time
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtGui
 import numpy as np
-import os
-from selEpisodioSueno import SelEpisodioSueno
-import time
+from selEpisodioSueno import SelEpisodioSueno, EpisodioSueno
 import colores
-#import datetime
 
 
 DEBUG = 1
 
 
 pg.mkQApp()
-
 path = os.path.dirname(os.path.abspath(__file__))
 uiFile = os.path.join(path, 'interfaz.ui')
 WindowTemplate, TemplateBaseClass = pg.Qt.loadUiType(uiFile)
@@ -52,54 +40,13 @@ class DateAxis(pg.AxisItem):
 
 
 class MainWindow(TemplateBaseClass):
-    def pintarDatos(self):
-        self.pBarra.clear()
-        #self.pBarra.addItem(self.selep.barraSuenio)
-        
-        if(DEBUG): print len(self.selep.horas), len(self.selep.colors)
-        self.pBarra.addItem(pg.BarGraphItem(x0=(self.selep.horas), width=60, height=1, brushes=self.selep.colors, pens=self.selep.colors))
-        
-        self.pAF.clear()
-        #self.pAF.plot(x=self.selep.horas, y=self.selep.activiData, pen=colores.actividad)
-        
-        self.pAcel.clear()
-        self.pAcel.plot(x=self.selep.horas, y=self.selep.acelData, pen=colores.acelerometro)
-        
-        self.pCons.clear()
-        self.pCons.addItem(pg.PlotCurveItem(x=self.selep.horas, y=self.selep.consumoData, pen=colores.consumo))
-        
-        self.pTemp.clear()
-        self.pTemp.plot(x=self.selep.horas, y=self.selep.tempData, pen=colores.temperatura)
-        
-        self.pFlujo.clear()
-        self.pFlujo.addItem(pg.PlotCurveItem(x=self.selep.horas, y=self.selep.flujoData, pen=colores.flujo))
-        
-        #Configurar rangos iniciales de visualización
-        self.pBarra.autoRange()
-        self.pAF.setYRange(0,2)
-        self.pCons.setYRange(0,65)
-        self.pTemp.setYRange(20,45)
-        self.pFlujo.setYRange(-20, 220)
-    
-    def updateViews(self):
-        ## view has resized; update auxiliary views to match
-        self.pFlujo.setGeometry(self.pTemp.vb.sceneBoundingRect())
-        
-        ## need to re-update linked axes since this was called
-        ## incorrectly while views had different shapes.
-        ## (probably this should be handled in ViewBox.resizeEvent)
-        self.pFlujo.linkedViewChanged(self.pTemp.vb, self.pFlujo.XAxis)
-        
-        self.pCons.setGeometry(self.pAF.vb.sceneBoundingRect())
-        self.pCons.linkedViewChanged(self.pAF.vb, self.pCons.XAxis)
-        
     def __init__(self):
         TemplateBaseClass.__init__(self)
         self.ui = WindowTemplate()
         self.ui.setupUi(self)
         
         #Obtener los datos del episodio a mostrar
-        self.selep = self.loadData()
+        self.loadData()
         
         #Obtener el layout de gráficos (GraphicsLayoutWidget)
         win = self.ui.plotConsumo
@@ -111,14 +58,14 @@ class MainWindow(TemplateBaseClass):
         self.pBarra.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.pBarra.setMouseEnabled(x=True, y=False)
         self.pBarra.hideAxis('bottom')
-        #self.pBarra.getAxis('left').setLabel('', color='#0000FF')
+        self.pBarra.getAxis('left').setLabel('', color='#0000FF')
         self.pBarra.showAxis('right')
-        #self.pBarra.getAxis('right').setLabel('', color='#0000FF')
+        self.pBarra.getAxis('right').setLabel('', color='#0000FF')
         
         #Configurar primera gráfica con acelerómetros
         win.nextRow()
         self.pAcel = win.addPlot()
-        self.pAcel.setTitle('Acelerómetros')
+        self.pAcel.setTitle('Acelerómetro transversal')
         self.pAcel.hideButtons()
         self.pAcel.setMouseEnabled(x=True, y=False)
         self.pAcel.hideAxis('bottom')
@@ -176,44 +123,93 @@ class MainWindow(TemplateBaseClass):
         win.ci.layout.setRowMaximumHeight(2, 80)
         
         #Configurar los botones
-        self.ui.next_e_btn.clicked.connect(self.nextEp)
-        self.ui.prev_e_btn.clicked.connect(self.prevEp)
-        #self.ui.btnLoadFile.clicked.connect(self.openFile)
-        
+        self.ui.actionAbrir.triggered.connect(self.openFile)
+        self.ui.btn_next.clicked.connect(self.btnNextListener)
+        self.ui.btn_prev.clicked.connect(self.btnPrevListener)
+        self.ui.cbxEpisodio.activated[str].connect(self.cbxListener)
         self.show()
         
     def openFile(self):
-        self.selep = self.loadData()
+        self.loadData()
         self.pintarDatos()
     
     def loadData(self):
         if(DEBUG): fname = '../data.csv'
         else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
         print "Abriendo fichero ", fname
-        #csv = lf.LectorFichero(fname).getDatos()
-        selep = SelEpisodioSueno(fname).eps_sueno[0]
+        self.setWindowTitle('Intérprete de sueños (' + fname +')')
+        self.selep = SelEpisodioSueno(fname)
+        self.epActual = 0
+        self.configureComboBox()
+    
+    def configureComboBox(self):
+        print "Configurando combobox"
+        self.ui.cbxEpisodio.clear()
+        for i in self.selep.eps_sueno:
+            self.ui.cbxEpisodio.addItem(i.nombre)
+    
+    def pintarDatos(self):
+        ep = self.selep.eps_sueno[self.epActual]
         
+        self.pBarra.clear()
+        #self.pBarra.addItem(self.selep.barraSuenio)
         
-        #datos = lf.LectorFichero(fname)
-        #selep = cachitos.SelecEpisodio(datos, filtros)
+        if(DEBUG): print len(ep.horas), len(ep.colors)
+        self.pBarra.addItem(pg.BarGraphItem(x0=(ep.horas), width=60, height=1, brushes=ep.colors, pens=ep.colors))
         
-        return selep
+        self.pAF.clear()
+        #self.pAF.plot(x=self.selep.horas, y=self.selep.activiData, pen=colores.actividad)
         
-    def nextEp(self):
-        #Actualizar y mostrar el nuevo episodio
-        self.selep.episodioSiguiente()
+        self.pAcel.clear()
+        self.pAcel.plot(x=ep.horas, y=ep.acelData, pen=colores.acelerometro)
+        
+        self.pCons.clear()
+        self.pCons.addItem(pg.PlotCurveItem(x=ep.horas, y=ep.consumoData, pen=colores.consumo))
+        
+        self.pTemp.clear()
+        self.pTemp.plot(x=ep.horas, y=ep.tempData, pen=colores.temperatura)
+        
+        self.pFlujo.clear()
+        self.pFlujo.addItem(pg.PlotCurveItem(x=ep.horas, y=ep.flujoData, pen=colores.flujo))
+        
+        #Configurar rangos iniciales de visualización
+        self.pBarra.autoRange()
+        self.pAF.setYRange(0,2)
+        self.pCons.setYRange(0,self.selep.limConsumo)
+        self.pTemp.setYRange(20,45)
+        self.pFlujo.setYRange(-20, 220)
+    
+    def updateViews(self):
+        ## view has resized; update auxiliary views to match
+        self.pFlujo.setGeometry(self.pTemp.vb.sceneBoundingRect())
+        
+        ## need to re-update linked axes since this was called
+        ## incorrectly while views had different shapes.
+        ## (probably this should be handled in ViewBox.resizeEvent)
+        self.pFlujo.linkedViewChanged(self.pTemp.vb, self.pFlujo.XAxis)
+        
+        self.pCons.setGeometry(self.pAF.vb.sceneBoundingRect())
+        self.pCons.linkedViewChanged(self.pAF.vb, self.pCons.XAxis)
+        
+    def btnNextListener(self):
+        if(self.epActual < len(self.selep.eps_sueno)-1):
+            self.epActual += 1
+            self.pintarDatos()
+            self.ui.cbxEpisodio.setCurrentIndex(self.epActual)
+        
+    def btnPrevListener(self):
+        if(self.epActual > 0):
+            self.epActual -= 1
+            self.pintarDatos()
+            self.ui.cbxEpisodio.setCurrentIndex(self.epActual)
+    
+    def cbxListener(self):
+        print 'Mostrando episodio', self.ui.cbxEpisodio.currentText()
+        self.epActual = self.ui.cbxEpisodio.currentIndex()
         self.pintarDatos()
-        
-    def prevEp(self):
-        self.selep.episodioAnterior()
-        self.pintarDatos()
-
 
 #Inicializar interfaz
 mwin = MainWindow()
-
-## Start Qt event loop unless running in interactive mode or using pyside.
 if __name__ == '__main__':
-    import sys
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         QtGui.QApplication.instance().exec_()
