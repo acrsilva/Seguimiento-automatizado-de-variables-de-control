@@ -9,7 +9,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-DEBUG = 0
+DEBUG = 1
 PRUEBAS = 0
 
 #Definición de tipos
@@ -252,6 +252,7 @@ class selEpisodio():
             print ind.nombre, ind.ini, ind.fin, "duracion:", ind.fin - ind.ini + 1
     
     #PRUEBAS
+    #Devuelve una lista con los instantes de tiempo donde el paciente está despierto
     def getDespierto(self, ini, fin):
         flag = False
         ii = 0
@@ -268,7 +269,8 @@ class selEpisodio():
                 rangos.append((self.dt[ii],self.dt[i]))
             
         return rangos
-        
+    
+    #Devuelve una lista con los instantes de tiempo donde el sueño es profundo
     def getProfundo(self, ini, fin):
         flag = False
         ii = 0
@@ -285,8 +287,24 @@ class selEpisodio():
                 rangos.append((self.dt[ii],self.dt[i]))
             
         return rangos
-
-
+    
+    #Devuelve una lista con los índices de los episodios que sean siestas durante el día
+    #Teniendo en cuenta que epFiltro contenga los episodios de sueño
+    #Se consideran siestas los sueños que empiezan después de las 10 de la mañana y acaban antes
+    #de las 10 de la noche
+    def getSiestasSuenosIdx(self):
+        siestas, suenos = [], []
+        eps = self.epFiltro
+        for i in range(len(eps)):
+            if(eps[i].tiempo[0].hour >= 10 and eps[i].tiempo[0].hour <= 22
+                and eps[i].tiempo[-1].hour >= 10 and eps[i].tiempo[-1].hour <= 22):
+                siestas.append(i)
+            else: suenos.append(i)
+        if(DEBUG): 
+            print "Sueños diurnos (idx)", siestas
+            print "Sueños nocturnos (idx)", suenos
+        return siestas, suenos
+    
 if(PRUEBAS==1):
     import lectorFichero as lf
     csv = lf.LectorFichero('../data.csv').getDatos()
@@ -294,8 +312,9 @@ if(PRUEBAS==1):
     print selep.epFiltro[0].nombre, selep.epFiltro[0]
     selep2 = selEpisodio(csv, epsCompletos=False)
     print selep2.epFiltro[0].nombre, selep2.epFiltro[0]
+    selep.update(sueno=True, sedentario=False, moderado=False, ligero=False)
+    selep.getSiestasSuenosIdx()
     
-
 if(PRUEBAS==2):
     eps = selEpisodio('../data.csv')
     print len(eps.episodios)
