@@ -20,7 +20,7 @@ from datetime import datetime
 import cachitos
 
 DEBUG = 0
-PRUEBAS=0
+PRUEBAS=1
 
 
 
@@ -108,27 +108,46 @@ class Main(QMainWindow, Ui_MainWindow):
     def loadData(self):
         if(PRUEBAS): fname = '../data.csv'
         else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
-        
         print "Abriendo fichero ", fname
         csv = lf.LectorFichero(fname).getDatos()
         self.selep = cachitos.selEpisodio(csv, sedentario=False, ligero=False, moderado=False)
+        #Obtener los indices de los episodios diurnos y nocturnos
+        self.idxDiurnos, self.idxNocturnos = self.selep.getSiestasSuenosIdx()
+        self.setWindowTitle('Estudio de sueños (' + fname +')')
         self.configureComboBox()
-        self.updatePlots(ep1=True, ep2=True)
+        self.updatePlots('todos', ep1=True, ep2=True)
         self.initCluster()
         self.cluster()
         self.setLabel(sup=True)
         self.setLabel(sup=False)
         
-    #Añade los nombres de los episodios en las listas desplegables
+    #Añade los nombres de los episodios en los combobox de todas las pestañas
     def configureComboBox(self):
         print "Configurando combobox"
         self.cbx1.clear()
         self.cbx2.clear()
-        for i in self.selep.epFiltro:
-            self.cbx1.addItem(i.nombre)
-            self.cbx2.addItem(i.nombre)
-        if(len(self.selep.epFiltro) > 1):
+        self.cbx1Siestas.clear()
+        self.cbx2Siestas.clear()
+        self.cbx1Suenos.clear()
+        self.cbx2Suenos.clear()
+        
+        eps = self.selep.epFiltro
+        for i in range(len(eps)):
+            self.cbx1.addItem(eps[i].nombre)
+            self.cbx2.addItem(eps[i].nombre)
+            if(i in self.idxDiurnos):
+                self.cbx1Siestas.addItem(eps[i].nombre)
+                self.cbx2Siestas.addItem(eps[i].nombre)
+            if(i in self.idxNocturnos):
+                self.cbx1Suenos.addItem(eps[i].nombre)
+                self.cbx2Suenos.addItem(eps[i].nombre)
+            
+        if(len(eps) > 1):
             self.cbx2.setCurrentIndex(1)
+        if(len(self.idxDiurnos) > 1):
+            self.cbx2Siestas.setCurrentIndex(1)
+        if(len(self.idxNocturnos) > 1):
+            self.cbx2Suenos.setCurrentIndex(1)
     
     #Muestra la fecha y la hora del episodio seleccionado
     def setLabel(self, sup):
@@ -136,9 +155,10 @@ class Main(QMainWindow, Ui_MainWindow):
             self.lbl1.setText(self.selep.epFiltro[self.cbx1.currentIndex()].tiempo[0].strftime('%d-%m-%y (%H:%M') +" - "+ self.selep.epFiltro[self.cbx1.currentIndex()].tiempo[-1].strftime('%H:%M)'))
         else:
             self.lbl2.setText(self.selep.epFiltro[self.cbx2.currentIndex()].tiempo[0].strftime('%d-%m-%y (%H:%M') +" - "+ self.selep.epFiltro[self.cbx2.currentIndex()].tiempo[-1].strftime('%H:%M)'))
-        
+    
+    #FALTA PASAR LA LISTA DE DIURNOS Y NOCTURNOS    
     #Actualiza el contenido de las gráficas con el episodio seleccionado por los combobox
-    def updatePlots(self, ep1=False, ep2=False):
+    def updatePlots(self, pest, ep1=False, ep2=False):
         def getDespierto(epi):
             desp = self.selep.getDespierto(epi.ini, epi.fin)
             if(DEBUG): print "Despierto intervalo", epi.ini, epi.fin, "en:", desp
@@ -149,23 +169,40 @@ class Main(QMainWindow, Ui_MainWindow):
             if(DEBUG): print "Sueño profundo intervalo", epi.ini, epi.fin, "en:", prof
             return prof
             
+        if(pest == 'todos'):
+            cb1 = self.cbx1
+            cb2 = self.cbx2
+            f11 = self.fig1_var1
+            f12 = self.fig1_var2
+            f13 = self.fig1_var3
+            f21 = self.fig2_var1
+            f22 = self.fig2_var2
+            f23 = self.fig2_var3
+        elif(pest == 'diurnos'):
+            cb1 = self.cbx1Siestas
+            cb2 = self.cbx2Siestas
+        elif(pest == 'nocturnos'):
+            cb1 = self.cbx1Suenos
+            cb2 = self.cbx2Suenos
+            
         if(ep1):
             print "Actualizar episodio izquierdo"
-            idx = self.cbx1.currentIndex()
+            idx = cb1.currentIndex()
             desp = getDespierto(self.selep.epFiltro[idx])
             prof = getProfundo(self.selep.epFiltro[idx])
-            self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, prof, temperatura=True)
-            self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, prof, flujo=True)
-            self.plotGraph(self.fig1_var3, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, prof, consumo=True)
+            self.plotGraph(f11, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, prof, temperatura=True)
+            self.plotGraph(f12, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, prof, flujo=True)
+            self.plotGraph(f13, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, prof, consumo=True)
         if(ep2):
             print "Actualizar episodio derecho"
-            idx = self.cbx2.currentIndex()
+            idx = cb2.currentIndex()
             desp = getDespierto(self.selep.epFiltro[idx])
             prof = getProfundo(self.selep.epFiltro[idx])
-            self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, prof, temperatura=True)
-            self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, prof, flujo=True)
-            self.plotGraph(self.fig2_var3, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, prof, consumo=True)
-    
+            self.plotGraph(f21, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, prof, temperatura=True)
+            self.plotGraph(f22, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, prof, flujo=True)
+            self.plotGraph(f23, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, prof, consumo=True)
+            
+            
     #Actualiza el contenido de la figura especificada
     def plotGraph(self, fig, tiempo, data, despierto, profundo, temperatura=False, flujo=False, consumo=False):
         ax = fig.axes[0]
@@ -251,12 +288,12 @@ class Main(QMainWindow, Ui_MainWindow):
         
     def cbx1Listener(self, text):
         print "Episodio izquierdo", text   
-        self.updatePlots(ep1=True)
+        self.updatePlots('todos', ep1=True)
         self.setLabel(sup=True)
         
     def cbx2Listener(self, text):
         print "Episodio derecho", text
-        self.updatePlots(ep2=True)
+        self.updatePlots('todos', ep2=True)
         self.setLabel(sup=False)
     
     #Selecciona los individuos a agrupar
