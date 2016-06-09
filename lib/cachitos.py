@@ -46,7 +46,7 @@ Permite filtrar los episodios por parámetro y mediante la función update
 epsCompletos: True para obtener EpisodioCompleto por cada episodio. False para obtener Episodio.
 """
 class selEpisodio():
-    def __init__(self, csv, epsCompletos=True, sueno=True, sedentario=True, ligero=True, moderado=True):
+    def __init__(self, csv, epsCompletos=True, sDiurno=True, sNocturno=True, sedentario=True, ligero=True, moderado=True):
         self.csv = csv
         self.epsCompletos = epsCompletos
         
@@ -68,17 +68,22 @@ class selEpisodio():
         self.totalCal = np.nansum(self.csv.consm)
         
     #Crea la lista de episodios con los filtros aplicados
-    def update(self, sueno=True, sedentario=True, ligero=True, moderado=True):
+    def update(self, sDiurno=True, sNocturno=True, sedentario=True, ligero=True, moderado=True):
         if(DEBUG>0): print sueno, sedentario, ligero, moderado, len(self.epFiltro)
+        if(sDiurno or sNocturno): 
+            diurnos, nocturnos = self.getSiestasSuenosIdx()
+        
         self.epFiltro = []
-        for i in self.episodios:
-            if((i.tipo == tipoSueno and sueno) 
-                or (i.tipo == tipoSedentario and sedentario)
-                or (i.tipo == tipoLigera and ligero)
-                or (i.tipo == tipoModerado and moderado)):
-                if(self.epsCompletos): self.epFiltro.append(EpisodioCompleto(i.ini, i.fin, i.tipo, i.nombre, 
+        for i in range(len(self.episodios)):
+            ep = self.episodios[i]
+            if((ep.tipo == tipoSedentario and sedentario)
+                or (ep.tipo == tipoLigera and ligero)
+                or (ep.tipo == tipoModerado and moderado)
+                or (i == diurnos[i] and sDiurno)  #REVISAR
+                or (i == nocturnos[i] and sNocturno)):
+                if(self.epsCompletos): self.epFiltro.append(EpisodioCompleto(ep.ini, ep.fin, ep.tipo, ep.nombre, 
                                         self.dt, self.csv.temp, self.csv.flujo, self.csv.consm))
-                else: self.epFiltro.append(i)
+                else: self.epFiltro.append(ep)
                     
         if(DEBUG>0):
             print "Total episodios:", len(self.episodios)

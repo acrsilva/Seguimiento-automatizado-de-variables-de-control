@@ -47,32 +47,30 @@ class TablaDiagonal(QTableWidget):
             self.item(i,min).setBackground(QtGui.QColor(colores.marcatabla))
             i -= 1
 
-# plotLayout
-# cbx1, cbx2
-# btnAbrir, btnClustering
-# rbTemperatura, rbConsumo
-# tableDistancias
-# dendrogramLayout
-class Main(QMainWindow, Ui_MainWindow):
-    def __init__(self, ):
-        super(Main, self).__init__()
-        #self.showMaximized()
-        self.setupUi(self)
-        
-        self.__initGraphs__()
-        self.loadData()
-        
-        print "Listo"
 
-        #Conectar elementos de la interfaz
+class TabPane():
+    def __init__(self, selep, layTop, layBot, cbx1, cbx2, rbTemperatura, rbConsumo, lbl1, lbl2, tableLayout, dendrogramLayout):
+        self.layTop = layTop
+        self.layBot = layBot
+        self.cbx1 = cbx1
+        self.cbx2 = cbx2
+        self.rbTemperatura = rbTemperatura
+        self.rbConsumo = rbConsumo
+        self.lbl1 = lbl1
+        self.lbl2 = lbl2
+        self.tableLayout = tableLayout
+        self.dendrogramLayout = dendrogramLayout
+        
         self.cbx1.activated[str].connect(self.cbx1Listener)
         self.cbx2.activated[str].connect(self.cbx2Listener)
-        self.actionAbrir.triggered.connect(self.loadData)
         self.rbTemperatura.clicked.connect(self.rbListener)
         self.rbConsumo.clicked.connect(self.rbListener)
-    
-    #Inicializa las figuras de cada layout que contendrán las gráficas
-    def __initGraphs__(self):
+        
+        self.initGraphs()
+        self.loadData(selep)
+        
+        
+    def initGraphs(self):
         #Graficas superior
         self.fig1_var1 = plt.figure(tight_layout=True)
         self.fig1_var1.add_subplot(111)
@@ -80,14 +78,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.fig1_var2.add_subplot(111)
         self.fig1_var3 = plt.figure(tight_layout=True)
         self.fig1_var3.add_subplot(111)
-        canvas11 = FigureCanvas(self.fig1_var1)
-        canvas12 = FigureCanvas(self.fig1_var2)
-        canvas13 = FigureCanvas(self.fig1_var3)
 
-        self.plotLayoutUp.addWidget(canvas11)
-        self.plotLayoutUp.addWidget(canvas12)
-        self.plotLayoutUp.addWidget(canvas13)
-        
         #Graficas inferior
         self.fig2_var1 = plt.figure(tight_layout=True)
         self.fig2_var1.add_subplot(111)
@@ -95,60 +86,41 @@ class Main(QMainWindow, Ui_MainWindow):
         self.fig2_var2.add_subplot(111)
         self.fig2_var3 = plt.figure(tight_layout=True)
         self.fig2_var3.add_subplot(111)
-        canvas21 = FigureCanvas(self.fig2_var1)
-        canvas22 = FigureCanvas(self.fig2_var2)
-        canvas23 = FigureCanvas(self.fig2_var3)
-
-        self.plotLayoutBot.addWidget(canvas21)
-        self.plotLayoutBot.addWidget(canvas22)
-        self.plotLayoutBot.addWidget(canvas23)
         
+        self.layTop.addWidget(FigureCanvas(self.fig2_var1))
+        self.layTop.addWidget(FigureCanvas(self.fig2_var2))
+        self.layTop.addWidget(FigureCanvas(self.fig2_var3))
+        self.layBot.addWidget(FigureCanvas(self.fig2_var1))
+        self.layBot.addWidget(FigureCanvas(self.fig2_var2))
+        self.layBot.addWidget(FigureCanvas(self.fig2_var3))
+    
     #Carga un fichero de datos csv y obtiene los episodios de sueño
     #Inicializa el contenido de la interfaz
-    def loadData(self):
-        if(PRUEBAS): fname = '../data.csv'
-        else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
-        print "Abriendo fichero ", fname
-        csv = lf.LectorFichero(fname).getDatos()
-        self.selep = cachitos.selEpisodio(csv, sedentario=False, ligero=False, moderado=False)
-        #Obtener los indices de los episodios diurnos y nocturnos
-        self.idxDiurnos, self.idxNocturnos = self.selep.getSiestasSuenosIdx()
-        self.setWindowTitle('Estudio de sueños (' + fname +')')
+    def loadData(self, selep):
+        self.selep = selep
+        
         self.configureComboBox()
-        self.updatePlots('todos', ep1=True, ep2=True)
+        self.updatePlots(ep1=True, ep2=True)
         self.initCluster()
         self.cluster()
         self.setLabel(sup=True)
         self.setLabel(sup=False)
+    
         
     #Añade los nombres de los episodios en los combobox de todas las pestañas
     def configureComboBox(self):
         print "Configurando combobox"
         self.cbx1.clear()
         self.cbx2.clear()
-        self.cbx1Siestas.clear()
-        self.cbx2Siestas.clear()
-        self.cbx1Suenos.clear()
-        self.cbx2Suenos.clear()
         
         eps = self.selep.epFiltro
         for i in range(len(eps)):
             self.cbx1.addItem(eps[i].nombre)
             self.cbx2.addItem(eps[i].nombre)
-            if(i in self.idxDiurnos):
-                self.cbx1Siestas.addItem(eps[i].nombre)
-                self.cbx2Siestas.addItem(eps[i].nombre)
-            if(i in self.idxNocturnos):
-                self.cbx1Suenos.addItem(eps[i].nombre)
-                self.cbx2Suenos.addItem(eps[i].nombre)
             
         if(len(eps) > 1):
             self.cbx2.setCurrentIndex(1)
-        if(len(self.idxDiurnos) > 1):
-            self.cbx2Siestas.setCurrentIndex(1)
-        if(len(self.idxNocturnos) > 1):
-            self.cbx2Suenos.setCurrentIndex(1)
-    
+
     #Muestra la fecha y la hora del episodio seleccionado
     def setLabel(self, sup):
         if(sup):
@@ -156,9 +128,13 @@ class Main(QMainWindow, Ui_MainWindow):
         else:
             self.lbl2.setText(self.selep.epFiltro[self.cbx2.currentIndex()].tiempo[0].strftime('%d-%m-%y (%H:%M') +" - "+ self.selep.epFiltro[self.cbx2.currentIndex()].tiempo[-1].strftime('%H:%M)'))
     
-    #FALTA PASAR LA LISTA DE DIURNOS Y NOCTURNOS    
-    #Actualiza el contenido de las gráficas con el episodio seleccionado por los combobox
-    def updatePlots(self, pest, ep1=False, ep2=False):
+    
+    def updatePlots(self, ep1=False, ep2=False):
+        """
+        Actualiza el contenido de las gráficas con el episodio seleccionado por los combobox
+        pest: pestaña selecciona
+        ep1/ep2: episodio a actualizar, el superior y el inferior
+        """
         def getDespierto(epi):
             desp = self.selep.getDespierto(epi.ini, epi.fin)
             if(DEBUG): print "Despierto intervalo", epi.ini, epi.fin, "en:", desp
@@ -169,41 +145,23 @@ class Main(QMainWindow, Ui_MainWindow):
             if(DEBUG): print "Sueño profundo intervalo", epi.ini, epi.fin, "en:", prof
             return prof
             
-        if(pest == 'todos'):
-            cb1 = self.cbx1
-            cb2 = self.cbx2
-            f11 = self.fig1_var1
-            f12 = self.fig1_var2
-            f13 = self.fig1_var3
-            f21 = self.fig2_var1
-            f22 = self.fig2_var2
-            f23 = self.fig2_var3
-        elif(pest == 'diurnos'):
-            cb1 = self.cbx1Siestas
-            cb2 = self.cbx2Siestas
-        elif(pest == 'nocturnos'):
-            cb1 = self.cbx1Suenos
-            cb2 = self.cbx2Suenos
-            
         if(ep1):
             print "Actualizar episodio izquierdo"
-            idx = cb1.currentIndex()
+            idx = self.cbx1.currentIndex()
             desp = getDespierto(self.selep.epFiltro[idx])
             prof = getProfundo(self.selep.epFiltro[idx])
-            self.plotGraph(f11, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, prof, temperatura=True)
-            self.plotGraph(f12, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, prof, flujo=True)
-            self.plotGraph(f13, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, prof, consumo=True)
+            self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, prof, temperatura=True)
+            self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, prof, flujo=True)
+            self.plotGraph(self.fig1_var3, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, prof, consumo=True)
         if(ep2):
             print "Actualizar episodio derecho"
-            idx = cb2.currentIndex()
+            idx = self.cbx2.currentIndex()
             desp = getDespierto(self.selep.epFiltro[idx])
             prof = getProfundo(self.selep.epFiltro[idx])
-            self.plotGraph(f21, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, prof, temperatura=True)
-            self.plotGraph(f22, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, prof, flujo=True)
-            self.plotGraph(f23, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, prof, consumo=True)
-            
-            
-    #Actualiza el contenido de la figura especificada
+            self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, prof, temperatura=True)
+            self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, prof, flujo=True)
+            self.plotGraph(self.fig2_var3, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, prof, consumo=True)
+        
     def plotGraph(self, fig, tiempo, data, despierto, profundo, temperatura=False, flujo=False, consumo=False):
         ax = fig.axes[0]
         ax.clear()
@@ -235,7 +193,7 @@ class Main(QMainWindow, Ui_MainWindow):
             ax.axvspan(i[0], i[1], facecolor=colores.despierto, alpha=0.5, edgecolor=colores.despierto)
             
         fig.canvas.draw()
-        
+
     #Dibuja el dendrograma
     def plotDendrogram(self, c1, c2):
         fig, self.axes = plt.subplots(1, 1, figsize=(8, 3), tight_layout=True)
@@ -290,18 +248,150 @@ class Main(QMainWindow, Ui_MainWindow):
         print "Episodio izquierdo", text   
         self.updatePlots('todos', ep1=True)
         self.setLabel(sup=True)
-        
+
     def cbx2Listener(self, text):
         print "Episodio derecho", text
         self.updatePlots('todos', ep2=True)
         self.setLabel(sup=False)
     
-    #Selecciona los individuos a agrupar
     def rbListener(self):
+        """
+        Selecciona los individuos a agrupar
+        """
         print "Radio button"
         self.axes.clear()
         self.cluster()
+    
+        
+
+# plotLayout
+# cbx1, cbx2
+# btnAbrir, btnClustering
+# rbTemperatura, rbConsumo
+# tableDistancias
+# dendrogramLayout
+class Main(QMainWindow, Ui_MainWindow):
+    def __init__(self, ):
+        super(Main, self).__init__()
+        #self.showMaximized()
+        #Cargar el diseño de la interfaz del QtDesigner
+        self.setupUi(self)
+        
+        #self.__initGraphs__()
+        self.loadData()
+        
+        #Conectar elementos de la interfaz
+        """
+        self.cbx1.activated[str].connect(self.cbx1Listener)
+        self.cbx2.activated[str].connect(self.cbx2Listener)
+        self.rbTemperatura.clicked.connect(self.rbListener)
+        self.rbConsumo.clicked.connect(self.rbListener)
+        """
+        self.actionAbrir.triggered.connect(self.loadData)
+        self.tabWidget.connect(self.tabWidget, QtCore.SIGNAL("currentChanged(int)"), self.tabListener)
+        
+        print "Listo"
+    
+    def initTabs(self):
+        self.tabs = []
+        self.tabs.append(TabPane(self.selep, self.plotLayoutUp, self.plotLayoutBot, self.cbx1, self.cbx2, 
+                            self.rbTemperatura, self.rbConsumo, self.lbl1, self.lbl2, self.tableLayout, self.dendrogramLayout))
+        
+        #Obtener los indices de los episodios diurnos y nocturnos
+        idxDiurnos, idxNocturnos = self.selep.getSiestasSuenosIdx()
+        diurnos, nocturnos = [], []
+        for i in range(len(self.selep)):
+            if(idxDiurnos[i] == i):
+                diurnos.append(self.selep[i])
+            elif(idxNocturnos[i] == i):
+                nocturnos.append(self.selep[i])
+            
+        self.tabs.append(TabPane(self.selep.update(), self.plotLayoutUpSiestas, self.plotLayoutBotSiestas, self.cbx1Siestas,
+                            self.cbx2Siestas, self.rbTemperaturaSiestas, self.rbConsumoSiestas, self.lbl1Siestas,
+                            self.lbl2Siestas, self.tableLayoutSiestas, self.dendrogramLayoutSiestas))
+        
+    #Carga un fichero de datos csv y obtiene los episodios de sueño
+    #Inicializa el contenido de la interfaz
+    def loadData(self):
+        if(PRUEBAS): fname = '../data.csv'
+        else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
+        print "Abriendo fichero ", fname
+        csv = lf.LectorFichero(fname).getDatos()
+        self.selep = cachitos.selEpisodio(csv, sedentario=False, ligero=False, moderado=False)
+        
+        self.setWindowTitle('Estudio de sueños (' + fname +')')
+        
+        self.initTabs()
+        
+        #self.configureComboBox()
+        #self.updatePlots('todos', ep1=True, ep2=True)
+        #self.initCluster()
+        #self.cluster()
+        #self.setLabel(sup=True)
+        #self.setLabel(sup=False)
+        
+
+    #FALTA PASAR LA LISTA DE DIURNOS Y NOCTURNOS    
+    def updatePlots(self, pest, ep1=False, ep2=False):
+        """
+        Actualiza el contenido de las gráficas con el episodio seleccionado por los combobox
+        pest: pestaña selecciona
+        ep1/ep2: episodio a actualizar, el superior y el inferior
+        """
+        def getDespierto(epi):
+            desp = self.selep.getDespierto(epi.ini, epi.fin)
+            if(DEBUG): print "Despierto intervalo", epi.ini, epi.fin, "en:", desp
+            return desp
+        
+        def getProfundo(epi):
+            prof = self.selep.getProfundo(epi.ini, epi.fin)
+            if(DEBUG): print "Sueño profundo intervalo", epi.ini, epi.fin, "en:", prof
+            return prof
+        
+        print self.tabWidget.currentIndex(), pest
+        tab = self.tabWidget.currentIndex()
+        #Todos los episodios
+        if(tab == 0):
+            cb1 = self.cbx1
+            cb2 = self.cbx2
+            f11 = self.fig1_var1
+            f12 = self.fig1_var2
+            f13 = self.fig1_var3
+            f21 = self.fig2_var1
+            f22 = self.fig2_var2
+            f23 = self.fig2_var3
+        #Episodios diurnos
+        elif(tab == 1):
+            cb1 = self.cbx1Siestas
+            cb2 = self.cbx2Siestas
+        #Episodios nocturnos
+        elif(tab == 2):
+            cb1 = self.cbx1Suenos
+            cb2 = self.cbx2Suenos
+            
+        if(ep1):
+            print "Actualizar episodio izquierdo"
+            idx = cb1.currentIndex()
+            desp = getDespierto(self.selep.epFiltro[idx])
+            prof = getProfundo(self.selep.epFiltro[idx])
+            self.plotGraph(f11, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, prof, temperatura=True)
+            self.plotGraph(f12, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, prof, flujo=True)
+            self.plotGraph(f13, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, prof, consumo=True)
+        if(ep2):
+            print "Actualizar episodio derecho"
+            idx = cb2.currentIndex()
+            desp = getDespierto(self.selep.epFiltro[idx])
+            prof = getProfundo(self.selep.epFiltro[idx])
+            self.plotGraph(f21, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, prof, temperatura=True)
+            self.plotGraph(f22, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, prof, flujo=True)
+            self.plotGraph(f23, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, prof, consumo=True)
+            
                 
+    def tabListener(self):
+        curTab = self.tabWidget.currentIndex()
+        print "Tab ", curTab
+        #self.tabs[curTab].loadData(self.
+        
         
 if __name__ == '__main__':
     import sys
