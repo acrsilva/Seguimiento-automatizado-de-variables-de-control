@@ -62,14 +62,17 @@ class selEpisodio():
         
         #Lista de EpisodioCompleto con los filtros especificados
         self.epFiltro = []
-        self.update(sueno, sedentario, ligero, moderado)
+        self.update(sDiurno, sNocturno, sedentario, ligero, moderado)
         
         #Consumo total de todos los datos. UTIL?
         self.totalCal = np.nansum(self.csv.consm)
         
-    #Crea la lista de episodios con los filtros aplicados
+    
     def update(self, sDiurno=True, sNocturno=True, sedentario=True, ligero=True, moderado=True):
-        if(DEBUG>0): print sueno, sedentario, ligero, moderado, len(self.epFiltro)
+        """
+        Crea la lista de episodios con los filtros aplicados
+        """
+        #if(DEBUG>0): print sueno, sedentario, ligero, moderado, len(self.epFiltro)
         if(sDiurno or sNocturno): 
             diurnos, nocturnos = self.getSiestasSuenosIdx()
         
@@ -79,8 +82,8 @@ class selEpisodio():
             if((ep.tipo == tipoSedentario and sedentario)
                 or (ep.tipo == tipoLigera and ligero)
                 or (ep.tipo == tipoModerado and moderado)
-                or (i == diurnos[i] and sDiurno)  #REVISAR
-                or (i == nocturnos[i] and sNocturno)):
+                or (sDiurno and ep.tipo == tipoSueno and self.isDiurno(ep))  #REVISAR
+                or (sNocturno and ep.tipo == tipoSueno and not self.isDiurno(ep))):
                 if(self.epsCompletos): self.epFiltro.append(EpisodioCompleto(ep.ini, ep.fin, ep.tipo, ep.nombre, 
                                         self.dt, self.csv.temp, self.csv.flujo, self.csv.consm))
                 else: self.epFiltro.append(ep)
@@ -254,7 +257,10 @@ class selEpisodio():
         
     def imprimeEpisodios(self, lista):
         for ind in lista:
-            print ind.nombre, ind.ini, ind.fin, "duracion:", ind.fin - ind.ini + 1
+            if(self.epsCompletos):
+                print ind.nombre, ind.ini, ind.fin, "duracion:", ind.fin - ind.ini + 1, ind.tiempo[0], ind.tiempo[-1], 'calorias: ', ind.numCalorias
+            else:
+                print ind.nombre, ind.ini, ind.fin, "duracion:", ind.fin - ind.ini + 1
     
     #PRUEBAS
     #Devuelve una lista con los instantes de tiempo donde el paciente está despierto
@@ -310,15 +316,20 @@ class selEpisodio():
             print "Sueños nocturnos (idx)", suenos
         return siestas, suenos
     
+    def isDiurno(self, ep):
+        """
+        Comprueba si el episodio es diurno o nocturno
+        """
+        return (self.dt[ep.ini].hour >= 10 and self.dt[ep.ini].hour <= 22
+                and self.dt[ep.fin].hour >= 10 and self.dt[ep.fin].hour <= 22)
+        
+    
 if(PRUEBAS==1):
     import lectorFichero as lf
     csv = lf.LectorFichero('../data.csv').getDatos()
-    selep = selEpisodio(csv)
-    print selep.epFiltro[0].nombre, selep.epFiltro[0]
-    selep2 = selEpisodio(csv, epsCompletos=False)
-    print selep2.epFiltro[0].nombre, selep2.epFiltro[0]
-    selep.update(sueno=True, sedentario=False, moderado=False, ligero=False)
-    selep.getSiestasSuenosIdx()
+    selep = selEpisodio(csv, sDiurno=False, sNocturno=True, sedentario=False, ligero=False, moderado=False)
+    selep.imprimeEpisodios(selep.epFiltro)
+    
     
 if(PRUEBAS==2):
     eps = selEpisodio('../data.csv')

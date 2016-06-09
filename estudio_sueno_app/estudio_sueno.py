@@ -87,9 +87,11 @@ class TabPane():
         self.fig2_var3 = plt.figure(tight_layout=True)
         self.fig2_var3.add_subplot(111)
         
-        self.layTop.addWidget(FigureCanvas(self.fig2_var1))
-        self.layTop.addWidget(FigureCanvas(self.fig2_var2))
-        self.layTop.addWidget(FigureCanvas(self.fig2_var3))
+        
+        
+        self.layTop.addWidget(FigureCanvas(self.fig1_var1))
+        self.layTop.addWidget(FigureCanvas(self.fig1_var2))
+        self.layTop.addWidget(FigureCanvas(self.fig1_var3))
         self.layBot.addWidget(FigureCanvas(self.fig2_var1))
         self.layBot.addWidget(FigureCanvas(self.fig2_var2))
         self.layBot.addWidget(FigureCanvas(self.fig2_var3))
@@ -98,7 +100,7 @@ class TabPane():
     #Inicializa el contenido de la interfaz
     def loadData(self, selep):
         self.selep = selep
-        
+        #print 'selep ', len(selep.epFiltro)
         self.configureComboBox()
         self.updatePlots(ep1=True, ep2=True)
         self.initCluster()
@@ -148,6 +150,7 @@ class TabPane():
         if(ep1):
             print "Actualizar episodio izquierdo"
             idx = self.cbx1.currentIndex()
+            print len(self.selep.epFiltro), idx
             desp = getDespierto(self.selep.epFiltro[idx])
             prof = getProfundo(self.selep.epFiltro[idx])
             self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, prof, temperatura=True)
@@ -246,12 +249,12 @@ class TabPane():
         
     def cbx1Listener(self, text):
         print "Episodio izquierdo", text   
-        self.updatePlots('todos', ep1=True)
+        self.updatePlots(ep1=True)
         self.setLabel(sup=True)
 
     def cbx2Listener(self, text):
         print "Episodio derecho", text
-        self.updatePlots('todos', ep2=True)
+        self.updatePlots(ep2=True)
         self.setLabel(sup=False)
     
     def rbListener(self):
@@ -297,18 +300,16 @@ class Main(QMainWindow, Ui_MainWindow):
         self.tabs.append(TabPane(self.selep, self.plotLayoutUp, self.plotLayoutBot, self.cbx1, self.cbx2, 
                             self.rbTemperatura, self.rbConsumo, self.lbl1, self.lbl2, self.tableLayout, self.dendrogramLayout))
         
-        #Obtener los indices de los episodios diurnos y nocturnos
-        idxDiurnos, idxNocturnos = self.selep.getSiestasSuenosIdx()
-        diurnos, nocturnos = [], []
-        for i in range(len(self.selep)):
-            if(idxDiurnos[i] == i):
-                diurnos.append(self.selep[i])
-            elif(idxNocturnos[i] == i):
-                nocturnos.append(self.selep[i])
-            
-        self.tabs.append(TabPane(self.selep.update(), self.plotLayoutUpSiestas, self.plotLayoutBotSiestas, self.cbx1Siestas,
+        
+        self.selep.update(sNocturno=False, sedentario=False, ligero=False, moderado=False)
+        self.tabs.append(TabPane(self.selep, self.plotLayoutUpSiestas, self.plotLayoutBotSiestas, self.cbx1Siestas,
                             self.cbx2Siestas, self.rbTemperaturaSiestas, self.rbConsumoSiestas, self.lbl1Siestas,
                             self.lbl2Siestas, self.tableLayoutSiestas, self.dendrogramLayoutSiestas))
+        
+        self.selep.update(sDiurno=False, sedentario=False, ligero=False, moderado=False)
+        self.tabs.append(TabPane(self.selep, self.plotLayoutUpSuenos, self.plotLayoutBotSuenos, self.cbx1Suenos,
+                            self.cbx2Suenos, self.rbTemperaturaSuenos, self.rbConsumoSuenos, self.lbl1Suenos,
+                            self.lbl2Suenos, self.tableLayoutSuenos, self.dendrogramLayoutSuenos))
         
     #Carga un fichero de datos csv y obtiene los episodios de sueño
     #Inicializa el contenido de la interfaz
