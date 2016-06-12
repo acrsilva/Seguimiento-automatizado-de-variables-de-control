@@ -38,30 +38,42 @@ class PanelSueno():
         
     def initGraphs(self):
         #Graficas superior
+        """
         self.fig1_var1 = plt.figure(tight_layout=True)
         self.fig1_var1.add_subplot(111)
         self.fig1_var2 = plt.figure(tight_layout=True)
         self.fig1_var2.add_subplot(111)
         self.fig1_var3 = plt.figure(tight_layout=True)
         self.fig1_var3.add_subplot(111)
-
+        """
+        self.figTop = plt.figure(tight_layout=True)
+        self.figTop.add_subplot(111)
+        canvasTop = FigureCanvas(self.figTop)
+        self.layTop.addWidget(canvasTop);
+        
+        self.figBot = plt.figure(tight_layout=True)
+        self.figBot.add_subplot(111)
+        canvasBot = FigureCanvas(self.figBot)
+        self.layBot.addWidget(canvasBot)
+        
         #Graficas inferior
+        """
         self.fig2_var1 = plt.figure(tight_layout=True)
         self.fig2_var1.add_subplot(111)
         self.fig2_var2 = plt.figure(tight_layout=True)
         self.fig2_var2.add_subplot(111)
         self.fig2_var3 = plt.figure(tight_layout=True)
         self.fig2_var3.add_subplot(111)
+        """
         
-        
-        
+        """
         self.layTop.addWidget(FigureCanvas(self.fig1_var1))
         self.layTop.addWidget(FigureCanvas(self.fig1_var2))
         self.layTop.addWidget(FigureCanvas(self.fig1_var3))
         self.layBot.addWidget(FigureCanvas(self.fig2_var1))
         self.layBot.addWidget(FigureCanvas(self.fig2_var2))
         self.layBot.addWidget(FigureCanvas(self.fig2_var3))
-    
+        """
     #Carga un fichero de datos csv y obtiene los episodios de sueño
     #Inicializa el contenido de la interfaz
     def loadData(self, selep):
@@ -119,49 +131,68 @@ class PanelSueno():
             print len(self.selep.epFiltro), idx
             desp = getDespierto(self.selep.epFiltro[idx])
             prof = getProfundo(self.selep.epFiltro[idx])
-            self.plotGraph(self.fig1_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, prof, temperatura=True)
-            self.plotGraph(self.fig1_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, prof, flujo=True)
-            self.plotGraph(self.fig1_var3, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, prof, consumo=True)
+            self.plotGraph(self.figTop, self.selep.epFiltro[idx], desp, prof)
         if(ep2):
             print "Actualizar episodio derecho"
             idx = self.cbx2.currentIndex()
             desp = getDespierto(self.selep.epFiltro[idx])
             prof = getProfundo(self.selep.epFiltro[idx])
-            self.plotGraph(self.fig2_var1, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].temp, desp, prof, temperatura=True)
-            self.plotGraph(self.fig2_var2, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].flujo, desp, prof, flujo=True)
-            self.plotGraph(self.fig2_var3, self.selep.epFiltro[idx].tiempo, self.selep.epFiltro[idx].consumo, desp, prof, consumo=True)
+            self.plotGraph(self.figBot, self.selep.epFiltro[idx], desp, prof)
+            
+    
+    def plotGraph(self, fig, filtro, despierto, profundo):
         
-    def plotGraph(self, fig, tiempo, data, despierto, profundo, temperatura=False, flujo=False, consumo=False):
-        ax = fig.axes[0]
-        ax.clear()
-        if(temperatura):
-            ax.set_ylabel('Temperatura (ºC)', color=colores.temperatura)
-            ax.set_ylim([25,40])
-            color = colores.temperatura
-        elif(flujo):
-            ax.set_ylabel('Flujo térmico', color=colores.flujo)
-            ax.set_ylim([-20,220])
-            color = colores.flujo
-        elif(consumo):
-            ax.set_ylabel('Consumo (cal)', color=colores.consumo)
-            ax.set_ylim([0,20])
-            color = colores.consumo
-
-        ax.plot(tiempo, data, color)
+        for i in fig.axes:
+            i.clear()
+        tiempo = filtro.tiempo
+        temperatura = filtro.temp
+        flujo = filtro.flujo
+        consumo = filtro.consumo
+        
+        axTemperatura = fig.add_subplot(131)
+        axTemperatura.plot(tiempo, temperatura, colores.temperatura)
+        axTemperatura.set_ylabel('Temperatura (ºC)', color=colores.temperatura)
+        axTemperatura.set_ylim([25,40])
         fig.autofmt_xdate()
         xfmt = md.DateFormatter('%H:%M')
-        ax.xaxis.set_major_formatter(xfmt)
-        start, end = ax.get_xlim()
-        ax.grid(True)
+        axTemperatura.xaxis.set_major_formatter(xfmt)
+        start, end = axTemperatura.get_xlim()
+        axTemperatura.grid(True)
+        
+        axFlujo = fig.add_subplot(132)
+        axFlujo.plot(tiempo, flujo, colores.flujo)
+        axFlujo.set_ylabel('Flujo térmico', color=colores.flujo)
+        axFlujo.set_ylim([-20, 220])
+        fig.autofmt_xdate()
+        xfmt = md.DateFormatter('%H:%M')
+        axFlujo.xaxis.set_major_formatter(xfmt)
+        start, end = axFlujo.get_xlim()
+        axFlujo.grid(True)
+        
+        axConsumo = fig.add_subplot(133)
+        axConsumo.plot(tiempo, consumo, colores.consumo)
+        axConsumo.set_ylabel('Consumo (cal)', color=colores.consumo)
+        axConsumo.set_ylim([0, 20])
+        fig.autofmt_xdate()
+        xfmt = md.DateFormatter('%H:%M')
+        axConsumo.xaxis.set_major_formatter(xfmt)
+        start, end = axConsumo.get_xlim()
+        axConsumo.grid(True)
         
         #Lineas verticales con la clasificación de sueños
         for i in profundo:
-            ax.axvspan(i[0], i[1], facecolor=colores.suenoProfundo, alpha=0.3, edgecolor=colores.suenoProfundo)
+            axTemperatura.axvspan(i[0], i[1], facecolor=colores.suenoProfundo, alpha=0.3, edgecolor=colores.suenoProfundo)
+            axFlujo.axvspan(i[0], i[1], facecolor=colores.suenoProfundo, alpha=0.3, edgecolor=colores.suenoProfundo)
+            axConsumo.axvspan(i[0], i[1], facecolor=colores.suenoProfundo, alpha=0.3, edgecolor=colores.suenoProfundo)
             
         for i in despierto:
-            ax.axvspan(i[0], i[1], facecolor=colores.despierto, alpha=0.5, edgecolor=colores.despierto)
+            axTemperatura.axvspan(i[0], i[1], facecolor=colores.despierto, alpha=0.5, edgecolor=colores.despierto)
+            axFlujo.axvspan(i[0], i[1], facecolor=colores.despierto, alpha=0.5, edgecolor=colores.despierto)
+            axConsumo.axvspan(i[0], i[1], facecolor=colores.despierto, alpha=0.5, edgecolor=colores.despierto)
             
         fig.canvas.draw()
+
+    
 
     #Dibuja el dendrograma
     def plotDendrogram(self, c1, c2):
