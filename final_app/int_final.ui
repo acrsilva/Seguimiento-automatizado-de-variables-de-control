@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1377</width>
-    <height>768</height>
+    <height>905</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,11 +20,11 @@
       <x>10</x>
       <y>10</y>
       <width>1371</width>
-      <height>711</height>
+      <height>781</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -600,6 +600,113 @@
       <property name="text">
        <string>Comparación entre episodios de sueño nocturnos</string>
       </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_4">
+     <attribute name="title">
+      <string>Consumos</string>
+     </attribute>
+     <widget class="QWidget" name="widget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>1321</width>
+        <height>241</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="layout_diario"/>
+     </widget>
+     <widget class="QComboBox" name="cbx_izq">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>300</y>
+        <width>141</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lbl_der">
+      <property name="geometry">
+       <rect>
+        <x>860</x>
+        <y>296</y>
+        <width>471</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lbl_izq">
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>296</y>
+        <width>471</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="KSeparator" name="kseparator_7">
+      <property name="geometry">
+       <rect>
+        <x>-10</x>
+        <y>270</y>
+        <width>1361</width>
+        <height>20</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="KSeparator" name="kseparator_8">
+      <property name="geometry">
+       <rect>
+        <x>660</x>
+        <y>280</y>
+        <width>20</width>
+        <height>491</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+     <widget class="QWidget" name="widget_2" native="true">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>340</y>
+        <width>640</width>
+        <height>380</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="layout_dia_izq"/>
+     </widget>
+     <widget class="QComboBox" name="cbx_der">
+      <property name="geometry">
+       <rect>
+        <x>690</x>
+        <y>300</y>
+        <width>141</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QWidget" name="widget_4" native="true">
+      <property name="geometry">
+       <rect>
+        <x>690</x>
+        <y>340</y>
+        <width>640</width>
+        <height>380</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="layout_dia_der"/>
      </widget>
     </widget>
    </widget>
