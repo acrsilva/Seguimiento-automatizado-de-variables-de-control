@@ -11,7 +11,7 @@ import clustering
 import cachitos
 from panelSueno import PanelSueno
 from tablaDistancias import TablaDistancias
-
+from copy import copy
 
 DEBUG = 0
 PRUEBAS=1
@@ -47,17 +47,20 @@ class Main(QMainWindow, Ui_MainWindow):
         self.tabs = []
         self.tabs.append(PanelSueno(self.selep, self.plotLayoutUp, self.plotLayoutBot, self.cbx1, self.cbx2, 
                             self.rbTemperatura, self.rbConsumo, self.lbl1, self.lbl2, self.tableLayout, self.dendrogramLayout))
-        
-        
-        self.selep.update(sNocturno=False, sedentario=False, ligero=False, moderado=False)
-        self.tabs.append(PanelSueno(self.selep, self.plotLayoutUpSiestas, self.plotLayoutBotSiestas, self.cbx1Siestas,
+        sel2 = copy(self.selep)
+        sel2.update(sNocturno=False, sedentario=False, ligero=False, moderado=False)
+        #self.selep.update(sNocturno=False, sedentario=False, ligero=False, moderado=False)
+        self.tabs.append(PanelSueno(sel2, self.plotLayoutUpSiestas, self.plotLayoutBotSiestas, self.cbx1Siestas,
                             self.cbx2Siestas, self.rbTemperaturaSiestas, self.rbConsumoSiestas, self.lbl1Siestas,
                             self.lbl2Siestas, self.tableLayoutSiestas, self.dendrogramLayoutSiestas))
         
-        self.selep.update(sDiurno=False, sedentario=False, ligero=False, moderado=False)
-        self.tabs.append(PanelSueno(self.selep, self.plotLayoutUpSuenos, self.plotLayoutBotSuenos, self.cbx1Suenos,
+        #self.selep.update(sDiurno=False, sedentario=False, ligero=False, moderado=False)
+        sel3 = copy(self.selep)
+        sel3.update(sDiurno=False, sedentario=False, ligero=False, moderado=False)
+        self.tabs.append(PanelSueno(sel3, self.plotLayoutUpSuenos, self.plotLayoutBotSuenos, self.cbx1Suenos,
                             self.cbx2Suenos, self.rbTemperaturaSuenos, self.rbConsumoSuenos, self.lbl1Suenos,
                             self.lbl2Suenos, self.tableLayoutSuenos, self.dendrogramLayoutSuenos))
+        
         
     #Carga un fichero de datos csv y obtiene los episodios de sueño
     #Inicializa el contenido de la interfaz

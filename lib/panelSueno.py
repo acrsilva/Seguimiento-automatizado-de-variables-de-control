@@ -38,42 +38,15 @@ class PanelSueno():
         
     def initGraphs(self):
         #Graficas superior
-        """
-        self.fig1_var1 = plt.figure(tight_layout=True)
-        self.fig1_var1.add_subplot(111)
-        self.fig1_var2 = plt.figure(tight_layout=True)
-        self.fig1_var2.add_subplot(111)
-        self.fig1_var3 = plt.figure(tight_layout=True)
-        self.fig1_var3.add_subplot(111)
-        """
         self.figTop = plt.figure(tight_layout=True)
-        self.figTop.add_subplot(111)
         canvasTop = FigureCanvas(self.figTop)
         self.layTop.addWidget(canvasTop);
-        
+        #Graficas inferior
         self.figBot = plt.figure(tight_layout=True)
-        self.figBot.add_subplot(111)
         canvasBot = FigureCanvas(self.figBot)
         self.layBot.addWidget(canvasBot)
         
-        #Graficas inferior
-        """
-        self.fig2_var1 = plt.figure(tight_layout=True)
-        self.fig2_var1.add_subplot(111)
-        self.fig2_var2 = plt.figure(tight_layout=True)
-        self.fig2_var2.add_subplot(111)
-        self.fig2_var3 = plt.figure(tight_layout=True)
-        self.fig2_var3.add_subplot(111)
-        """
         
-        """
-        self.layTop.addWidget(FigureCanvas(self.fig1_var1))
-        self.layTop.addWidget(FigureCanvas(self.fig1_var2))
-        self.layTop.addWidget(FigureCanvas(self.fig1_var3))
-        self.layBot.addWidget(FigureCanvas(self.fig2_var1))
-        self.layBot.addWidget(FigureCanvas(self.fig2_var2))
-        self.layBot.addWidget(FigureCanvas(self.fig2_var3))
-        """
     #Carga un fichero de datos csv y obtiene los episodios de sueño
     #Inicializa el contenido de la interfaz
     def loadData(self, selep):

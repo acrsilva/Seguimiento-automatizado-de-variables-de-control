@@ -327,7 +327,7 @@ class selEpisodio():
 if(PRUEBAS==1):
     import lectorFichero as lf
     csv = lf.LectorFichero('../data.csv').getDatos()
-    selep = selEpisodio(csv, sDiurno=False, sNocturno=True, sedentario=False, ligero=False, moderado=False)
+    selep = selEpisodio(csv, sDiurno=True, sNocturno=True, sedentario=False, ligero=False, moderado=False)
     selep.imprimeEpisodios(selep.epFiltro)
     
     
