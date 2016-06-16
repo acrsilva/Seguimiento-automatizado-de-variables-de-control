@@ -46,6 +46,9 @@ class Main(QMainWindow, Ui_MainWindow):
     
     def initTabs(self):
         self.tabs = []
+        
+        
+        
         self.tabs.append(PanelSueno(self.selep, self.plotLayoutUp, self.plotLayoutBot, self.cbx1, self.cbx2, 
                             self.rbTemperatura, self.rbConsumo, self.lbl1, self.lbl2, self.tableLayout, self.dendrogramLayout))
         sel2 = copy(self.selep)

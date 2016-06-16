@@ -24,8 +24,59 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
+    <widget class="QWidget" name="tab_5">
+     <attribute name="title">
+      <string>Intérprete</string>
+     </attribute>
+     <widget class="QPushButton" name="btn_prev">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>620</y>
+        <width>141</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Episodio Anterior</string>
+      </property>
+     </widget>
+     <widget class="GraphicsLayoutWidget" name="plotConsumo">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>70</y>
+        <width>951</width>
+        <height>531</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_next">
+      <property name="geometry">
+       <rect>
+        <x>910</x>
+        <y>620</y>
+        <width>141</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Episodio Siguiente</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="cbxEpisodio">
+      <property name="geometry">
+       <rect>
+        <x>620</x>
+        <y>620</y>
+        <width>161</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
       <string>Todos</string>
@@ -740,6 +791,11 @@
    <class>KSeparator</class>
    <extends>QFrame</extends>
    <header>kseparator.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GraphicsLayoutWidget</class>
+   <extends>QGraphicsView</extends>
+   <header>pyqtgraph</header>
   </customwidget>
  </customwidgets>
  <resources/>
