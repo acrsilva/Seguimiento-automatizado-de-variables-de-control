@@ -350,3 +350,10 @@ if(PRUEBAS==2):
     for i in range(len(eps.epsDias)):
         print "Dia", i+1
         eps.imprimeEpisodios(eps.epsDias[i])
+
+if(PRUEBAS==3):
+    import lectorFichero as lf
+    csv = lf.LectorFichero('../data.csv').getDatosDias()
+    print len(csv), 'dias'
+    
+    
