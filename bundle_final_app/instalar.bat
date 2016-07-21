@@ -1,0 +1,3 @@
+pip install virtualenv
+virtualenv envtfg
+envtfg\Scripts\activate & pip install libs\numpy-1.11.1+mkl-cp27-cp27m-win32.whl & pip install libs\scipy-0.17.1-cp27-cp27m-win32.whl & pip install cycler & pip install pyparsing & libs\ez_setup.py & pip install python-dateutil & pip install libs\matplotlib-1.5.2-cp27-cp27m-win32.whl & pip install libs\pyqtgraph-0.9.10-py2.py3-none-any.whl & pip install libs\PyQt4-4.11.4-cp27-none-win32.whl & pip install -U scikit-learn & pip install libs\mlpy-3.5.0-cp27-none-win32.whl & pip install libs\pywin32-220.1-cp27-cp27m-win32.whl & deactivate
