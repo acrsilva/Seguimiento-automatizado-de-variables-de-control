@@ -60,19 +60,25 @@ class Main(QMainWindow, Ui_MainWindow):
         sel2 = copy(self.selep)
         sel2.update(sNocturno=False, sedentario=False, ligero=False, moderado=False)
         #self.selep.update(sNocturno=False, sedentario=False, ligero=False, moderado=False)
-        self.tabs.append(PanelSueno(sel2, self.plotLayoutUpSiestas, self.plotLayoutBotSiestas, self.cbx1Siestas,
-                            self.cbx2Siestas, self.rbTemperaturaSiestas, self.rbConsumoSiestas, self.lbl1Siestas,
-                            self.lbl2Siestas, self.tableLayoutSiestas, self.dendrogramLayoutSiestas))
-        
+        if(len(sel2.epFiltro) > 0):
+            self.tabs.append(PanelSueno(sel2, self.plotLayoutUpSiestas, self.plotLayoutBotSiestas, self.cbx1Siestas,
+                                self.cbx2Siestas, self.rbTemperaturaSiestas, self.rbConsumoSiestas, self.lbl1Siestas,
+                                self.lbl2Siestas, self.tableLayoutSiestas, self.dendrogramLayoutSiestas))
+        else:
+            self.tabWidget.setTabEnabled(2,False)
         #self.selep.update(sDiurno=False, sedentario=False, ligero=False, moderado=False)
         sel3 = copy(self.selep)
         sel3.update(sDiurno=False, sedentario=False, ligero=False, moderado=False)
-        self.tabs.append(PanelSueno(sel3, self.plotLayoutUpSuenos, self.plotLayoutBotSuenos, self.cbx1Suenos,
-                            self.cbx2Suenos, self.rbTemperaturaSuenos, self.rbConsumoSuenos, self.lbl1Suenos,
-                            self.lbl2Suenos, self.tableLayoutSuenos, self.dendrogramLayoutSuenos))
-        
+        if(len(sel3.epFiltro) > 0):
+            self.tabs.append(PanelSueno(sel3, self.plotLayoutUpSuenos, self.plotLayoutBotSuenos, self.cbx1Suenos,
+                                self.cbx2Suenos, self.rbTemperaturaSuenos, self.rbConsumoSuenos, self.lbl1Suenos,
+                                self.lbl2Suenos, self.tableLayoutSuenos, self.dendrogramLayoutSuenos))
+        else:
+            self.tabWidget.setTabEnabled(3,False)
+            
         epsDias = []
-        for i in self.csv.getDatosDias():
+        dd = self.csv.getDatosDias()
+        for i in dd:
             epsDias.append(cachitos.selEpisodio(i))
         self.tabs.append(PanelConsumo(epsDias, self.layout_diario, self.layout_dia_izq, self.layout_dia_der,
                                   self.cbx_izq, self.cbx_der, self.lbl_izq, self.lbl_der))
@@ -107,6 +113,8 @@ class Main(QMainWindow, Ui_MainWindow):
         
     def abrirListener(self):
         #Limpiar layouts
+        self.tabWidget.setTabEnabled(2,True)
+        self.tabWidget.setTabEnabled(3,True)
         
         self.interprete.clearGraphs()
         self.gvInterprete.clear()

@@ -7,7 +7,7 @@ import sys
 from datetime import datetime as dt
 from PyQt4 import QtGui
 
-DEBUG = 0
+DEBUG = 1
 PRUEBAS = 0
 
 """
@@ -48,7 +48,8 @@ class Datos():
             fecha1 = dt.fromtimestamp(self.tiempo[i])
             fecha2 = dt.fromtimestamp(self.tiempo[i+1])
             #Nuevo dia si cambia el dia o si es el último
-            if(fecha1.day != fecha2.day or i == len(self.tiempo)-2):
+            #if(fecha1.day != fecha2.day or i == len(self.tiempo)-2):
+            if((fecha1.day != fecha2.day and fecha1 < fecha2) or i == len(self.tiempo)-2):
                 fin = i
                 datos_dias.append(datosDia((ini, fin)))
                 if(DEBUG):
@@ -90,17 +91,42 @@ class LectorFichero(object):
         consm = csv['Gasto_energético'.encode('iso8859-15')]
         acltrans = csv['Acel_transversal__picos']
         
+        #COMPROBAR DATOS CORRECTOS
+        #self.checkCSV()
+        
         #Datos tal cual vienen en el csv, sin particiones
         self.datos_total = Datos(sueno, clasifSueno, flujo, temp, tiempo, actli, actsd, actmd, consm, acltrans)
-        
+    
+    def limpia_datos(self):
+        i = 1
+        dato = self.tiempo[0]
+        dato += 6
+        while  (i < len(self.tiempo)-1):
+            if (self.tiempo(i) < dato):
+                self.sueno.pop(i)
+                self.clasifSueno.pop(i)
+                self.flujo.pop(i)
+                self.temp.pop(i)
+                self.tiempo.pop(i)
+                self.actli.pop(i)
+                self.actsd.pop(i)
+                self.actmd.pop(i)
+                self.consm.pop(i)
+                self.acltrans.pop(i)
+            elif (dato < self.tiempo(i)):
+                dato += 6
+            else: 
+                i += 1
+                dato += 6
+            
     def getDatos(self):
         return self.datos_total
         
     def getDatosDias(self):
         datos_dias = self.datos_total.creaDias()
         if(DEBUG):
-            print len(self.datos_dias), 'dias'
-            for i in self.datos_dias:
+            print len(datos_dias), 'dias'
+            for i in datos_dias:
                 print "ini", i.tiempo[0], "fin", i.tiempo[-1]
         return datos_dias
 

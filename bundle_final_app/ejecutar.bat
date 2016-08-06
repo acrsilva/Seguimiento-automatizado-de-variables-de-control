@@ -1,1 +1,1 @@
-envtfg\Scripts\activate & cd source & python final.py & deactivate
+envtfg\Scripts\activate & cd source & python final.py & cd .. & deactivate

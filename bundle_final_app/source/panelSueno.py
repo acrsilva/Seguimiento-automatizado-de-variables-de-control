@@ -27,6 +27,11 @@ class PanelSueno():
         self.tableLayout = tableLayout
         self.dendrogramLayout = dendrogramLayout
         
+        if(len(selep.epFiltro) > 1):
+            self.clusterable = True
+        else:
+            self.clusterable = False
+        
         self.cbx1.activated[str].connect(self.cbx1Listener)
         self.cbx2.activated[str].connect(self.cbx2Listener)
         self.rbTemperatura.clicked.connect(self.rbListener)
@@ -54,8 +59,9 @@ class PanelSueno():
         #print 'selep ', len(selep.epFiltro)
         self.configureComboBox()
         self.updatePlots(ep1=True, ep2=True)
-        self.initCluster()
-        self.cluster()
+        if(self.clusterable):
+            self.initCluster()
+            self.cluster()
         self.setLabel(sup=True)
         self.setLabel(sup=False)
     
@@ -185,7 +191,7 @@ class PanelSueno():
     def initCluster(self):
         self.cluster_tf = clustering.HierarchicalClustering(self.selep, tf=True)
         self.cluster_cons = clustering.HierarchicalClustering(self.selep, cons=True)
-        
+    
         self.dendrogramLayout.addWidget(self.plotDendrogram(self.cluster_tf, self.cluster_cons))
        
         
@@ -200,7 +206,6 @@ class PanelSueno():
             widget = self.dendrogramLayout.takeAt(cnt).widget()
             if widget is not None:
                 widget.deleteLater()
-                
         self.dendrogramLayout.addWidget(self.plotDendrogram(self.cluster_tf, self.cluster_cons))
         
         if(self.rbTemperatura.isChecked()):

@@ -135,7 +135,7 @@ class PanelConsumo():
         for i in self.epsDias[cbx_idx].epFiltro:
             ratios.append(i.numCalorias / (i.fin - i.ini))
     
-        #self.plotRatioBar(ax_bar, cbx_idx, ratios)
+        self.plotRatioBar(ax_bar, cbx_idx, ratios)
         
         fig.canvas.draw()
         #fig.canvas.mpl_connect('pick_event', self.onpick)
@@ -187,6 +187,7 @@ class PanelConsumo():
                     
         colors = []
         labels = []
+        tlabels = []
         for i in self.epsDias[idx].epFiltro:
             if(i.tipo == cachitos.tipoSueno):
                 c = colores.sueno
@@ -198,6 +199,8 @@ class PanelConsumo():
                 c = colores.moderado
             colors.append(c)
             labels.append(i.tiempo[0].strftime('%H:%M'))
+            tlabels.append(i.tiempo[0])
+            if(DEBUG): print i.tiempo[0].strftime('%H:%M')
             #labels.append(i.tiempo[0])
         
         print len(means), "muestras"
@@ -213,8 +216,8 @@ class PanelConsumo():
         for i in range(len(labels)):
             p, q = [], []
             a = datetime.strptime(labels[i], "%H:%M").timetuple()
-            p.append(mktime(datetime.strptime(labels[i], "%H:%M").timetuple())) 
-            r.append(mktime(datetime.strptime(labels[i], "%H:%M").timetuple()))
+            p.append(tlabels[i]) 
+            r.append(tlabels[i])
             q.append(means[i])
             markerline, stemlines, baseline = ax.stem(p, q)
             plt.setp(markerline, 'markerfacecolor', colors[i])
@@ -224,7 +227,7 @@ class PanelConsumo():
         ax.set_xticks(r)
         ax.set_xticklabels(labels, rotation=90, fontsize=10)
         ax.set_title('Ratio consumo por minuto')
-        ax.set_ylim(0, 15)
+        ax.set_ylim(0, 10)
         
         if(DEBUG): 
             print self.epsDias[idx].epFiltro[0].tiempo[0], self.epsDias[idx].epFiltro[-1].tiempo[-1]
