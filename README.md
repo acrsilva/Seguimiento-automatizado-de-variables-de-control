@@ -1,2 +1,4 @@
 # animated-zZz-machine
-Que sueeeeeeeeeeeeño zZz
+
+Versión final con instalador en bundle_final_app
+
