@@ -3,23 +3,28 @@ from __future__ import unicode_literals
 import sys
 #sys.path.insert(0, '../lib')
 
+
+"""
 import matplotlib.pyplot as plt
-from PyQt4.uic import loadUiType
-from pyqtgraph.Qt import QtCore, QtGui
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import numpy as np
 import matplotlib.dates as md
 import math
-import lectorFichero as lf
+
 import colores
 import clustering
 from scipy.cluster.hierarchy import dendrogram
 from datetime import datetime
-import cachitos
+"""
+from PyQt4.uic import loadUiType
+from pyqtgraph.Qt import QtCore, QtGui
+import lectorFichero as lf
+import selEpisodio
 from panelSueno import PanelSueno
 from panelConsumo import PanelConsumo
+from panelScatter import PanelScatter
 from copy import copy
 from panelInterprete import PanelInterprete
 
@@ -29,9 +34,9 @@ PRUEBAS=0
 Ui_MainWindow, QMainWindow = loadUiType('int_final.ui')
 
 
-class Main(QMainWindow, Ui_MainWindow):
+class VentanaMain(QMainWindow, Ui_MainWindow):
     def __init__(self, ):
-        super(Main, self).__init__()
+        super(VentanaMain, self).__init__()
         #self.showMaximized()
         #Cargar el diseño de la interfaz del QtDesigner
         self.setupUi(self)
@@ -52,36 +57,42 @@ class Main(QMainWindow, Ui_MainWindow):
         self.gvInterprete.clear()
         self.interprete = PanelInterprete(self.selep, self.csv, self.gvInterprete, self.btn_prev, self.btn_next, self.cbxEpisodio)
         self.tabs.append(self.interprete)
-        sel1 = copy(self.selep)
         
+        sel4 = copy(self.selep)
+        sel4.update(sDiurno=True, sNocturno=True, sedentario=True, ligero=True, moderado=True)
+        self.scatter = PanelScatter(sel4, self.layoutMatplot1, self.cbSueno, self.cbSedentario, self.cbLigera, self.cbModerada, self.cbx_izq_2, self.cbx_der_2, self.btnPrev, self.btnNext, self.labelScatter)
+        self.tabs.append(self.scatter)
+        
+        sel1 = copy(self.selep)
         #Rellenar layouts
-        self.tabs.append(PanelSueno(sel1, self.plotLayoutUp, self.plotLayoutBot, self.cbx1, self.cbx2, 
-                            self.rbTemperatura, self.rbConsumo, self.lbl1, self.lbl2, self.tableLayout, self.dendrogramLayout))
+        self.tabs.append(PanelSueno(self, sel1, self.plotLayoutUp, self.plotLayoutBot, self.cbx1, self.cbx2, 
+                            self.rbTemperatura, self.rbConsumo, self.lbl1, self.lbl2, self.tableLayout, self.dendrogramLayout, self.btnFiltraEpsT))
         sel2 = copy(self.selep)
         sel2.update(sNocturno=False, sedentario=False, ligero=False, moderado=False)
         #self.selep.update(sNocturno=False, sedentario=False, ligero=False, moderado=False)
         if(len(sel2.epFiltro) > 0):
-            self.tabs.append(PanelSueno(sel2, self.plotLayoutUpSiestas, self.plotLayoutBotSiestas, self.cbx1Siestas,
+            self.tabs.append(PanelSueno(self, sel2, self.plotLayoutUpSiestas, self.plotLayoutBotSiestas, self.cbx1Siestas,
                                 self.cbx2Siestas, self.rbTemperaturaSiestas, self.rbConsumoSiestas, self.lbl1Siestas,
-                                self.lbl2Siestas, self.tableLayoutSiestas, self.dendrogramLayoutSiestas))
+                                self.lbl2Siestas, self.tableLayoutSiestas, self.dendrogramLayoutSiestas, self.btnFiltraEpsD))
         else:
             self.tabWidget.setTabEnabled(2,False)
         #self.selep.update(sDiurno=False, sedentario=False, ligero=False, moderado=False)
         sel3 = copy(self.selep)
         sel3.update(sDiurno=False, sedentario=False, ligero=False, moderado=False)
         if(len(sel3.epFiltro) > 0):
-            self.tabs.append(PanelSueno(sel3, self.plotLayoutUpSuenos, self.plotLayoutBotSuenos, self.cbx1Suenos,
+            self.tabs.append(PanelSueno(self, sel3, self.plotLayoutUpSuenos, self.plotLayoutBotSuenos, self.cbx1Suenos,
                                 self.cbx2Suenos, self.rbTemperaturaSuenos, self.rbConsumoSuenos, self.lbl1Suenos,
-                                self.lbl2Suenos, self.tableLayoutSuenos, self.dendrogramLayoutSuenos))
+                                self.lbl2Suenos, self.tableLayoutSuenos, self.dendrogramLayoutSuenos, self.btnFiltraEpsN))
         else:
             self.tabWidget.setTabEnabled(3,False)
             
         epsDias = []
         dd = self.csv.getDatosDias()
         for i in dd:
-            epsDias.append(cachitos.selEpisodio(i))
+            epsDias.append(selEpisodio.selEpisodio(i))
         self.tabs.append(PanelConsumo(epsDias, self.layout_diario, self.layout_dia_izq, self.layout_dia_der,
                                   self.cbx_izq, self.cbx_der, self.lbl_izq, self.lbl_der))
+        
         
         
     #Carga un fichero de datos csv y obtiene los episodios de sueño
@@ -91,7 +102,7 @@ class Main(QMainWindow, Ui_MainWindow):
         else: fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
         print "Abriendo fichero ", fname
         self.csv = lf.LectorFichero(fname)
-        self.selep = cachitos.selEpisodio(self.csv.getDatos(), sedentario=False, ligero=False, moderado=False)
+        self.selep = selEpisodio.selEpisodio(self.csv.getDatos(), sedentario=False, ligero=False, moderado=False)
         
         self.setWindowTitle('Estudio de sueños (' + fname +')')
         
@@ -119,6 +130,8 @@ class Main(QMainWindow, Ui_MainWindow):
         self.interprete.clearGraphs()
         self.gvInterprete.clear()
         
+        self.scatter.limpiarLayout()
+                
         for i in reversed(range(self.layout_diario.count())): 
             self.layout_diario.itemAt(i).widget().deleteLater()
         for i in reversed(range(self.layout_dia_izq.count())): 
@@ -151,6 +164,7 @@ class Main(QMainWindow, Ui_MainWindow):
             self.tableLayoutSuenos.itemAt(i).widget().deleteLater()   
         for i in reversed(range(self.dendrogramLayoutSuenos.count())): 
             self.dendrogramLayoutSuenos.itemAt(i).widget().deleteLater()   
+           
 
         self.loadData()    
 
@@ -159,7 +173,7 @@ class Main(QMainWindow, Ui_MainWindow):
 if __name__ == '__main__':
     
     app = QtGui.QApplication(sys.argv)
-    main = Main()
+    main = VentanaMain()
     
     main.show()
     

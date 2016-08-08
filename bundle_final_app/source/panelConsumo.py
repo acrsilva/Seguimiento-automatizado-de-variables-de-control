@@ -14,7 +14,7 @@ import lectorFichero as lf
 import colores
 #import hover
 import datetime 
-import cachitos
+import selEpisodio
 from time import mktime
 from datetime import datetime
 
@@ -145,24 +145,24 @@ class PanelConsumo():
         if(tiempo):
             # Calcular tiempo por actividad
             for i in self.epsDias[idx].epFiltro:
-                if(i.tipo == cachitos.tipoSueno):
+                if(i.tipo == selEpisodio.tipoSueno):
                     sizes[0] += len(i.tiempo)
-                elif(i.tipo == cachitos.tipoSedentario):
+                elif(i.tipo == selEpisodio.tipoSedentario):
                     sizes[1] += len(i.tiempo)
-                elif(i.tipo == cachitos.tipoLigera):
+                elif(i.tipo == selEpisodio.tipoLigera):
                     sizes[2] += len(i.tiempo)
-                elif(i.tipo == cachitos.tipoModerado):
+                elif(i.tipo == selEpisodio.tipoModerado):
                     sizes[3] += len(i.tiempo)
         elif(consumo):
             # Calcular calorías consumidas por actividad
             for i in self.epsDias[idx].epFiltro:
-                if(i.tipo == cachitos.tipoSueno):
+                if(i.tipo == selEpisodio.tipoSueno):
                     sizes[0] += i.numCalorias
-                elif(i.tipo == cachitos.tipoSedentario):
+                elif(i.tipo == selEpisodio.tipoSedentario):
                     sizes[1] += i.numCalorias
-                elif(i.tipo == cachitos.tipoLigera):
+                elif(i.tipo == selEpisodio.tipoLigera):
                     sizes[2] += i.numCalorias
-                elif(i.tipo == cachitos.tipoModerado):
+                elif(i.tipo == selEpisodio.tipoModerado):
                     sizes[3] += i.numCalorias
         if(DEBUG>2):
             print sizes
@@ -189,13 +189,13 @@ class PanelConsumo():
         labels = []
         tlabels = []
         for i in self.epsDias[idx].epFiltro:
-            if(i.tipo == cachitos.tipoSueno):
+            if(i.tipo == selEpisodio.tipoSueno):
                 c = colores.sueno
-            elif(i.tipo == cachitos.tipoSedentario):
+            elif(i.tipo == selEpisodio.tipoSedentario):
                 c = colores.sedentario
-            elif(i.tipo == cachitos.tipoLigera):
+            elif(i.tipo == selEpisodio.tipoLigera):
                 c = colores.ligero
-            elif(i.tipo == cachitos.tipoModerado):
+            elif(i.tipo == selEpisodio.tipoModerado):
                 c = colores.moderado
             colors.append(c)
             labels.append(i.tiempo[0].strftime('%H:%M'))
@@ -255,13 +255,13 @@ class PanelConsumo():
         idx = 0
         for j in self.epsDias:
             for i in j.epFiltro:
-                if(i.tipo == cachitos.tipoSueno):
+                if(i.tipo == selEpisodio.tipoSueno):
                     suenos[idx] += i.numCalorias
-                elif(i.tipo == cachitos.tipoSedentario):
+                elif(i.tipo == selEpisodio.tipoSedentario):
                     sedentarias[idx] += i.numCalorias
-                elif(i.tipo == cachitos.tipoLigera):
+                elif(i.tipo == selEpisodio.tipoLigera):
                     ligeras[idx] += i.numCalorias
-                elif(i.tipo == cachitos.tipoModerado):
+                elif(i.tipo == selEpisodio.tipoModerado):
                     moderadas[idx] += i.numCalorias
             idx += 1
             

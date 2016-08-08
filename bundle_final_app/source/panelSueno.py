@@ -10,12 +10,52 @@ import colores
 import clustering
 from scipy.cluster.hierarchy import dendrogram
 from tablaDistancias import TablaDistancias
+from PyQt4 import *
+
 
 DEBUG = 0
 
 
+class FiltroEpisodiosDialog(QtGui.QDialog):
+    def __init__(self, parent=None, eps=None):
+        super(FiltroEpisodiosDialog, self).__init__(parent)
+        self.eps = eps
+        
+        self.setWindowTitle("Agrupar episodios")
+        
+        self.buttonBox = QtGui.QDialogButtonBox(self)
+        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        
+        self.buttonBox.accepted.connect(self.acceptListener)
+        self.buttonBox.rejected.connect(self.reject)
+        
+        self.listWidget = QtGui.QListWidget()
+        self.listWidget.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
+
+        item=QtGui.QListWidgetItem()
+        
+        for i in self.eps:
+            item=QtGui.QListWidgetItem()
+            item.setText(i.nombre)                        
+            self.listWidget.addItem(item) 
+        
+        self.verticalLayout = QtGui.QVBoxLayout(self)
+        self.verticalLayout.addWidget(self.listWidget)
+        self.verticalLayout.addWidget(self.buttonBox)
+        
+        self.selectedEps = []
+        
+
+    def acceptListener(self):
+        print "aceptado"
+        for i in self.listWidget.selectedItems():
+            self.selectedEps.append(i.text())
+            #print self.selectedEps[-1];
+        self.accept()
+
 class PanelSueno():
-    def __init__(self, selep, layTop, layBot, cbx1, cbx2, rbTemperatura, rbConsumo, lbl1, lbl2, tableLayout, dendrogramLayout):
+    def __init__(self, parentWindow, selep, layTop, layBot, cbx1, cbx2, rbTemperatura, rbConsumo, lbl1, lbl2, tableLayout, dendrogramLayout, btnFiltraEps):
         self.layTop = layTop
         self.layBot = layBot
         self.cbx1 = cbx1
@@ -26,6 +66,8 @@ class PanelSueno():
         self.lbl2 = lbl2
         self.tableLayout = tableLayout
         self.dendrogramLayout = dendrogramLayout
+        self.btnFiltraEps = btnFiltraEps
+        self.parentWindow = parentWindow
         
         if(len(selep.epFiltro) > 1):
             self.clusterable = True
@@ -36,6 +78,7 @@ class PanelSueno():
         self.cbx2.activated[str].connect(self.cbx2Listener)
         self.rbTemperatura.clicked.connect(self.rbListener)
         self.rbConsumo.clicked.connect(self.rbListener)
+        self.btnFiltraEps.clicked.connect(self.btnFiltraEpsListener)
         
         self.initGraphs()
         self.loadData(selep)
@@ -242,3 +285,11 @@ class PanelSueno():
         self.axes.clear()
         self.cluster()
     
+    def btnFiltraEpsListener(self):
+        print "Filtrando episodios"
+        dialogTextBrowser = FiltroEpisodiosDialog(self.parentWindow, self.selep.epFiltro)
+        dialogTextBrowser.exec_()
+        for i in dialogTextBrowser.selectedEps:
+            print i
+        
+        

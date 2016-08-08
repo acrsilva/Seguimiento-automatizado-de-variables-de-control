@@ -142,13 +142,13 @@ class selEpisodio():
             episodio.nombre = self.dt[episodio.ini].strftime('%d') + "-Su" + str(nums[0])
         elif episodio.tipo == tipoSedentario:
             nums[1]  += 1
-            episodio.nombre = str(nums[1]) + ". Sedentario"
+            episodio.nombre = self.dt[episodio.ini].strftime('%d') + "-Se" + str(nums[1])
         elif episodio.tipo == tipoLigera:
             nums[2] += 1
-            episodio.nombre = str(nums[2]) + ". Ligera"
+            episodio.nombre = self.dt[episodio.ini].strftime('%d') + "-Li" + str(nums[2])
         elif episodio.tipo == tipoModerado:
             nums[3] += 1
-            episodio.nombre = str(nums[3]) + ". Moderada"
+            episodio.nombre = self.dt[episodio.ini].strftime('%d') + "-Mo" + str(nums[3])
         
     def filtraEpisodios(self, minep, intr, lista):
         """
@@ -209,7 +209,7 @@ class selEpisodio():
             elif(mod[indice] == 1):
                 return tipoModerado, False, False, False, True
 
-    def cachitos(self, sueno, sed, lig, mod):
+    def selEpisodio(self, sueno, sed, lig, mod):
         """
         Crea los distintos episodios teniendo en cuenta el maximo intervalo
         de interrupcion.
@@ -250,7 +250,7 @@ class selEpisodio():
         minep: tamaño minimo de episodio
         intr: interrupciones por actividad
         """
-        lista = self.cachitos(sueno, sed, lig, mod)
+        lista = self.selEpisodio(sueno, sed, lig, mod)
         self.filtraEpisodios(minep, intr, lista)
         return lista
     

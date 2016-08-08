@@ -10,7 +10,7 @@ import datetime
 import lectorFichero as lf
 import colores
 
-from cachitos import Episodio, selEpisodio
+from selEpisodio import Episodio, selEpisodio
 
 
 PRUEBAS = 0

@@ -86,12 +86,12 @@ class PanelInterprete():
         #Configurar segunda gr�fica con actividad f�sica y consumo
         #win.nextRow()
         self.pAF = win.addPlot(row=2, col=0)
-        self.pAF.setTitle('Actividad física y consumo energético')
+        self.pAF.setTitle('Consumo energético')
         self.pAF.hideButtons()
         self.pAF.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.pAF.setMouseEnabled(x=True, y=False)
         self.pAF.hideAxis('bottom')
-        self.pAF.getAxis('left').setLabel('Actividad', color=colores.actividad)
+        self.pAF.getAxis('left').setLabel('', color=colores.actividad)
         self.pAF.setXLink('barClasificacion')
         
         self.pCons = pg.ViewBox()
@@ -99,7 +99,7 @@ class PanelInterprete():
         self.pAF.scene().addItem(self.pCons)
         self.pAF.getAxis('right').linkToView(self.pCons)
         self.pCons.setXLink(self.pAF)
-        self.pAF.getAxis('right').setLabel('Consumo', color=colores.consumo)
+        self.pAF.getAxis('right').setLabel('', color=colores.consumo)
         self.pAF.vb.sigResized.connect(self.updateViews)
         
         
