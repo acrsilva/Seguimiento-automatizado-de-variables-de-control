@@ -18,7 +18,8 @@ DEBUG=0
 
 
 class HierarchicalClustering():
-    def __init__(self, selepisodio, tf=False, cons=False):
+    #episodios = selep
+    def __init__(self, episodios, tf=False, cons=False):
         #Representa un episodio de sueño mediante las series temporales de flujo y temperatura
         class Individuo:
             def __init__(self, nombre, tiempo, temperatura=[], flujo=[], consumo=[]):
@@ -28,18 +29,18 @@ class HierarchicalClustering():
                 self.stf = flujo
                 self.stc = consumo
         
-        sel = selepisodio
+        #episodios = selep.epFiltro
         
-        print "Normalizar", len(sel.epFiltro), "episodios de sueño"
+        print "Normalizar", len(episodios), "episodios de sueño"
         # Normalizar por estandarización cada episodio de sueño (temperatura y flujo)
         self.eps_sueno = []
         if(tf):
-            for i in sel.epFiltro:
+            for i in episodios:
                 a = preprocessing.scale(i.temp, copy=True)
                 b = preprocessing.scale(i.flujo, copy=True)
                 self.eps_sueno.append(Individuo(i.nombre, i.tiempo, temperatura=a, flujo=b))
         elif(cons):
-            for i in sel.epFiltro:
+            for i in episodios:
                 a = preprocessing.scale(i.consumo, copy=True)
                 self.eps_sueno.append(Individuo(i.nombre, i.tiempo, consumo=a))
         

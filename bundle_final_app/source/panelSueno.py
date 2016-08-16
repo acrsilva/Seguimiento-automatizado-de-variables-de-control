@@ -69,10 +69,13 @@ class PanelSueno():
         self.btnFiltraEps = btnFiltraEps
         self.parentWindow = parentWindow
         
+        #Comprobar si hay suficientes eps para hacer clustering
         if(len(selep.epFiltro) > 1):
             self.clusterable = True
         else:
             self.clusterable = False
+        
+        self.clusterEps = selep.epFiltro
         
         self.cbx1.activated[str].connect(self.cbx1Listener)
         self.cbx2.activated[str].connect(self.cbx2Listener)
@@ -232,8 +235,8 @@ class PanelSueno():
     
     #Realiza el clustering de temperatura y flujo y de consumo y dibuja el dendrograma
     def initCluster(self):
-        self.cluster_tf = clustering.HierarchicalClustering(self.selep, tf=True)
-        self.cluster_cons = clustering.HierarchicalClustering(self.selep, cons=True)
+        self.cluster_tf = clustering.HierarchicalClustering(self.clusterEps, tf=True)
+        self.cluster_cons = clustering.HierarchicalClustering(self.clusterEps, cons=True)
     
         self.dendrogramLayout.addWidget(self.plotDendrogram(self.cluster_tf, self.cluster_cons))
        
@@ -286,10 +289,25 @@ class PanelSueno():
         self.cluster()
     
     def btnFiltraEpsListener(self):
+        def buscaep(e):
+            for i in self.selep.epFiltro:
+                if (e == i.nombre):
+                    return i
         print "Filtrando episodios"
         dialogTextBrowser = FiltroEpisodiosDialog(self.parentWindow, self.selep.epFiltro)
         dialogTextBrowser.exec_()
-        for i in dialogTextBrowser.selectedEps:
-            print i
+        #Comprobar si se han seleccionado más de dos episodios
+        if(len(dialogTextBrowser.selectedEps) > 1):
+            self.clusterEps = []
+            for i in dialogTextBrowser.selectedEps:
+                print i
+                self.clusterEps.append(buscaep(i))
+                
+            for i in reversed(range(self.dendrogramLayout.count())): 
+                self.dendrogramLayout.itemAt(i).widget().deleteLater()   
+            for i in reversed(range(self.tableLayout.count())): 
+                self.tableLayout.itemAt(i).widget().deleteLater()   
+            self.initCluster()
+            self.cluster()
         
         
