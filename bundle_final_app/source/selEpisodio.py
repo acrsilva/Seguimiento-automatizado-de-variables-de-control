@@ -9,7 +9,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-DEBUG = 1
+DEBUG = 0
 PRUEBAS = 0
 
 #Definición de tipos
@@ -218,6 +218,7 @@ class selEpisodio():
         """
         indices = []
         cini, cfin = 0, 0
+        print "**** PRUEBA ", len(sueno), len(sed), len(lig), len(mod)
         tipo, sbool, sedb, ligb, modb = self.encuentraTipo(0, sueno, sed, lig, mod)
         for i in range(len(sueno)-1):
             if(sueno[i+1] == 1 and not sbool):

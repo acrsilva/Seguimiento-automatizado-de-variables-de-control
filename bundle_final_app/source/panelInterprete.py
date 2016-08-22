@@ -73,7 +73,7 @@ class PanelInterprete():
         
         #Configurar primera gr�fica con aceler�metros
         #win.nextRow()
-        self.pAcel = win.addPlot(row=1, col=0)
+        self.pAcel = win.addPlot(row=1, col=0, connect="finite")
         self.pAcel.setTitle('Acelerómetro transversal')
         self.pAcel.hideButtons()
         self.pAcel.setMouseEnabled(x=True, y=False)
@@ -85,7 +85,7 @@ class PanelInterprete():
         
         #Configurar segunda gr�fica con actividad f�sica y consumo
         #win.nextRow()
-        self.pAF = win.addPlot(row=2, col=0)
+        self.pAF = win.addPlot(row=2, col=0, connect="finite")
         self.pAF.setTitle('Consumo energético')
         self.pAF.hideButtons()
         self.pAF.disableAutoRange(axis=pg.ViewBox.XAxis)
@@ -106,7 +106,7 @@ class PanelInterprete():
         #Configurar tercera gr�fica con temperatura y flujo t�rmico
         #win.nextRow()
         axis = DateAxis(orientation='bottom')
-        self.pTemp = win.addPlot(row=3, col=0, axisItems={'bottom': axis})
+        self.pTemp = win.addPlot(row=3, col=0, axisItems={'bottom': axis}, connect="finite")
         self.pTemp.setXLink('barClasificacion')
         self.pTemp.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.pTemp.setMouseEnabled(x=True, y=False)

@@ -18,7 +18,7 @@ import selEpisodio
 from time import mktime
 from datetime import datetime
 
-DEBUG = 1
+DEBUG = 0
 
 
 class PanelConsumo():

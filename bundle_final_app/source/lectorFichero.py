@@ -7,7 +7,7 @@ import sys
 from datetime import datetime as dt
 from PyQt4 import QtGui
 
-DEBUG = 1
+DEBUG = 0
 PRUEBAS = 0
 
 """
@@ -52,7 +52,7 @@ class Datos():
             if((fecha1.day != fecha2.day and fecha1 < fecha2) or i == len(self.tiempo)-2):
                 fin = i
                 datos_dias.append(datosDia((ini, fin)))
-                if(DEBUG):
+                if(DEBUG == 1):
                     print "ini", dt.fromtimestamp(self.tiempo[ini]), "fin", dt.fromtimestamp(self.tiempo[fin])
                 
                 ini = i+1
@@ -79,60 +79,218 @@ class LectorFichero(object):
         csv = np.genfromtxt(open(nombre, 'r'), delimiter="," , names=True)
         #self.nomCols = self.csv.dtype.names
         #self.nparams = len(self.nomCols)
-
-        sueno = csv['Sueño'.encode('iso8859-15')]
-        clasifSueno = csv['Clasificaciones_del_sueño'.encode('iso8859-15')]
-        flujo = csv['Flujo_térmico__media'.encode('iso8859-15')]
-        temp = csv['Temp_cerca_del_cuerpo__media']
-        tiempo = csv['Time'] / 1000
-        actli = csv['Ligera']
-        actsd = csv['Sedentaria']
-        actmd = csv['Moderada']
-        consm = csv['Gasto_energético'.encode('iso8859-15')]
-        acltrans = csv['Acel_transversal__picos']
+        self.nombre = nombre
+        
+        self.sueno = csv['Sueño'.encode('iso8859-15')]
+        self.clasifSueno = csv['Clasificaciones_del_sueño'.encode('iso8859-15')]
+        self.flujo = csv['Flujo_térmico__media'.encode('iso8859-15')]
+        self.temp = csv['Temp_cerca_del_cuerpo__media']
+        self.tiempo = csv['Time'] / 1000
+        self.actli = csv['Ligera']
+        self.actsd = csv['Sedentaria']
+        self.actmd = csv['Moderada']
+        self.consm = csv['Gasto_energético'.encode('iso8859-15')]
+        self.acltrans = csv['Acel_transversal__picos']
         
         #COMPROBAR DATOS CORRECTOS
-        #self.checkCSV()
+        self.filtrarDatosLigero()
+        #self.comprobarDatos()
+        #self.limpia_datos()
         
         #Datos tal cual vienen en el csv, sin particiones
-        self.datos_total = Datos(sueno, clasifSueno, flujo, temp, tiempo, actli, actsd, actmd, consm, acltrans)
+        self.datos_total = Datos(self.sueno, self.clasifSueno, self.flujo, self.temp, self.tiempo, self.actli, self.actsd, self.actmd, self.consm, self.acltrans)
+    
+    def filtrarDatosLigero(self):
+        def appendValues():
+            sueno.append(self.sueno[i])
+            clasifSueno.append(self.clasifSueno[i])
+            flujo.append(self.flujo[i])
+            temp.append(self.temp[i])
+            actli.append(self.actli[i])
+            actsd.append(self.actsd[i])
+            actmd.append(self.actmd[i])
+            consm.append(self.consm[i])
+            acltrans.append(self.acltrans[i])
+            
+        numDatos = len(self.tiempo)
+        i=10
+        incorrectos = 0
+        
+        while(self.tiempo[i] % 60 != 0):
+            i += 1
+        t = self.tiempo[i]
+        tiempo, sueno, clasifSueno, flujo, temp, actli, actsd, actmd, consm, acltrans = [], [], [], [], [], [], [], [], [], []
+
+        if(DEBUG == 3):
+            print i, self.tiempo[i], t
+            raw_input() # PAUSE
+            print "----Comprobar datos ", self.nombre, "----"
+            print self.tiempo[i], t
+            raw_input() # PAUSE
+        
+        """
+        x = i
+        while(x < 10):
+            print self.tiempo[x+1] - self.tiempo[x]
+            x += 1
+        raw_input() # PAUSE    
+        """
+        
+        while(i < numDatos-1):
+            if(self.tiempo[i] % 60 != 0):
+                if(DEBUG == 3):
+                    print i
+                    raw_input() # PAUSE
+                    incorrectos += 1
+                #tiempo.append(t)
+                #appendNan()
+            else:
+                tiempo.append(t)
+                appendValues()
+                t += 60
+            i += 1
+               
+        if(DEBUG == 3):
+            print "Datos totales: ", numDatos, " incorrectos: ", incorrectos, " datos nuevos: ", len(tiempo)
+        self.sueno, self.clasifSueno, self.flujo, self.temp, self.tiempo, self.actli, self.actsd, self.actmd, self.consm, self.acltrans = sueno, clasifSueno, flujo, temp, tiempo, actli, actsd, actmd, consm, acltrans    
+    
+    
+    def comprobarDatos(self):
+        def appendNan():
+            sueno.append(np.NaN)
+            clasifSueno.append(np.NaN)
+            flujo.append(np.NaN)
+            temp.append(np.NaN)
+            actli.append(np.NaN)
+            actsd.append(np.NaN)
+            actmd.append(np.NaN)
+            consm.append(np.NaN)
+            acltrans.append(np.NaN)
+        def appendValues():
+            sueno.append(self.sueno[i])
+            clasifSueno.append(self.clasifSueno[i])
+            flujo.append(self.flujo[i])
+            temp.append(self.temp[i])
+            actli.append(self.actli[i])
+            actsd.append(self.actsd[i])
+            actmd.append(self.actmd[i])
+            consm.append(self.consm[i])
+            acltrans.append(self.acltrans[i])
+               
+        numDatos = len(self.tiempo)
+        i=10
+        incorrectos = 0
+        
+        while(self.tiempo[i] % 60 != 0):
+            i += 1
+        t = self.tiempo[i]
+        tiempo, sueno, clasifSueno, flujo, temp, actli, actsd, actmd, consm, acltrans = [], [], [], [], [], [], [], [], [], []
+
+        if(DEBUG == 3):
+            print i, self.tiempo[i], t
+            raw_input() # PAUSE
+            print "----Comprobar datos ", self.nombre, "----"
+            print self.tiempo[i], t
+            raw_input() # PAUSE
+        
+        """
+        x = i
+        while(x < 10):
+            print self.tiempo[x+1] - self.tiempo[x]
+            x += 1
+        raw_input() # PAUSE    
+        """
+        
+        while(i < numDatos-1):
+            if(self.tiempo[i] % 60 != 0):
+                if(DEBUG == 3):
+                    print i
+                    raw_input() # PAUSE
+                    incorrectos += 1
+                #tiempo.append(t)
+                #appendNan()
+            elif(self.tiempo[i] != t):
+                if(DEBUG == 3):
+                    print "Desajuste de tiempo en ", i, " ", t, " ", self.tiempo[i]
+                    raw_input() # PAUSE
+                    incorrectos +=1
+                if(self.tiempo[i] > t):
+                    k = 0
+                    #Si hay un salto de tiempo, rellenar el hueco con NaN
+                    while(self.tiempo[i] > t):
+                        #print i, self.tiempo[i], t
+                        tiempo.append(t)
+                        appendNan()
+                        t+=60
+                        k+=1
+                    if(DEBUG == 3):
+                        print "nan insertados: ", k
+                        raw_input() # PAUSE
+                tiempo.append(t)
+                appendValues()
+                t+=60
+            else:
+                tiempo.append(t)
+                appendValues()
+                t += 60
+            i += 1
+               
+        if(DEBUG == 3):
+            print "Datos totales: ", numDatos, " incorrectos: ", incorrectos, " datos nuevos: ", len(tiempo)
+        self.sueno, self.clasifSueno, self.flujo, self.temp, self.tiempo, self.actli, self.actsd, self.actmd, self.consm, self.acltrans = sueno, clasifSueno, flujo, temp, tiempo, actli, actsd, actmd, consm, acltrans    
     
     def limpia_datos(self):
+        print "Limpiando datos del fichero"
         i = 1
         dato = self.tiempo[0]
-        dato += 6
-        while  (i < len(self.tiempo)-1):
-            if (self.tiempo(i) < dato):
-                self.sueno.pop(i)
-                self.clasifSueno.pop(i)
-                self.flujo.pop(i)
-                self.temp.pop(i)
-                self.tiempo.pop(i)
-                self.actli.pop(i)
-                self.actsd.pop(i)
-                self.actmd.pop(i)
-                self.consm.pop(i)
-                self.acltrans.pop(i)
-            elif (dato < self.tiempo(i)):
-                dato += 6
-            else: 
+        numDatos = len(self.tiempo)
+        # ¿? Mejor duplicar listas guardando en la segunda los datos filtrados
+        while  (i < numDatos-1):
+            if (self.tiempo[i] < self.tiempo[i-1] or (self.tiempo[i] - 90000) > self.tiempo[i-1]):
+                numDatos -= 1
+                print "*****Pillado!***** ", self.tiempo[i]
+                np.delete(self.sueno, i)
+                np.delete(self.clasifSueno, i)
+                np.delete(self.flujo, i)
+                np.delete(self.temp, i)
+                np.delete(self.tiempo, i)
+                np.delete(self.actli, i)
+                np.delete(self.actsd, i)
+                np.delete(self.actmd, i)
+                np.delete(self.consm, i)
+                np.delete(self.acltrans, i)
+                
+                
+            else:    
                 i += 1
-                dato += 6
-            
+
     def getDatos(self):
         return self.datos_total
         
     def getDatosDias(self):
         datos_dias = self.datos_total.creaDias()
-        if(DEBUG):
+        if(DEBUG == 2):
             print len(datos_dias), 'dias'
             for i in datos_dias:
                 print "ini", i.tiempo[0], "fin", i.tiempo[-1]
         return datos_dias
 
+
+
 if(PRUEBAS):
-    fichero = LectorFichero('../data.csv')
-    fichero.getDatosDias()
+    fname = 'Ejemplos/natividad.csv'
+    fname2 = 'Ejemplos/Concha Muñoz Gutiérrez.csv'
+    fname3 = 'Ejemplos/Ana Carolina.csv'
+    fname4 = 'Ejemplos/noelia.csv'
+    fname5 = 'Ejemplos/Javier.csv'
+    
+    fichero = LectorFichero(fname)
+    #fichero = LectorFichero(fname2)
+    #fichero = LectorFichero(fname3)
+    #fichero = LectorFichero(fname4)
+    #fichero = LectorFichero(fname5)
+
+    #fichero.getDatosDias()
     #raw_input('Press <ENTER> to continue')
     
     """

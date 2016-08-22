@@ -3,21 +3,6 @@ from __future__ import unicode_literals
 import sys
 #sys.path.insert(0, '../lib')
 
-
-"""
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-import numpy as np
-import matplotlib.dates as md
-import math
-
-import colores
-import clustering
-from scipy.cluster.hierarchy import dendrogram
-from datetime import datetime
-"""
 from PyQt4.uic import loadUiType
 from pyqtgraph.Qt import QtCore, QtGui
 import lectorFichero as lf
@@ -88,11 +73,11 @@ class VentanaMain(QMainWindow, Ui_MainWindow):
             
         epsDias = []
         dd = self.csv.getDatosDias()
+        
         for i in dd:
             epsDias.append(selEpisodio.selEpisodio(i))
         self.tabs.append(PanelConsumo(epsDias, self.layout_diario, self.layout_dia_izq, self.layout_dia_der,
                                   self.cbx_izq, self.cbx_der, self.lbl_izq, self.lbl_der))
-        
         
         
     #Carga un fichero de datos csv y obtiene los episodios de sueño
