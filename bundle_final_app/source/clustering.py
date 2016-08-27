@@ -1,24 +1,17 @@
 # -*- coding: utf-8 -*-
 import sys
 #sys.path.insert(0, '../lib')
-from matplotlib import pyplot as plt
-from scipy.cluster.hierarchy import dendrogram, linkage
+from scipy.cluster.hierarchy import linkage
 import numpy as np
-from scipy.cluster.hierarchy import cophenet
-from scipy.spatial.distance import pdist
 from sklearn import preprocessing
-from scipy.spatial.distance import euclidean
 #from fastdtw import fastdtw
 import scipy.spatial.distance as ssd
 import math
 import mlpy
-import selEpisodio
 
 DEBUG=0
 
-
 class HierarchicalClustering():
-    #episodios = selep
     def __init__(self, episodios, tf=False, cons=False):
         #Representa un episodio de sueño mediante las series temporales de flujo y temperatura
         class Individuo:
@@ -29,9 +22,7 @@ class HierarchicalClustering():
                 self.stf = flujo
                 self.stc = consumo
         
-        #episodios = selep.epFiltro
-        
-        print "Normalizar", len(episodios), "episodios de sueño"
+        if(DEBUG): print "Normalizar", len(episodios), "episodios de sueño"
         # Normalizar por estandarización cada episodio de sueño (temperatura y flujo)
         self.eps_sueno = []
         if(tf):
@@ -50,15 +41,14 @@ class HierarchicalClustering():
         if(tf):
             for i in range(s):
                 for j in range(s):
-                    #distanceTemp , path = fastdtw(eps_sueno[i].stt, eps_sueno[j].stt, dist=euclidean) #Distancia en temperatura
-                    #distanceFlujo , path = fastdtw(eps_sueno[i].stf, eps_sueno[j].stf, dist=euclidean) #Distancia en flujo
-                    distanceTemp = mlpy.dtw_std(self.eps_sueno[i].stt, self.eps_sueno[j].stt, dist_only=True) 
+                    distanceTemp = mlpy.dtw_std(self.eps_sueno[i].stt, self.eps_sueno[j].stt, dist_only=True)
                     distanceFlujo = mlpy.dtw_std(self.eps_sueno[i].stf, self.eps_sueno[j].stf, dist_only=True)
                     self.distancias[j][i] = math.sqrt(math.pow(distanceTemp, 2) + math.pow(distanceFlujo, 2)) #Distancia euclídea total
         elif(cons):
             for i in range(s):
                 for j in range(s):
                     self.distancias[j][i] = mlpy.dtw_std(self.eps_sueno[i].stc, self.eps_sueno[j].stc, dist_only=True) #Dist. euclidea
+                    
         #Vector con las distancias requeridas para hacer clustering
         if(DEBUG): print "Matriz de distancias", self.distancias.shape, self.distancias
 
@@ -67,6 +57,7 @@ class HierarchicalClustering():
         #Calcular clustering jerárquico
         self.Z = linkage(dists, 'average')
 
+        #Etiquetas de cada episodio para mostrar en el dendrograma
         self.labels=[]
         for i in self.eps_sueno:
             self.labels.append(i.nombre)

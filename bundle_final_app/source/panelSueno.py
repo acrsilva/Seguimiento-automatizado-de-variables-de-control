@@ -21,7 +21,7 @@ class FiltroEpisodiosDialog(QtGui.QDialog):
         super(FiltroEpisodiosDialog, self).__init__(parent)
         self.eps = eps
         
-        self.setWindowTitle("Agrupar episodios")
+        self.setWindowTitle("Elegir episodios a agrupar")
         
         self.buttonBox = QtGui.QDialogButtonBox(self)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)

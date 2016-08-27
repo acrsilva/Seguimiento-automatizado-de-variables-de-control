@@ -5,6 +5,7 @@ import numpy as np
 from datetime import datetime
 from scipy.stats import pearsonr
 import sys
+import colores
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -218,7 +219,6 @@ class selEpisodio():
         """
         indices = []
         cini, cfin = 0, 0
-        print "**** PRUEBA ", len(sueno), len(sed), len(lig), len(mod)
         tipo, sbool, sedb, ligb, modb = self.encuentraTipo(0, sueno, sed, lig, mod)
         for i in range(len(sueno)-1):
             if(sueno[i+1] == 1 and not sbool):
@@ -263,7 +263,27 @@ class selEpisodio():
             else:
                 print ind.nombre, ind.ini, ind.fin, "duracion:", ind.fin - ind.ini + 1
     
-    #PRUEBAS
+    def getColorSueno(self, t):
+        if(not self.csv.sueno[t]):
+            return colores.despierto
+        elif(self.csv.clasifSueno[t] == 5):
+            return colores.suenoProfundo
+        else:
+            return "w"
+        
+    """        
+    def getColores(self, ini, fin):
+        c = []
+        for i in range(ini, fin):
+            if(not self.csv.sueno[i]):
+                c.append(colores.despierto)
+            elif(self.csv.clasifSueno[i] == 5):
+                c.append(colores.suenoProfundo)
+            else:
+                c.append(colores.suenoLigero)
+        return c
+    """
+        
     #Devuelve una lista con los instantes de tiempo donde el paciente está despierto
     def getDespierto(self, ini, fin):
         flag = False

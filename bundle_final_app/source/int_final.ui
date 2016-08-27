@@ -6,1016 +6,1129 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1377</width>
-    <height>840</height>
+    <width>1391</width>
+    <height>838</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QTabWidget" name="tabWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>1371</width>
-      <height>781</height>
-     </rect>
-    </property>
-    <property name="autoFillBackground">
-     <bool>true</bool>
-    </property>
-    <property name="currentIndex">
-     <number>0</number>
-    </property>
-    <widget class="QWidget" name="tab_5">
-     <attribute name="title">
-      <string>Intérprete</string>
-     </attribute>
-     <widget class="QPushButton" name="btn_prev">
-      <property name="geometry">
-       <rect>
-        <x>310</x>
-        <y>620</y>
-        <width>141</width>
-        <height>27</height>
-       </rect>
+   <layout class="QGridLayout" name="gridLayout_4">
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="autoFillBackground">
+       <bool>true</bool>
       </property>
-      <property name="text">
-       <string>Episodio Anterior</string>
+      <property name="currentIndex">
+       <number>0</number>
       </property>
-     </widget>
-     <widget class="QPushButton" name="btn_next">
-      <property name="geometry">
-       <rect>
-        <x>910</x>
-        <y>620</y>
-        <width>141</width>
-        <height>27</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Episodio Siguiente</string>
-      </property>
-     </widget>
-     <widget class="QComboBox" name="cbxEpisodio">
-      <property name="geometry">
-       <rect>
-        <x>620</x>
-        <y>620</y>
-        <width>161</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="GraphicsLayoutWidget" name="gvInterprete">
-      <property name="geometry">
-       <rect>
-        <x>90</x>
-        <y>40</y>
-        <width>1181</width>
-        <height>551</height>
-       </rect>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="tab_6">
-     <attribute name="title">
-      <string>Correlaciones</string>
-     </attribute>
-     <widget class="QGroupBox" name="groupBox_4">
-      <property name="geometry">
-       <rect>
-        <x>180</x>
-        <y>640</y>
-        <width>984</width>
-        <height>100</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>100</height>
-       </size>
-      </property>
-      <property name="title">
-       <string>Filtros</string>
-      </property>
-      <widget class="QPushButton" name="btnNext">
-       <property name="geometry">
-        <rect>
-         <x>510</x>
-         <y>60</y>
-         <width>101</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>&gt;&gt;</string>
-       </property>
+      <widget class="QWidget" name="tab_5">
+       <attribute name="title">
+        <string>Intérprete</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="GraphicsLayoutWidget" name="gvInterprete"/>
+        </item>
+        <item>
+         <widget class="QFrame" name="frame_5">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <widget class="QComboBox" name="cbxEpisodio">
+           <property name="geometry">
+            <rect>
+             <x>560</x>
+             <y>30</y>
+             <width>131</width>
+             <height>20</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="btn_prev">
+           <property name="geometry">
+            <rect>
+             <x>330</x>
+             <y>30</y>
+             <width>89</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Episodio Anterior</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="btn_next">
+           <property name="geometry">
+            <rect>
+             <x>850</x>
+             <y>30</y>
+             <width>94</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Episodio Siguiente</string>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
       </widget>
-      <widget class="QPushButton" name="btnPrev">
-       <property name="geometry">
-        <rect>
-         <x>370</x>
-         <y>60</y>
-         <width>91</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>30</width>
-         <height>20</height>
-        </size>
-       </property>
-       <property name="baseSize">
-        <size>
-         <width>59</width>
-         <height>59</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>&lt;&lt;</string>
-       </property>
+      <widget class="QWidget" name="tab_6">
+       <attribute name="title">
+        <string>Correlaciones</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QWidget" name="wScatter1" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <layout class="QHBoxLayout" name="layoutMatplot1"/>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_4">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Filtros</string>
+          </property>
+          <widget class="QPushButton" name="btnNext">
+           <property name="geometry">
+            <rect>
+             <x>680</x>
+             <y>60</y>
+             <width>101</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>&gt;&gt;</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="btnPrev">
+           <property name="geometry">
+            <rect>
+             <x>540</x>
+             <y>60</y>
+             <width>91</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="baseSize">
+            <size>
+             <width>59</width>
+             <height>59</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>&lt;&lt;</string>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="cbSueno">
+           <property name="geometry">
+            <rect>
+             <x>370</x>
+             <y>30</y>
+             <width>984</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Clasificación de sueño</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="cbSedentario">
+           <property name="geometry">
+            <rect>
+             <x>550</x>
+             <y>30</y>
+             <width>984</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Sedentario</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="cbLigera">
+           <property name="geometry">
+            <rect>
+             <x>660</x>
+             <y>30</y>
+             <width>984</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Actividad ligera</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="cbModerada">
+           <property name="geometry">
+            <rect>
+             <x>800</x>
+             <y>30</y>
+             <width>984</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Actividad moderada</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QComboBox" name="cbx_izq_2">
+           <property name="geometry">
+            <rect>
+             <x>320</x>
+             <y>60</y>
+             <width>121</width>
+             <height>27</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QComboBox" name="cbx_der_2">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>880</x>
+             <y>60</y>
+             <width>121</width>
+             <height>27</height>
+            </rect>
+           </property>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labelScatter">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
-      <widget class="QCheckBox" name="cbSueno">
-       <property name="geometry">
-        <rect>
-         <x>200</x>
-         <y>30</y>
-         <width>984</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Clasificación de sueño</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Todos</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QFrame" name="frame_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_6">
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Matriz de distancias entre episodios de sueño</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QWidget" name="wgDistTable" native="true">
+             <layout class="QGridLayout" name="tableLayout"/>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QGroupBox" name="groupBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+               <horstretch>0</horstretch>
+               <verstretch>10</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>60</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>60</height>
+              </size>
+             </property>
+             <property name="title">
+              <string>Clustering</string>
+             </property>
+             <widget class="QRadioButton" name="rbTemperatura">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>20</y>
+                <width>171</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Temperatura y flujo</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+             <widget class="QRadioButton" name="rbConsumo">
+              <property name="geometry">
+               <rect>
+                <x>200</x>
+                <y>20</y>
+                <width>116</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Consumo</string>
+              </property>
+             </widget>
+             <widget class="QPushButton" name="btnFiltraEpsT">
+              <property name="geometry">
+               <rect>
+                <x>300</x>
+                <y>20</y>
+                <width>91</width>
+                <height>23</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Filtrar Episodios</string>
+              </property>
+             </widget>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QWidget" name="wgDendograma" native="true">
+             <layout class="QGridLayout" name="dendrogramLayout"/>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="frame_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>2</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="QFrame" name="frame">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>80</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>80</height>
+              </size>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <widget class="QLabel" name="label">
+              <property name="geometry">
+               <rect>
+                <x>290</x>
+                <y>10</y>
+                <width>201</width>
+                <height>21</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Comparación entre episodios de sueño</string>
+              </property>
+             </widget>
+             <widget class="QLabel" name="lbl1">
+              <property name="geometry">
+               <rect>
+                <x>210</x>
+                <y>50</y>
+                <width>241</width>
+                <height>21</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+             </widget>
+             <widget class="QComboBox" name="cbx1">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>50</y>
+                <width>191</width>
+                <height>21</height>
+               </rect>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>300</height>
+               </size>
+              </property>
+             </widget>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="wgPlotUp" native="true">
+             <layout class="QHBoxLayout" name="plotLayoutUp"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QFrame" name="frame_4">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>60</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>60</height>
+              </size>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <widget class="QLabel" name="lbl2">
+              <property name="geometry">
+               <rect>
+                <x>200</x>
+                <y>10</y>
+                <width>191</width>
+                <height>31</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+             </widget>
+             <widget class="QComboBox" name="cbx2">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>20</y>
+                <width>181</width>
+                <height>20</height>
+               </rect>
+              </property>
+             </widget>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="wgPlotBot" native="true">
+             <layout class="QHBoxLayout" name="plotLayoutBot"/>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
       </widget>
-      <widget class="QCheckBox" name="cbSedentario">
-       <property name="geometry">
-        <rect>
-         <x>380</x>
-         <y>30</y>
-         <width>984</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Sedentario</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Sueños diurnos</string>
+       </attribute>
+       <widget class="QComboBox" name="cbx1Siestas">
+        <property name="geometry">
+         <rect>
+          <x>560</x>
+          <y>40</y>
+          <width>171</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>300</height>
+         </size>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="cbx2Siestas">
+        <property name="geometry">
+         <rect>
+          <x>560</x>
+          <y>370</y>
+          <width>171</width>
+          <height>27</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_2">
+        <property name="geometry">
+         <rect>
+          <x>770</x>
+          <y>0</y>
+          <width>381</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Comparación entre episodios de sueño diurnos (siestas)</string>
+        </property>
+       </widget>
+       <widget class="QWidget" name="wgDendograma_2" native="true">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>390</y>
+          <width>511</width>
+          <height>291</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="dendrogramLayoutSiestas"/>
+       </widget>
+       <widget class="QLabel" name="lbl2Siestas">
+        <property name="geometry">
+         <rect>
+          <x>750</x>
+          <y>370</y>
+          <width>461</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="lbl1Siestas">
+        <property name="geometry">
+         <rect>
+          <x>750</x>
+          <y>40</y>
+          <width>461</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QWidget" name="wgPlotBot_2" native="true">
+        <property name="geometry">
+         <rect>
+          <x>550</x>
+          <y>410</y>
+          <width>801</width>
+          <height>271</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="plotLayoutBotSiestas"/>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>511</width>
+          <height>61</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Clustering</string>
+        </property>
+        <widget class="QRadioButton" name="rbTemperaturaSiestas">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>171</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Temperatura y flujo</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="rbConsumoSiestas">
+         <property name="geometry">
+          <rect>
+           <x>200</x>
+           <y>20</y>
+           <width>116</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Consumo</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="btnFiltraEpsD">
+         <property name="geometry">
+          <rect>
+           <x>350</x>
+           <y>20</y>
+           <width>91</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Filtrar Episodios</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QLabel" name="label_4">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>70</y>
+          <width>221</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Matriz de distancias entre episodios de sueño</string>
+        </property>
+       </widget>
+       <widget class="QWidget" name="wgPlotUp_2" native="true">
+        <property name="geometry">
+         <rect>
+          <x>550</x>
+          <y>80</y>
+          <width>801</width>
+          <height>251</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="plotLayoutUpSiestas"/>
+       </widget>
+       <widget class="QWidget" name="wgDistTable_2" native="true">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>90</y>
+          <width>511</width>
+          <height>291</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="tableLayoutSiestas"/>
+       </widget>
+       <widget class="Line" name="line_5">
+        <property name="geometry">
+         <rect>
+          <x>530</x>
+          <y>340</y>
+          <width>851</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+       <widget class="Line" name="line_6">
+        <property name="geometry">
+         <rect>
+          <x>520</x>
+          <y>0</y>
+          <width>20</width>
+          <height>761</height>
+         </rect>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
       </widget>
-      <widget class="QCheckBox" name="cbLigera">
-       <property name="geometry">
-        <rect>
-         <x>490</x>
-         <y>30</y>
-         <width>984</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Actividad ligera</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>Sueños nocturnos</string>
+       </attribute>
+       <widget class="QComboBox" name="cbx1Suenos">
+        <property name="geometry">
+         <rect>
+          <x>560</x>
+          <y>40</y>
+          <width>171</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>300</height>
+         </size>
+        </property>
+       </widget>
+       <widget class="QWidget" name="wgPlotBot_3" native="true">
+        <property name="geometry">
+         <rect>
+          <x>550</x>
+          <y>410</y>
+          <width>801</width>
+          <height>271</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="plotLayoutBotSuenos"/>
+       </widget>
+       <widget class="QWidget" name="wgDistTable_3" native="true">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>90</y>
+          <width>511</width>
+          <height>291</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="tableLayoutSuenos"/>
+       </widget>
+       <widget class="QWidget" name="wgPlotUp_3" native="true">
+        <property name="geometry">
+         <rect>
+          <x>550</x>
+          <y>80</y>
+          <width>801</width>
+          <height>251</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="plotLayoutUpSuenos"/>
+       </widget>
+       <widget class="QLabel" name="label_5">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>70</y>
+          <width>221</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Matriz de distancias entre episodios de sueño</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="lbl1Suenos">
+        <property name="geometry">
+         <rect>
+          <x>750</x>
+          <y>40</y>
+          <width>461</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>511</width>
+          <height>61</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Clustering</string>
+        </property>
+        <widget class="QRadioButton" name="rbTemperaturaSuenos">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>171</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Temperatura y flujo</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="rbConsumoSuenos">
+         <property name="geometry">
+          <rect>
+           <x>200</x>
+           <y>20</y>
+           <width>116</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Consumo</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="btnFiltraEpsN">
+         <property name="geometry">
+          <rect>
+           <x>350</x>
+           <y>20</y>
+           <width>91</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Filtrar Episodios</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="wgDendograma_3" native="true">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>390</y>
+          <width>511</width>
+          <height>291</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="dendrogramLayoutSuenos"/>
+       </widget>
+       <widget class="QLabel" name="lbl2Suenos">
+        <property name="geometry">
+         <rect>
+          <x>750</x>
+          <y>370</y>
+          <width>461</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="cbx2Suenos">
+        <property name="geometry">
+         <rect>
+          <x>560</x>
+          <y>370</y>
+          <width>171</width>
+          <height>27</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_6">
+        <property name="geometry">
+         <rect>
+          <x>770</x>
+          <y>0</y>
+          <width>361</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Comparación entre episodios de sueño nocturnos</string>
+        </property>
+       </widget>
+       <widget class="Line" name="line_7">
+        <property name="geometry">
+         <rect>
+          <x>530</x>
+          <y>340</y>
+          <width>851</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+       <widget class="Line" name="line_8">
+        <property name="geometry">
+         <rect>
+          <x>520</x>
+          <y>0</y>
+          <width>20</width>
+          <height>761</height>
+         </rect>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
       </widget>
-      <widget class="QCheckBox" name="cbModerada">
-       <property name="geometry">
-        <rect>
-         <x>630</x>
-         <y>30</y>
-         <width>984</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Actividad moderada</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QComboBox" name="cbx_izq_2">
-       <property name="geometry">
-        <rect>
-         <x>150</x>
-         <y>60</y>
-         <width>121</width>
-         <height>27</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QComboBox" name="cbx_der_2">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>710</x>
-         <y>60</y>
-         <width>121</width>
-         <height>27</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QWidget" name="wScatter1" native="true">
-      <property name="geometry">
-       <rect>
-        <x>180</x>
-        <y>1</y>
-        <width>984</width>
-        <height>631</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <layout class="QHBoxLayout" name="layoutMatplot1"/>
-     </widget>
-     <widget class="QLabel" name="labelScatter">
-      <property name="geometry">
-       <rect>
-        <x>180</x>
-        <y>650</y>
-        <width>984</width>
-        <height>13</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="tab_2">
-     <attribute name="title">
-      <string>Todos</string>
-     </attribute>
-     <widget class="QGroupBox" name="groupBox">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>511</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Clustering</string>
-      </property>
-      <widget class="QRadioButton" name="rbTemperatura">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>171</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Temperatura y flujo</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="rbConsumo">
-       <property name="geometry">
-        <rect>
-         <x>200</x>
-         <y>20</y>
-         <width>116</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Consumo</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="btnFiltraEpsT">
-       <property name="geometry">
-        <rect>
-         <x>350</x>
-         <y>20</y>
-         <width>91</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Filtrar Episodios</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QComboBox" name="cbx2">
-      <property name="geometry">
-       <rect>
-        <x>560</x>
-        <y>370</y>
-        <width>171</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lbl1">
-      <property name="geometry">
-       <rect>
-        <x>750</x>
-        <y>40</y>
-        <width>461</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>TextLabel</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lbl2">
-      <property name="geometry">
-       <rect>
-        <x>750</x>
-        <y>370</y>
-        <width>461</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>TextLabel</string>
-      </property>
-     </widget>
-     <widget class="QComboBox" name="cbx1">
-      <property name="geometry">
-       <rect>
-        <x>560</x>
-        <y>40</y>
-        <width>171</width>
-        <height>27</height>
-       </rect>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>300</height>
-       </size>
-      </property>
-     </widget>
-     <widget class="QWidget" name="wgPlotBot" native="true">
-      <property name="geometry">
-       <rect>
-        <x>550</x>
-        <y>410</y>
-        <width>801</width>
-        <height>271</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="plotLayoutBot"/>
-     </widget>
-     <widget class="QWidget" name="wgDendograma" native="true">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>390</y>
-        <width>511</width>
-        <height>291</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="dendrogramLayout"/>
-     </widget>
-     <widget class="QLabel" name="label_3">
-      <property name="geometry">
-       <rect>
-        <x>140</x>
-        <y>70</y>
-        <width>231</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Matriz de distancias entre episodios de sueño</string>
-      </property>
-     </widget>
-     <widget class="QWidget" name="wgDistTable" native="true">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>90</y>
-        <width>511</width>
-        <height>291</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="tableLayout"/>
-     </widget>
-     <widget class="QLabel" name="label">
-      <property name="geometry">
-       <rect>
-        <x>770</x>
-        <y>0</y>
-        <width>261</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Comparación entre episodios de sueño</string>
-      </property>
-     </widget>
-     <widget class="QWidget" name="wgPlotUp" native="true">
-      <property name="geometry">
-       <rect>
-        <x>550</x>
-        <y>80</y>
-        <width>801</width>
-        <height>251</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="plotLayoutUp"/>
-     </widget>
-     <widget class="Line" name="line">
-      <property name="geometry">
-       <rect>
-        <x>520</x>
-        <y>0</y>
-        <width>20</width>
-        <height>761</height>
-       </rect>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-     <widget class="Line" name="line_2">
-      <property name="geometry">
-       <rect>
-        <x>530</x>
-        <y>340</y>
-        <width>851</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="tab">
-     <attribute name="title">
-      <string>Sueños diurnos</string>
-     </attribute>
-     <widget class="QComboBox" name="cbx1Siestas">
-      <property name="geometry">
-       <rect>
-        <x>560</x>
-        <y>40</y>
-        <width>171</width>
-        <height>27</height>
-       </rect>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>300</height>
-       </size>
-      </property>
-     </widget>
-     <widget class="QComboBox" name="cbx2Siestas">
-      <property name="geometry">
-       <rect>
-        <x>560</x>
-        <y>370</y>
-        <width>171</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_2">
-      <property name="geometry">
-       <rect>
-        <x>770</x>
-        <y>0</y>
-        <width>381</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Comparación entre episodios de sueño diurnos (siestas)</string>
-      </property>
-     </widget>
-     <widget class="QWidget" name="wgDendograma_2" native="true">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>390</y>
-        <width>511</width>
-        <height>291</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="dendrogramLayoutSiestas"/>
-     </widget>
-     <widget class="QLabel" name="lbl2Siestas">
-      <property name="geometry">
-       <rect>
-        <x>750</x>
-        <y>370</y>
-        <width>461</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>TextLabel</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lbl1Siestas">
-      <property name="geometry">
-       <rect>
-        <x>750</x>
-        <y>40</y>
-        <width>461</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>TextLabel</string>
-      </property>
-     </widget>
-     <widget class="QWidget" name="wgPlotBot_2" native="true">
-      <property name="geometry">
-       <rect>
-        <x>550</x>
-        <y>410</y>
-        <width>801</width>
-        <height>271</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="plotLayoutBotSiestas"/>
-     </widget>
-     <widget class="QGroupBox" name="groupBox_2">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>511</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Clustering</string>
-      </property>
-      <widget class="QRadioButton" name="rbTemperaturaSiestas">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>171</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Temperatura y flujo</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="rbConsumoSiestas">
-       <property name="geometry">
-        <rect>
-         <x>200</x>
-         <y>20</y>
-         <width>116</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Consumo</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="btnFiltraEpsD">
-       <property name="geometry">
-        <rect>
-         <x>350</x>
-         <y>20</y>
-         <width>91</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Filtrar Episodios</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QLabel" name="label_4">
-      <property name="geometry">
-       <rect>
-        <x>140</x>
-        <y>70</y>
-        <width>221</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Matriz de distancias entre episodios de sueño</string>
-      </property>
-     </widget>
-     <widget class="QWidget" name="wgPlotUp_2" native="true">
-      <property name="geometry">
-       <rect>
-        <x>550</x>
-        <y>80</y>
-        <width>801</width>
-        <height>251</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="plotLayoutUpSiestas"/>
-     </widget>
-     <widget class="QWidget" name="wgDistTable_2" native="true">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>90</y>
-        <width>511</width>
-        <height>291</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="tableLayoutSiestas"/>
-     </widget>
-     <widget class="Line" name="line_5">
-      <property name="geometry">
-       <rect>
-        <x>530</x>
-        <y>340</y>
-        <width>851</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-     <widget class="Line" name="line_6">
-      <property name="geometry">
-       <rect>
-        <x>520</x>
-        <y>0</y>
-        <width>20</width>
-        <height>761</height>
-       </rect>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="tab_3">
-     <attribute name="title">
-      <string>Sueños nocturnos</string>
-     </attribute>
-     <widget class="QComboBox" name="cbx1Suenos">
-      <property name="geometry">
-       <rect>
-        <x>560</x>
-        <y>40</y>
-        <width>171</width>
-        <height>27</height>
-       </rect>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>300</height>
-       </size>
-      </property>
-     </widget>
-     <widget class="QWidget" name="wgPlotBot_3" native="true">
-      <property name="geometry">
-       <rect>
-        <x>550</x>
-        <y>410</y>
-        <width>801</width>
-        <height>271</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="plotLayoutBotSuenos"/>
-     </widget>
-     <widget class="QWidget" name="wgDistTable_3" native="true">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>90</y>
-        <width>511</width>
-        <height>291</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="tableLayoutSuenos"/>
-     </widget>
-     <widget class="QWidget" name="wgPlotUp_3" native="true">
-      <property name="geometry">
-       <rect>
-        <x>550</x>
-        <y>80</y>
-        <width>801</width>
-        <height>251</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="plotLayoutUpSuenos"/>
-     </widget>
-     <widget class="QLabel" name="label_5">
-      <property name="geometry">
-       <rect>
-        <x>140</x>
-        <y>70</y>
-        <width>221</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Matriz de distancias entre episodios de sueño</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lbl1Suenos">
-      <property name="geometry">
-       <rect>
-        <x>750</x>
-        <y>40</y>
-        <width>461</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>TextLabel</string>
-      </property>
-     </widget>
-     <widget class="QGroupBox" name="groupBox_3">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>511</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Clustering</string>
-      </property>
-      <widget class="QRadioButton" name="rbTemperaturaSuenos">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>171</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Temperatura y flujo</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="rbConsumoSuenos">
-       <property name="geometry">
-        <rect>
-         <x>200</x>
-         <y>20</y>
-         <width>116</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Consumo</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="btnFiltraEpsN">
-       <property name="geometry">
-        <rect>
-         <x>350</x>
-         <y>20</y>
-         <width>91</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Filtrar Episodios</string>
-       </property>
+      <widget class="QWidget" name="tab_4">
+       <attribute name="title">
+        <string>Consumos</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QWidget" name="widget" native="true">
+          <layout class="QVBoxLayout" name="layout_diario"/>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="frame_10">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QFrame" name="frame_7">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QGridLayout" name="gridLayout">
+              <item row="0" column="0">
+               <widget class="QFrame" name="frame_6">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>50</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>50</height>
+                 </size>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <widget class="QLabel" name="lbl_izq">
+                 <property name="geometry">
+                  <rect>
+                   <x>170</x>
+                   <y>6</y>
+                   <width>471</width>
+                   <height>31</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+                <widget class="QComboBox" name="cbx_izq">
+                 <property name="geometry">
+                  <rect>
+                   <x>10</x>
+                   <y>10</y>
+                   <width>141</width>
+                   <height>27</height>
+                  </rect>
+                 </property>
+                </widget>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QWidget" name="widget_2" native="true">
+                <layout class="QVBoxLayout" name="layout_dia_izq"/>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_4">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QFrame" name="frame_9">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_3">
+              <item row="0" column="0">
+               <widget class="QFrame" name="frame_8">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>50</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>50</height>
+                 </size>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <widget class="QLabel" name="lbl_der">
+                 <property name="geometry">
+                  <rect>
+                   <x>170</x>
+                   <y>10</y>
+                   <width>471</width>
+                   <height>31</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+                <widget class="QComboBox" name="cbx_der">
+                 <property name="geometry">
+                  <rect>
+                   <x>10</x>
+                   <y>10</y>
+                   <width>141</width>
+                   <height>27</height>
+                  </rect>
+                 </property>
+                </widget>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QWidget" name="widget_4" native="true">
+                <layout class="QVBoxLayout" name="layout_dia_der"/>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
-     <widget class="QWidget" name="wgDendograma_3" native="true">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>390</y>
-        <width>511</width>
-        <height>291</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="dendrogramLayoutSuenos"/>
-     </widget>
-     <widget class="QLabel" name="lbl2Suenos">
-      <property name="geometry">
-       <rect>
-        <x>750</x>
-        <y>370</y>
-        <width>461</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>TextLabel</string>
-      </property>
-     </widget>
-     <widget class="QComboBox" name="cbx2Suenos">
-      <property name="geometry">
-       <rect>
-        <x>560</x>
-        <y>370</y>
-        <width>171</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_6">
-      <property name="geometry">
-       <rect>
-        <x>770</x>
-        <y>0</y>
-        <width>361</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Comparación entre episodios de sueño nocturnos</string>
-      </property>
-     </widget>
-     <widget class="Line" name="line_7">
-      <property name="geometry">
-       <rect>
-        <x>530</x>
-        <y>340</y>
-        <width>851</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-     <widget class="Line" name="line_8">
-      <property name="geometry">
-       <rect>
-        <x>520</x>
-        <y>0</y>
-        <width>20</width>
-        <height>761</height>
-       </rect>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="tab_4">
-     <attribute name="title">
-      <string>Consumos</string>
-     </attribute>
-     <widget class="QWidget" name="widget" native="true">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>1321</width>
-        <height>241</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="layout_diario"/>
-     </widget>
-     <widget class="QComboBox" name="cbx_izq">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>300</y>
-        <width>141</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lbl_der">
-      <property name="geometry">
-       <rect>
-        <x>860</x>
-        <y>296</y>
-        <width>471</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lbl_izq">
-      <property name="geometry">
-       <rect>
-        <x>180</x>
-        <y>296</y>
-        <width>471</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QWidget" name="widget_2" native="true">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>340</y>
-        <width>640</width>
-        <height>380</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="layout_dia_izq"/>
-     </widget>
-     <widget class="QComboBox" name="cbx_der">
-      <property name="geometry">
-       <rect>
-        <x>700</x>
-        <y>300</y>
-        <width>141</width>
-        <height>27</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QWidget" name="widget_4" native="true">
-      <property name="geometry">
-       <rect>
-        <x>690</x>
-        <y>340</y>
-        <width>640</width>
-        <height>380</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="layout_dia_der"/>
-     </widget>
-     <widget class="Line" name="line_3">
-      <property name="geometry">
-       <rect>
-        <x>-3</x>
-        <y>260</y>
-        <width>1371</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-     <widget class="Line" name="line_4">
-      <property name="geometry">
-       <rect>
-        <x>660</x>
-        <y>270</y>
-        <width>20</width>
-        <height>511</height>
-       </rect>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-    </widget>
-   </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1377</width>
+     <width>1391</width>
      <height>21</height>
     </rect>
    </property>

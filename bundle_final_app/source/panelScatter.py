@@ -107,15 +107,16 @@ class PanelScatter():
         print xdata[ind[0]], ydata[ind[0]]
         self.label.setText('Instante ' + str(self.getTime(xdata[ind[0]], ydata[ind[0]], ep)))
             
-    def creaFiguras(self, t, a, b):
+    def creaFiguras(self, ep):
+        """ ep: tiempo, temp, flujo"""
         #Serie temporal
         fig0 = plt.figure(tight_layout=True)
         #Normalizar
-        preprocessing.scale(a, copy=True)
-        preprocessing.scale(b, copy=True)
+        preprocessing.scale(ep.temp, copy=True)
+        preprocessing.scale(ep.flujo, copy=True)
         #Curva temperatura
         ax1 = fig0.add_subplot(111)
-        ax1.plot(t, a, '-', color=colores.temperatura)
+        ax1.plot(ep.tiempo, ep.temp, '-', color=colores.temperatura)
         #ax1.set_ylim([-5,5])
         #ax1.set_xlabel('Tiempo (m)')
         ax1.set_ylabel('Temperatura (ºC)', color=colores.temperatura)
@@ -131,37 +132,64 @@ class PanelScatter():
         
         #Curva flujo térmico
         ax2 = ax1.twinx()
-        ax2.plot(t, b, '-', color=colores.flujo)
+        ax2.plot(ep.tiempo, ep.flujo, '-', color=colores.flujo)
         #ax2.set_ylim([-5,5])
         ax2.set_ylabel('Flujo térmico', color=colores.flujo)
         for tl in ax2.get_yticklabels():
             tl.set_color(colores.flujo)
         
-        #Scatterplot
-        fig1 = plt.figure(tight_layout=True)
-        ax1f1 = fig1.add_subplot(111)
-        line, = ax1f1.plot(a, b, 'o', picker=5)
-        #ax1f1.set_xlim([20,45])
-        #ax1f1.set_ylim([-20,220])
-        ax1f1.set_xlabel('Temperatura (ºC)', color=colores.temperatura)
-        ax1f1.set_ylabel('Flujo térmico', color=colores.flujo)
         
+        #Scatterplot
+        #Lineas verticales con la clasificación de sueños
+        if(ep.tipo == selEpisodio.tipoSueno):
+            profundo = self.selep.getProfundo(ep.ini, ep.fin)
+            despierto = self.selep.getDespierto(ep.ini, ep.fin)
+            for i in profundo:
+                ax1.axvspan(i[0], i[1], facecolor=colores.suenoProfundo, alpha=0.3, edgecolor=colores.suenoProfundo)
+                
+            for i in despierto:
+                ax1.axvspan(i[0], i[1], facecolor=colores.despierto, alpha=0.5, edgecolor=colores.despierto)
+            
+            fig1 = plt.figure(tight_layout=True)
+            ax1f1 = fig1.add_subplot(111)
+            k = 0
+            for i in range(ep.ini, ep.fin):
+                t = self.selep.getColorSueno(i)
+                ax1f1.plot(ep.temp[k], ep.flujo[k], 'o', picker=5, color=t)
+                k+=1
+            ax1f1.set_xlabel('Temperatura (ºC)', color=colores.temperatura)
+            ax1f1.set_ylabel('Flujo térmico', color=colores.flujo)
+            
+        else:
+            fig1 = plt.figure(tight_layout=True)
+            ax1f1 = fig1.add_subplot(111)
+            line, = ax1f1.plot(ep.temp, ep.flujo, 'o', picker=5, color = "b")
+            #ax1f1.set_xlim([20,45])
+            #ax1f1.set_ylim([-20,220])
+            ax1f1.set_xlabel('Temperatura (ºC)', color=colores.temperatura)
+            ax1f1.set_ylabel('Flujo térmico', color=colores.flujo)
+            
         return fig0, fig1
     
-    def crearWidget(self, filtro, ep):
-        fig10, fig11 = self.creaFiguras(filtro.tiempo, filtro.temp, filtro.flujo)
+    def crearWidget(self, ep, derecho):
+        """ 
+        ep: Episodio a visualizar
+        derecho: 0/1 episodio izquierdo o derecho 
+        """
+        
+        fig10, fig11 = self.creaFiguras(ep)
         canvas1 = FigureCanvas(fig10)
         canvas2 = FigureCanvas(fig11)
         vbox = QtGui.QGridLayout()
-        vbox.addWidget(QtGui.QLabel("<b>Episodio:</b> " + filtro.nombre))
-        vbox.addWidget(QtGui.QLabel("<b>Inicio:</b> " + str(filtro.tiempo[0])))
-        vbox.addWidget(QtGui.QLabel("<b>Final:</b> " + str(filtro.tiempo[-1])))
-        vbox.addWidget(QtGui.QLabel("<b>Duración:</b> %i min" % (len(filtro.tiempo))))
-        vbox.addWidget(QtGui.QLabel("<b>Coeficiente de correlación:</b> " + str(filtro.correlacion)[:5]))
-        vbox.addWidget(QtGui.QLabel("<b>Calorías consumidas:</b> " + str(filtro.numCalorias)[:6] + " (" + str(filtro.numCalorias/self.selep.totalCal*100)[:4] + "%)"))
+        vbox.addWidget(QtGui.QLabel("<b>Episodio:</b> " + ep.nombre))
+        vbox.addWidget(QtGui.QLabel("<b>Inicio:</b> " + str(ep.tiempo[0])))
+        vbox.addWidget(QtGui.QLabel("<b>Final:</b> " + str(ep.tiempo[-1])))
+        vbox.addWidget(QtGui.QLabel("<b>Duración:</b> %s min" % (ep.tiempo[-1] - ep.tiempo[0])))
+        vbox.addWidget(QtGui.QLabel("<b>Coeficiente de correlación:</b> " + str(ep.correlacion)[:5]))
+        vbox.addWidget(QtGui.QLabel("<b>Calorías consumidas:</b> " + str(ep.numCalorias)[:6] + " (" + str(ep.numCalorias/self.selep.totalCal*100)[:4] + "%)"))
         vbox.addWidget(canvas1)
         vbox.addWidget(canvas2)
-        canvas2.mpl_connect('pick_event', lambda event: self.onpick(event, ep))
+        canvas2.mpl_connect('pick_event', lambda event: self.onpick(event, derecho))
         return vbox
     
     #Inserta elementos en el layout con los nuevos episodios
