@@ -20,7 +20,7 @@ DEBUG = 0
 
 class EpisodioSueno():
     def __init__(self, nombre, ep_ini, ep_fin, sueno_ini, sueno_fin, 
-            colors, tiempo, consumo, flujo, temperatura, acelerometro):
+            colors, colsAcostado, tiempo, consumo, flujo, temperatura, acelerometro):
         
         self.nombre = nombre
         self.ep_ini = ep_ini
@@ -29,7 +29,8 @@ class EpisodioSueno():
         self.sueno_fin = sueno_fin
         
         self.colors = colors
-        self.barraSuenio = pg.BarGraphItem(x0=tiempo, width=60, height=1, brushes=colors, pens=colors)
+        self.colsAcostado = colsAcostado
+        #self.barraSuenio = pg.BarGraphItem(x0=tiempo, width=60, height=1, brushes=colors, pens=colors)
         self.horas = tiempo #Horas int
         self.consumoData = consumo
         self.flujoData = flujo
@@ -83,8 +84,10 @@ class SelEpisodioSueno(object):
         colors.extend(self.coloreaSueno(su_ini, su_fin))
         colors.extend(self.coloreaActividades(su_fin+1, ep_fin))    
         
+        colsAcostado = self.coloreaAcostado(ep_ini, ep_fin)
+        
         return EpisodioSueno(episodio.nombre, ep_ini, ep_fin, su_ini, su_fin, 
-                    colors, self.csv.tiempo[ep_ini:ep_fin+1],
+                    colors, colsAcostado, self.csv.tiempo[ep_ini:ep_fin+1],
                     self.csv.consm[ep_ini:ep_fin+1], self.csv.flujo[ep_ini:ep_fin+1],
                     self.csv.temp[ep_ini:ep_fin+1], self.csv.acltrans[ep_ini:ep_fin+1])
     
@@ -125,6 +128,17 @@ class SelEpisodioSueno(object):
             colors.append(c)
             i += 1
         return colors
+    
+    def coloreaAcostado(self, ini, fin):
+        col_acostado = []
+        i = ini
+        while(i <= fin):
+            if(self.csv.acostado[i]):
+                col_acostado.append(colores.acostado)
+            else:
+                col_acostado.append(colores.despierto)
+            i+=1    
+        return col_acostado
     
     #Obtiene el mayor consumo de todos los minutos en todos los episodios de sue�o
     def calculaLimites(self):

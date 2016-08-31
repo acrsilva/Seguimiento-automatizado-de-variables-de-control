@@ -84,7 +84,6 @@ class PanelConsumo():
         self.layout_dia_der.addWidget(canvas_der)
         
     def plotGraph(self, fig, cbx_idx):
-        
         def make_autopct(values):
             def my_autopct(pct):
                 total = sum(values)
@@ -104,15 +103,17 @@ class PanelConsumo():
             for wedge in wedges:
                 wedge.set_picker(True)
             fig.canvas.mpl_connect('pick_event', onclick)
-
         
+        #Texto a mostrar en los porcentajes de las tartas
+        def my_autopct(pct):
+            return ('%1.1f%%' % pct) if pct > 0 else ''
         
         #labels = ['Dormido', 'Sedentario', 'Act. Ligera', 'Act. Moderada']
         colors = [colores.sueno, colores.sedentario, colores.ligero, colores.moderado]
         #Gráfica de tiempos
         sizes = self.getSizes(cbx_idx, tiempo=True)
         ax_tiempo = fig.add_subplot(221)
-        wedges, plt_labels, autotexts = ax_tiempo.pie(sizes, colors=colors, autopct='%1.1f%%', shadow=False, startangle=0)
+        wedges, plt_labels, autotexts = ax_tiempo.pie(sizes, colors=colors, autopct=my_autopct, shadow=False, startangle=0)
         #make_picker(fig, wedges, autotexts)
         #ax_tiempo.legend(pie[0], labels, loc="upper left", prop={'size':7})
         ax_tiempo.axis('equal')
@@ -121,7 +122,7 @@ class PanelConsumo():
         #Gráfica de consumos
         sizes = self.getSizes(cbx_idx, consumo=True)
         ax_consumo = fig.add_subplot(222)
-        pie = ax_consumo.pie(sizes, colors=colors, autopct='%1.1f%%', shadow=False, startangle=0)
+        pie = ax_consumo.pie(sizes, colors=colors, autopct=my_autopct, shadow=False, startangle=0)
         #ax_consumo.legend(pie[0], labels, loc="upper left")
         ax_consumo.axis('equal')
         ax_consumo.set_title('Consumo por actividad')
@@ -227,7 +228,7 @@ class PanelConsumo():
         ax.set_xticks(r)
         ax.set_xticklabels(labels, rotation=90, fontsize=10)
         ax.set_title('Ratio consumo por minuto')
-        ax.set_ylim(0, 10)
+        ax.set_ylim(0, max(means)+1)
         
         if(DEBUG): 
             print self.epsDias[idx].epFiltro[0].tiempo[0], self.epsDias[idx].epFiltro[-1].tiempo[-1]

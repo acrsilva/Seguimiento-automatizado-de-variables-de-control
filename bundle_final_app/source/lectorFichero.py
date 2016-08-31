@@ -11,12 +11,45 @@ import math
 DEBUG = 0
 PRUEBAS = 0
 
+class Cotas():
+    def __init__(self, flujo, temp, consm, acltrans):
+        self.flujo_min = 400
+        self.flujo_max = 0
+        self.temp_min = 100
+        self.temp_max = -20
+        self.consm_min = 10000
+        self.consm_max = 0
+        self.acltrans_min = 10000
+        self.acltrans_max = 0
+        
+        for i in range(len(flujo)):
+            if(flujo[i] < self.flujo_min):
+                self.flujo_min = flujo[i]
+            elif(flujo[i] > self.flujo_max):
+                self.flujo_max = flujo[i]
+            
+            if(temp[i] < self.temp_min):
+                self.temp_min = temp[i]
+            elif(temp[i] > self.temp_max):
+                self.temp_max = temp[i]
+                
+            if(consm[i] < self.consm_min):
+                self.consm_min = consm[i]
+            elif(consm[i] > self.consm_max):
+                self.consm_max = consm[i]    
+            
+            if(acltrans[i] < self.acltrans_min):
+                self.acltrans_min = acltrans[i]
+            elif(acltrans[i] > self.acltrans_max):
+                self.acltrans_max = acltrans[i]
+        
+
 """
 Almacena los valores puros de un fichero csv
 Puede separar los datos en días
 """
 class Datos():
-    def __init__(self, sueno, clasifSueno, flujo, temp, tiempo, actli, actsd, actmd, consm, acltrans):
+    def __init__(self, sueno, clasifSueno, flujo, temp, tiempo, actli, actsd, actmd, consm, acltrans, acostado):
         self.sueno = sueno
         self.clasifSueno = clasifSueno
         self.flujo = flujo
@@ -27,6 +60,9 @@ class Datos():
         self.actmd = actmd
         self.consm = consm
         self.acltrans = acltrans
+        self.acostado = acostado
+        
+        self.cotas = Cotas(self.flujo, self.temp, self.consm, self.acltrans)
     
     #Crea una lista días particionando los datos
     def creaDias(self):
@@ -41,7 +77,8 @@ class Datos():
                         self.actsd[dia[0]:dia[1]+1],
                         self.actmd[dia[0]:dia[1]+1],
                         self.consm[dia[0]:dia[1]+1],
-                        self.acltrans[dia[0]:dia[1]+1])
+                        self.acltrans[dia[0]:dia[1]+1],
+                        self.acostado[dia[0]:dia[1]+1])
         
         datos_dias = []
         ini, fin = 0, 0
@@ -92,13 +129,14 @@ class LectorFichero(object):
         self.actmd = csv['Moderada']
         self.consm = csv['Gasto_energético'.encode('iso8859-15')]
         self.acltrans = csv['Acel_transversal__picos']
+        self.acostado = csv['Acostado']
         
         #Filtrar datos erroneos
         self.filtrarDatos()
         #self.comprobarDatos()
         
         #Datos tal cual vienen en el csv, sin particiones
-        self.datos_total = Datos(self.sueno, self.clasifSueno, self.flujo, self.temp, self.tiempo, self.actli, self.actsd, self.actmd, self.consm, self.acltrans)
+        self.datos_total = Datos(self.sueno, self.clasifSueno, self.flujo, self.temp, self.tiempo, self.actli, self.actsd, self.actmd, self.consm, self.acltrans, self.acostado)
     
     def filtrarDatos(self):
         """ Actualiza los arrays de datos descartando aquellos incorrectos o incompletos """
@@ -114,13 +152,14 @@ class LectorFichero(object):
             actmd.append(self.actmd[i])
             consm.append(self.consm[i])
             acltrans.append(self.acltrans[i])
+            acostado.append(self.acostado[i])
         
         def checkNan():
-            return math.isnan(self.sueno[i]) or math.isnan(self.clasifSueno[i]) or math.isnan(self.flujo[i]) or math.isnan(self.temp[i]) or math.isnan(self.actli[i]) or math.isnan(self.actsd[i]) or math.isnan(self.actmd[i]) or math.isnan(self.consm[i]) or math.isnan(self.acltrans[i])
+            return math.isnan(self.sueno[i]) or math.isnan(self.clasifSueno[i]) or math.isnan(self.flujo[i]) or math.isnan(self.temp[i]) or math.isnan(self.actli[i]) or math.isnan(self.actsd[i]) or math.isnan(self.actmd[i]) or math.isnan(self.consm[i]) or math.isnan(self.acltrans[i]) or math.isnan(self.acostado[i]) 
             
         numDatos = len(self.tiempo)
         i = 0
-        tiempo, sueno, clasifSueno, flujo, temp, actli, actsd, actmd, consm, acltrans = [], [], [], [], [], [], [], [], [], []
+        tiempo, sueno, clasifSueno, flujo, temp, actli, actsd, actmd, consm, acltrans, acostado = [], [], [], [], [], [], [], [], [], [], []
         
         #Descartar los datos que no vayan al minuto
         while(i < numDatos-1):
@@ -142,6 +181,7 @@ class LectorFichero(object):
         self.actmd = actmd
         self.consm = consm
         self.acltrans =  acltrans    
+        self.acostado = acostado
         
     def comprobarDatos(self):
         def appendNan():

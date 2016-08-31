@@ -49,6 +49,7 @@ epsCompletos: True para obtener EpisodioCompleto por cada episodio. False para o
 class selEpisodio():
     def __init__(self, csv, epsCompletos=True, sDiurno=True, sNocturno=True, sedentario=True, ligero=True, moderado=True):
         self.csv = csv
+        #self.cotas = csv.cotas
         self.epsCompletos = epsCompletos
         
         #Pasar minutos a Datetime. UTIL?

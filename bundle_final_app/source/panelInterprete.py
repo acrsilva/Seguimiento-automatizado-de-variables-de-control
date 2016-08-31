@@ -71,9 +71,21 @@ class PanelInterprete():
         self.pBarra.showAxis('right')
         self.pBarra.getAxis('right').setLabel('', color='#0000FF')
         
+        #Configurar barra de colores cuando el paciente se acuesta
+        self.pBarraAcostado = win.addPlot(row=1, col=0)
+        self.pBarraAcostado.setTitle('Postura')
+        self.pBarraAcostado.hideButtons()
+        self.pBarraAcostado.disableAutoRange(axis=pg.ViewBox.XAxis)
+        self.pBarraAcostado.setMouseEnabled(x=True, y=False)
+        self.pBarraAcostado.hideAxis('bottom')
+        self.pBarraAcostado.getAxis('left').setLabel('', color='#0000FF')
+        self.pBarraAcostado.showAxis('right')
+        self.pBarraAcostado.getAxis('right').setLabel('', color='#0000FF')
+        self.pBarraAcostado.setXLink('barClasificacion')
+        
         #Configurar primera gr�fica con aceler�metros
         #win.nextRow()
-        self.pAcel = win.addPlot(row=1, col=0, connect="finite")
+        self.pAcel = win.addPlot(row=2, col=0, connect="finite")
         self.pAcel.setTitle('Acelerómetro transversal')
         self.pAcel.hideButtons()
         self.pAcel.setMouseEnabled(x=True, y=False)
@@ -85,15 +97,17 @@ class PanelInterprete():
         
         #Configurar segunda gr�fica con actividad f�sica y consumo
         #win.nextRow()
-        self.pAF = win.addPlot(row=2, col=0, connect="finite")
+        self.pAF = win.addPlot(row=3, col=0, connect="finite")
         self.pAF.setTitle('Consumo energético')
         self.pAF.hideButtons()
         self.pAF.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.pAF.setMouseEnabled(x=True, y=False)
         self.pAF.hideAxis('bottom')
+        self.pAF.showAxis('right')
         self.pAF.getAxis('left').setLabel('', color=colores.actividad)
         self.pAF.setXLink('barClasificacion')
         
+        """
         self.pCons = pg.ViewBox()
         self.pAF.showAxis('right')
         self.pAF.scene().addItem(self.pCons)
@@ -101,12 +115,12 @@ class PanelInterprete():
         self.pCons.setXLink(self.pAF)
         self.pAF.getAxis('right').setLabel('', color=colores.consumo)
         self.pAF.vb.sigResized.connect(self.updateViews)
-        
+        """
         
         #Configurar tercera gr�fica con temperatura y flujo t�rmico
         #win.nextRow()
         axis = DateAxis(orientation='bottom')
-        self.pTemp = win.addPlot(row=3, col=0, axisItems={'bottom': axis}, connect="finite")
+        self.pTemp = win.addPlot(row=4, col=0, axisItems={'bottom': axis}, connect="finite")
         self.pTemp.setXLink('barClasificacion')
         self.pTemp.disableAutoRange(axis=pg.ViewBox.XAxis)
         self.pTemp.setMouseEnabled(x=True, y=False)
@@ -125,13 +139,13 @@ class PanelInterprete():
         
         #Enchufar los datos
         self.pintarDatos()
-        
+
         #Configurar tama�os del layout
-        win.ci.layout.setRowMaximumHeight(0, 60)
-        win.ci.layout.setRowMaximumHeight(1, 80)
-        win.ci.layout.setRowMaximumHeight(2, 80)
-        
-        
+        win.ci.layout.setRowMaximumHeight(0, 50)
+        win.ci.layout.setRowMaximumHeight(1, 40)
+        win.ci.layout.setRowMaximumHeight(2, 70)
+        win.ci.layout.setRowMaximumHeight(3, 80)
+        #win.ci.layout.setRowMaximumHeight(4, 80)
         
     
     def openFile(self):
@@ -155,9 +169,10 @@ class PanelInterprete():
     
     def clearGraphs(self):
         self.pBarra.clear()
+        self.pBarraAcostado.clear()
         self.pAF.clear()
         self.pAcel.clear()
-        self.pCons.clear()
+        #self.pCons.clear()
         self.pTemp.clear()
         self.pFlujo.clear()
         
@@ -170,14 +185,18 @@ class PanelInterprete():
         if(DEBUG): print len(ep.horas), len(ep.colors)
         self.pBarra.addItem(pg.BarGraphItem(x0=(ep.horas), width=60, height=1, brushes=ep.colors, pens=ep.colors))
         
+        self.pBarraAcostado.clear()
+        a, b=len(ep.horas), len(ep.colsAcostado)
+        self.pBarraAcostado.addItem(pg.BarGraphItem(x0=(ep.horas), width=60, height=1, brushes=ep.colsAcostado, pens=ep.colsAcostado))
+        
         self.pAF.clear()
-        #self.pAF.plot(x=self.selep.horas, y=self.selep.activiData, pen=colores.actividad)
+        self.pAF.addItem(pg.PlotCurveItem(x=ep.horas, y=ep.consumoData, pen=colores.consumo))
         
         self.pAcel.clear()
         self.pAcel.plot(x=ep.horas, y=ep.acelData, pen=colores.acelerometro)
         
-        self.pCons.clear()
-        self.pCons.addItem(pg.PlotCurveItem(x=ep.horas, y=ep.consumoData, pen=colores.consumo))
+        #self.pCons.clear()
+        #self.pCons.addItem(pg.PlotCurveItem(x=ep.horas, y=ep.consumoData, pen=colores.consumo))
         
         self.pTemp.clear()
         self.pTemp.plot(x=ep.horas, y=ep.tempData, pen=colores.temperatura)
@@ -187,10 +206,12 @@ class PanelInterprete():
         
         #Configurar rangos iniciales de visualizaci�n
         self.pBarra.autoRange()
-        self.pAF.setYRange(0,2)
-        self.pCons.setYRange(0,self.selep.limConsumo)
-        self.pTemp.setYRange(20,45)
-        self.pFlujo.setYRange(-20, 220)
+        self.pBarraAcostado.autoRange()
+        #self.pAF.setYRange(0,2)
+        self.pAF.setYRange(self.selep.csv.cotas.consm_min ,self.selep.csv.cotas.consm_max)
+        self.pTemp.setYRange(self.selep.csv.cotas.temp_min, self.selep.csv.cotas.temp_max)
+        self.pFlujo.setYRange(self.selep.csv.cotas.flujo_min, self.selep.csv.cotas.flujo_max)
+        self.pAcel.setYRange(self.selep.csv.cotas.acltrans_min, self.selep.csv.cotas.acltrans_max)
     
     def updateViews(self):
         ## view has resized; update auxiliary views to match
@@ -201,8 +222,8 @@ class PanelInterprete():
         ## (probably this should be handled in ViewBox.resizeEvent)
         self.pFlujo.linkedViewChanged(self.pTemp.vb, self.pFlujo.XAxis)
         
-        self.pCons.setGeometry(self.pAF.vb.sceneBoundingRect())
-        self.pCons.linkedViewChanged(self.pAF.vb, self.pCons.XAxis)
+        #self.pCons.setGeometry(self.pAF.vb.sceneBoundingRect())
+        #self.pCons.linkedViewChanged(self.pAF.vb, self.pCons.XAxis)
         
     def btnNextListener(self):
         if(self.epActual < len(self.selep.eps_sueno)-1):

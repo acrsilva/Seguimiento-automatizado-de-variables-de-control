@@ -117,7 +117,7 @@ class PanelScatter():
         #Curva temperatura
         ax1 = fig0.add_subplot(111)
         ax1.plot(ep.tiempo, ep.temp, '-', color=colores.temperatura)
-        #ax1.set_ylim([-5,5])
+        ax1.set_ylim([self.selep.csv.cotas.temp_min,self.selep.csv.cotas.temp_max])
         #ax1.set_xlabel('Tiempo (m)')
         ax1.set_ylabel('Temperatura (ºC)', color=colores.temperatura)
         for tl in ax1.get_yticklabels():
@@ -133,7 +133,7 @@ class PanelScatter():
         #Curva flujo térmico
         ax2 = ax1.twinx()
         ax2.plot(ep.tiempo, ep.flujo, '-', color=colores.flujo)
-        #ax2.set_ylim([-5,5])
+        ax2.set_ylim([self.selep.csv.cotas.flujo_min, self.selep.csv.cotas.flujo_max])
         ax2.set_ylabel('Flujo térmico', color=colores.flujo)
         for tl in ax2.get_yticklabels():
             tl.set_color(colores.flujo)
@@ -164,11 +164,12 @@ class PanelScatter():
             fig1 = plt.figure(tight_layout=True)
             ax1f1 = fig1.add_subplot(111)
             line, = ax1f1.plot(ep.temp, ep.flujo, 'o', picker=5, color = "b")
-            #ax1f1.set_xlim([20,45])
-            #ax1f1.set_ylim([-20,220])
             ax1f1.set_xlabel('Temperatura (ºC)', color=colores.temperatura)
             ax1f1.set_ylabel('Flujo térmico', color=colores.flujo)
             
+        #ax1f1.set_xlim([self.selep.csv.cotas.temp_min, self.selep.csv.cotas.temp_max])
+        #ax1f1.set_ylim([self.selep.csv.cotas.flujo_min, self.selep.csv.cotas.flujo_max])
+        
         return fig0, fig1
     
     def crearWidget(self, ep, derecho):
